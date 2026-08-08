@@ -1,0 +1,29 @@
+name: TermoBar
+options:
+  bundleIdPrefix: br.com.gbrlrg
+  deploymentTarget:
+    macOS: "15.0"
+targets:
+  TermoBar:
+    type: application
+    platform: macOS
+    sources: [TermoBar]
+    info:
+      path: TermoBar/Info.plist
+      properties:
+        CFBundleDisplayName: TermoBar
+        CFBundleShortVersionString: "1.0.0"
+        LSUIElement: true
+        LSApplicationCategoryType: public.app-category.utilities
+    dependencies:
+      - sdk: libIOReport.tbd
+      - sdk: libsqlite3.tbd
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: br.com.gbrlrg.termobar
+        SWIFT_VERSION: "6.0"
+        SWIFT_OBJC_BRIDGING_HEADER: TermoBar/Bridging.h
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGN_STYLE: Manual
+        ENABLE_HARDENED_RUNTIME: NO
+        GENERATE_INFOPLIST_FILE: NO

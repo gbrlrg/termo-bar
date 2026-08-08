@@ -1,0 +1,11 @@
+# Gerados pelo XcodeGen (fonte: project.yml)
+TermoBar.xcodeproj/
+TermoBar/Info.plist
+
+# Build
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+
+.DS_Store
