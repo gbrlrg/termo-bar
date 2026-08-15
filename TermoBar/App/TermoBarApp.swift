@@ -2,24 +2,22 @@ import SwiftUI
 
 @main
 struct TermoBarApp: App {
-    @State private var monitor = Monitor.shared
-
     init() {
         #if DEBUG
-        DebugSnapshot.runIfRequested(monitor)
+            DebugSnapshot.runIfRequested()
         #endif
     }
 
     var body: some Scene {
         MenuBarExtra {
-            PopoverView(monitor: monitor)
+            PopoverView().appDependencies()
         } label: {
-            MenuBarLabel(monitor: monitor)
+            MenuBarLabel().appDependencies()
         }
         .menuBarExtraStyle(.window)
 
         Settings {
-            SettingsView(monitor: monitor)
+            SettingsView().appDependencies()
         }
     }
 }
