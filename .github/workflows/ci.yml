@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: Formatação (swift-format)
+    runs-on: ubuntu-latest
+    container: swift:6.0
+    steps:
+      - uses: actions/checkout@v4
+      - run: swift format lint --strict --recursive TermoBar TermoBarTests
+
+  build-and-test:
+    name: Build e testes (macOS)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gerar o projeto Xcode
+        run: |
+          brew install xcodegen
+          xcodegen generate
+      - name: Testar
+        run: |
+          xcodebuild test \
+            -project TermoBar.xcodeproj \
+            -scheme TermoBar \
+            -destination 'platform=macOS' \
+            -derivedDataPath build

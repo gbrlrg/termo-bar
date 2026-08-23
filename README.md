@@ -120,7 +120,7 @@ Nenhum dado sai do computador. Não há telemetria.
 
 ## Compilar
 
-Requisitos: Mac com Apple Silicon, macOS 15 ou superior, Xcode 27 e [XcodeGen](https://github.com/yonaskolb/XcodeGen).
+Requisitos: Mac com Apple Silicon, macOS 15 ou superior, Xcode 16 ou superior e [XcodeGen](https://github.com/yonaskolb/XcodeGen).
 
 ```sh
 brew install xcodegen
@@ -132,24 +132,47 @@ open /Applications/TermoBar.app
 
 O projeto Xcode é gerado a partir do `project.yml` e não fica no repositório.
 
-## Estrutura
+### Testes e formatação
+
+```sh
+xcodebuild test -project TermoBar.xcodeproj -scheme TermoBar -destination 'platform=macOS'
+swift format lint --strict --recursive TermoBar TermoBarTests
+```
+
+Os testes (Swift Testing) cobrem a lógica pura — agregação, ranking, alertas, histórico SQLite, CSV e preferências — e não dependem de sensores. O CI (`.github/workflows/ci.yml`) roda a formatação e os testes em cada pull request.
+
+## Arquitetura
+
+O código é dividido em camadas; as de cima dependem das de baixo, nunca o contrário.
+
+| Pasta | Responsabilidade |
+|---|---|
+| `App/` | Ponto de entrada, raiz de composição (`AppDependencies`) e captura de tela de diagnóstico |
+| `UI/` | Telas SwiftUI: barra de menus, popover, Ajustes, componentes e tema. Recebem os serviços pelo `Environment` |
+| `Services/` | Estado do app e integração com o macOS: coleta (`Monitor`), preferências, notificações, item de login e log |
+| `Hardware/` | Leitura do hardware: sensores de temperatura (IOHID), energia de CPU por processo, GPU (IOReport/IORegistry) e pressão térmica; `Bridging.h` declara as funções privadas usadas |
+| `Persistence/` | Histórico em SQLite (instruções preparadas, transações) e exportação CSV |
+| `Domain/` | Modelo e regras puras, sem AppKit nem SwiftUI: amostras, resumo por minuto e por período, cores por app, política de alertas, unidades e formatação |
 
 | Arquivo | Responsabilidade |
 |---|---|
-| `Sensors.swift` | Leitura dos sensores de temperatura (IOHID) e filtro de leituras implausíveis |
-| `Energy.swift` | Energia de CPU por processo e agrupamento por app responsável |
-| `GPU.swift` | Energia da GPU (IOReport), tempo de GPU por processo, correção do WindowServer e pressão térmica |
-| `Monitor.swift` | Coleta a cada segundo, fecha registros, resume por minuto e mantém o estado da interface |
-| `Summary.swift` | Agregação por período: ranking, barras empilhadas, linhas do tempo |
-| `Store.swift` | Histórico em SQLite e exportação CSV |
-| `Alerts.swift` | Notificações |
-| `Preferences.swift` | Preferências e formatação (°C/°F, watts) |
-| `PopoverView.swift` | Interface do popover |
-| `SettingsView.swift` | Janela de Ajustes |
-| `MenuBarLabel.swift` | Rótulo da barra de menus |
-| `Theme.swift` | Paleta categórica validada (claro/escuro), escala de temperatura e cores de estado |
-| `Bridging.h` | Declarações das funções privadas do IOKit/IOReport usadas |
-| `DebugSnapshot.swift` | Ferramentas de captura e diagnóstico (só em Debug) |
+| `Domain/Sample.swift` | Registro do histórico, resumo por minuto e cálculos sobre coleções de amostras |
+| `Domain/RangeSummary.swift` | Agregação por período: ranking, barras empilhadas, linhas do tempo |
+| `Domain/AlertPolicy.swift` | Quando avisar: temperatura sustentada, limitação térmica, app acima do limite, intervalo entre repetições |
+| `Hardware/TemperatureSensors.swift` | Sensores do die e filtro de leituras implausíveis |
+| `Hardware/EnergySampler.swift` | Energia de CPU por processo e agrupamento por app responsável |
+| `Hardware/GPUSampler.swift` | Energia da GPU, tempo de GPU por processo e correção do WindowServer |
+| `Services/Monitor.swift` | Coleta a cada segundo, fecha registros, resume por minuto e mantém o estado da interface |
+| `Persistence/HistoryStore.swift` | Leitura e escrita do histórico |
+
+### Segurança e privacidade
+
+- Todo valor gravado no SQLite entra por parâmetro (`?`), nunca interpolado no SQL; as escritas de cada registro são atômicas.
+- O CSV exportado neutraliza nomes de processo que começam com `=`, `+`, `-` ou `@`, para não virarem fórmulas numa planilha.
+- A pasta do histórico é criada com permissão só para o usuário, e "Apagar histórico" compacta o arquivo para não deixar os dados no disco.
+- Preferências fora da faixa válida (editadas com `defaults write`) são corrigidas ao abrir o app.
+- O app roda com o runtime endurecido do macOS. Ele não pode usar o App Sandbox, porque lê a energia de processos de outros apps e usa APIs privadas do IOKit.
+- Falhas de banco e de notificação vão para o log unificado (`log stream --predicate 'subsystem == "br.com.gbrlrg.termobar"'`).
 
 ### Diagnóstico (build Debug)
 
