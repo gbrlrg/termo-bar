@@ -78,4 +78,16 @@ struct HistoryStoreTests {
         let csv = try String(contentsOf: url, encoding: .utf8)
         #expect(csv.split(separator: "\n").count == 2)
     }
+
+    @Test func restrictsAnExistingFolderToTheOwner() throws {
+        let directory = FileManager.default.temporaryDirectory.appending(path: "termobar-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: directory) }
+        try FileManager.default.createDirectory(
+            at: directory, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o755])
+
+        _ = try HistoryStore(url: directory.appending(path: "history.sqlite"))
+
+        let attributes = try FileManager.default.attributesOfItem(atPath: directory.path(percentEncoded: false))
+        #expect(attributes[.posixPermissions] as? Int == 0o700)
+    }
 }

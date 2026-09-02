@@ -23,11 +23,13 @@ final class HistoryStore {
 
     private let db: SQLiteDatabase
 
-    /// Abre o histórico em `url`, criando a pasta (visível só para o usuário) se preciso.
+    /// Abre o histórico em `url`, criando a pasta se preciso. A pasta fica visível só para o usuário,
+    /// inclusive quando já existia com outra permissão (criada por uma versão anterior do app).
     convenience init(url: URL) throws {
         let directory = url.deletingLastPathComponent()
-        try FileManager.default.createDirectory(
-            at: directory, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
+        let ownerOnly: [FileAttributeKey: Any] = [.posixPermissions: 0o700]
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: ownerOnly)
+        try FileManager.default.setAttributes(ownerOnly, ofItemAtPath: directory.path(percentEncoded: false))
         try self.init(database: SQLiteDatabase(path: url.path(percentEncoded: false)))
     }
 
