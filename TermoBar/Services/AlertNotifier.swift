@@ -7,9 +7,12 @@ import UserNotifications
 final class AlertNotifier {
     private let preferences: Preferences
     @ObservationIgnored private var policy = AlertPolicy()
+    /// O delegate do `UNUserNotificationCenter` é uma referência fraca: o notificador o mantém vivo.
+    @ObservationIgnored private let presenter = ForegroundPresenter()
 
     init(preferences: Preferences) {
         self.preferences = preferences
+        UNUserNotificationCenter.current().delegate = presenter
     }
 
     /// Pede permissão só se algum alerta estiver ligado, para não incomodar quem não usa.
@@ -90,5 +93,15 @@ final class AlertNotifier {
         } catch {
             Log.notifications.error("Falha ao enviar notificação: \(error.localizedDescription)")
         }
+    }
+}
+
+/// Sem delegate, o macOS não mostra o banner enquanto o app está em primeiro plano (com os Ajustes
+/// abertos, por exemplo) e manda a notificação direto para a Central de Notificações.
+private final class ForegroundPresenter: NSObject, UNUserNotificationCenterDelegate, Sendable {
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter, willPresent notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
+        [.banner, .list, .sound]
     }
 }
