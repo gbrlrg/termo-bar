@@ -7,6 +7,17 @@ struct AlertSettingsView: View {
     var body: some View {
         @Bindable var preferences = preferences
         Form {
+            if alerts.isDenied {
+                Section {
+                    Label("Notificações desativadas", systemImage: "bell.slash.fill")
+                        .foregroundStyle(Theme.critical)
+                    SettingsFootnote(
+                        "O macOS está bloqueando as notificações do TermoBar, e os alertas não vão aparecer.")
+                    Button("Abrir Ajustes de Notificações") {
+                        if let url = Self.notificationSettingsURL { NSWorkspace.shared.open(url) }
+                    }
+                }
+            }
             Section {
                 Toggle("Temperatura alta", isOn: $preferences.alertTemperature)
                 if preferences.alertTemperature {
@@ -38,5 +49,15 @@ struct AlertSettingsView: View {
         .onChange(of: preferences.alertConfiguration.isAnyEnabled) { _, isEnabled in
             if isEnabled { alerts.requestAuthorization() }
         }
+        // Atualiza ao abrir a aba e ao voltar dos Ajustes do Sistema.
+        .task { await alerts.refreshAuthorization() }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            Task { await alerts.refreshAuthorization() }
+        }
     }
+
+    private static let notificationSettingsURL = URL(
+        string:
+            "x-apple.systempreferences:com.apple.Notifications-Settings.extension?id=\(Bundle.main.bundleIdentifier ?? "")"
+    )
 }

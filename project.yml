@@ -26,6 +26,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: br.com.gbrlrg.termobar
         SWIFT_OBJC_BRIDGING_HEADER: TermoBar/Hardware/Bridging.h
+        # Ícone do Icon Composer (TermoBar/AppIcon.icon).
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         CODE_SIGN_IDENTITY: "-"
         CODE_SIGN_STYLE: Manual
         # Runtime endurecido: bloqueia injeção de código e bibliotecas não assinadas.

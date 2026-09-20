@@ -7,6 +7,8 @@ import UserNotifications
 final class AlertNotifier {
     private let preferences: Preferences
     @ObservationIgnored private var policy = AlertPolicy()
+    /// O usuário bloqueou as notificações do app nos Ajustes do Sistema: os alertas não aparecem.
+    private(set) var isDenied = false
     /// O delegate do `UNUserNotificationCenter` é uma referência fraca: o notificador o mantém vivo.
     @ObservationIgnored private let presenter = ForegroundPresenter()
 
@@ -22,7 +24,14 @@ final class AlertNotifier {
     }
 
     func requestAuthorization() {
-        Task { await Self.authorize() }
+        Task {
+            await Self.authorize()
+            await refreshAuthorization()
+        }
+    }
+
+    func refreshAuthorization() async {
+        isDenied = await Self.authorizationStatus() == .denied
     }
 
     /// Avalia a amostra mais recente do histórico e notifica o que for preciso.
@@ -37,6 +46,7 @@ final class AlertNotifier {
     func sendTestNotification() {
         Task {
             await Self.authorize()
+            await refreshAuthorization()
             await Self.deliver(id: "test", title: "TermoBar", body: "As notificações estão funcionando.")
         }
     }
@@ -80,6 +90,10 @@ final class AlertNotifier {
         } catch {
             Log.notifications.error("Permissão de notificação negada: \(error.localizedDescription)")
         }
+    }
+
+    private nonisolated static func authorizationStatus() async -> UNAuthorizationStatus {
+        await UNUserNotificationCenter.current().notificationSettings().authorizationStatus
     }
 
     private nonisolated static func deliver(id: String, title: String, body: String) async {
