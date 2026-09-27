@@ -1,115 +1,96 @@
 {
-  "fill-specializations": [
+  "fill-specializations" : [
     {
-      "value": {
-        "linear-gradient": [
+      "value" : {
+        "linear-gradient" : [
           "srgb:0.07843,0.05882,0.18039,1.00000",
           "srgb:0.02745,0.01961,0.10196,1.00000"
-        ],
-        "orientation": {
-          "start": {
-            "x": 0.5,
-            "y": 0
-          },
-          "stop": {
-            "x": 0.5,
-            "y": 1
-          }
-        }
+        ]
       }
     },
     {
-      "appearance": "dark",
-      "value": {
-        "linear-gradient": [
+      "appearance" : "dark",
+      "value" : {
+        "linear-gradient" : [
           "srgb:0.05098,0.03922,0.12549,1.00000",
           "srgb:0.01569,0.01176,0.06275,1.00000"
-        ],
-        "orientation": {
-          "start": {
-            "x": 0.5,
-            "y": 0
-          },
-          "stop": {
-            "x": 0.5,
-            "y": 1
-          }
-        }
+        ]
       }
     }
   ],
-  "groups": [
+  "groups" : [
     {
-      "layers": [
+      "layers" : [
         {
-          "image-name": "anel5.svg",
-          "name": "anel5",
-          "glass": true
+          "glass" : true,
+          "image-name" : "anel5.svg",
+          "name" : "anel5"
         },
         {
-          "image-name": "anel4.svg",
-          "name": "anel4",
-          "glass": true
+          "glass" : true,
+          "image-name" : "anel4.svg",
+          "name" : "anel4"
         }
       ],
-      "shadow": {
-        "kind": "neutral",
-        "opacity": 0.3
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.3
       },
-      "translucency": {
-        "enabled": true,
-        "value": 0.1
-      },
-      "specular": true
+      "specular" : true,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.1
+      }
     },
     {
-      "layers": [
+      "layers" : [
         {
-          "image-name": "anel3.svg",
-          "name": "anel3",
-          "glass": true
+          "glass" : true,
+          "image-name" : "anel3.svg",
+          "name" : "anel3"
         },
         {
-          "image-name": "anel2.svg",
-          "name": "anel2",
-          "glass": true
+          "glass" : true,
+          "image-name" : "anel2.svg",
+          "name" : "anel2"
         }
       ],
-      "shadow": {
-        "kind": "neutral",
-        "opacity": 0.35
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.35
       },
-      "translucency": {
-        "enabled": true,
-        "value": 0.15
-      },
-      "specular": true
+      "specular" : true,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.15
+      }
     },
     {
-      "layers": [
+      "layers" : [
         {
-          "image-name": "anel1.svg",
-          "name": "anel1",
-          "glass": true
+          "glass" : true,
+          "image-name" : "anel1.svg",
+          "name" : "anel1"
         },
         {
-          "image-name": "anel0.svg",
-          "name": "anel0",
-          "glass": true
+          "glass" : true,
+          "hidden" : false,
+          "image-name" : "anel0.svg",
+          "name" : "anel0"
         }
       ],
-      "shadow": {
-        "kind": "neutral",
-        "opacity": 0.3
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.3
       },
-      "translucency": {
-        "enabled": true,
-        "value": 0.2
-      },
-      "specular": true
+      "specular" : true,
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.2
+      }
     }
   ],
-  "supported-platforms": {
-    "squares": "shared"
+  "supported-platforms" : {
+    "squares" : "shared"
   }
 }

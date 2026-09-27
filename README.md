@@ -132,6 +132,8 @@ open /Applications/TermoBar.app
 
 O projeto Xcode é gerado a partir do `project.yml` e não fica no repositório.
 
+O ícone (`TermoBar/AppIcon.icon`) é um documento do Icon Composer e só é compilado a partir do Xcode 26. Com versões anteriores, o app compila e funciona, mas fica com o ícone genérico do macOS.
+
 ### Testes e formatação
 
 ```sh
