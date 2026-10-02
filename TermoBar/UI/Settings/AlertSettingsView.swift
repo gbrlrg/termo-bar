@@ -9,24 +9,30 @@ struct AlertSettingsView: View {
         Form {
             if alerts.isDenied {
                 Section {
-                    Label("Notificações desativadas", systemImage: "bell.slash.fill")
-                        .foregroundStyle(Theme.critical)
+                    LabeledContent {
+                        Button("Abrir Ajustes…") {
+                            if let url = Self.notificationSettingsURL { NSWorkspace.shared.open(url) }
+                        }
+                    } label: {
+                        Label("Notificações desativadas", systemImage: "bell.slash.fill")
+                            .foregroundStyle(Theme.critical)
+                    }
+                } footer: {
                     SettingsFootnote(
                         "O macOS está bloqueando as notificações do TermoBar, e os alertas não vão aparecer.")
-                    Button("Abrir Ajustes de Notificações") {
-                        if let url = Self.notificationSettingsURL { NSWorkspace.shared.open(url) }
-                    }
                 }
             }
             Section {
                 Toggle("Temperatura alta", isOn: $preferences.alertTemperature)
                 if preferences.alertTemperature {
                     TemperatureStepper(title: "Avisar acima de", celsius: $preferences.alertTemperatureLimit)
-                    SettingsFootnote("O aviso sai quando a temperatura fica acima do limite por 30 segundos seguidos.")
                 }
+            } footer: {
+                SettingsFootnote("Avisa quando a temperatura fica acima do limite por 30 segundos seguidos.")
             }
             Section {
                 Toggle("Limitação de desempenho", isOn: $preferences.alertThrottling)
+            } footer: {
                 SettingsFootnote(
                     "Avisa quando o macOS reduz a velocidade do chip por calor (pressão térmica pesada ou crítica).")
             }
@@ -40,9 +46,13 @@ struct AlertSettingsView: View {
                         LabeledContent("Em média por", value: "\(Int(preferences.alertAppMinutes)) min")
                     }
                 }
+            } footer: {
+                SettingsFootnote("Avisa quando um app gasta mais que o limite, em média, durante o período escolhido.")
             }
             Section {
-                Button("Enviar notificação de teste") { alerts.sendTestNotification() }
+                LabeledContent("Notificação de teste") {
+                    Button("Enviar") { alerts.sendTestNotification() }
+                }
             }
         }
         .formStyle(.grouped)

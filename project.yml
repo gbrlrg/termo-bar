@@ -17,6 +17,7 @@ targets:
         CFBundleDisplayName: TermoBar
         CFBundleShortVersionString: "1.0.0"
         CFBundleVersion: "1"
+        NSHumanReadableCopyright: "© 2026 Gabriel Rigon"
         LSUIElement: true
         LSApplicationCategoryType: public.app-category.utilities
     dependencies:

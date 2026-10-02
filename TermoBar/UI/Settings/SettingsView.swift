@@ -7,6 +7,7 @@ enum SettingsTab: String, CaseIterable {
     case sensors = "sensores"
     case data = "dados"
     case methodology = "precisao"
+    case about = "sobre"
 }
 
 /// Janela de Ajustes.
@@ -21,9 +22,10 @@ struct SettingsView: View {
             Tab("Sensores", systemImage: "sensor", value: .sensors) { SensorSettingsView() }
             Tab("Dados", systemImage: "externaldrive", value: .data) { DataSettingsView() }
             Tab("Precisão", systemImage: "scope", value: .methodology) { MethodologyView() }
+            Tab("Sobre", systemImage: "info.circle", value: .about) { AboutView() }
         }
-        .frame(width: 520)
-        .scenePadding()
+        // O Form agrupado já tem margens próprias; sem `scenePadding` o espaçamento fica igual ao do macOS.
+        .frame(width: 560)
     }
 }
 

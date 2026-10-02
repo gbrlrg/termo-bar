@@ -10,24 +10,42 @@ struct DataSettingsView: View {
     var body: some View {
         @Bindable var preferences = preferences
         Form {
-            Picker("Guardar histórico por", selection: $preferences.retentionDays) {
-                Text("7 dias").tag(7)
-                Text("30 dias").tag(30)
-                Text("90 dias").tag(90)
-            }
-            SettingsFootnote(
-                "As leituras finas ficam 24 horas; depois disso fica o resumo por minuto. Tudo fica só neste Mac, sem envio de dados."
-            )
-            Section("Exportar CSV") {
-                Button("Últimas 24 horas, leitura a leitura…") { export(.raw, fileName: "TermoBar-24h.csv") }
-                Button("Histórico completo, por minuto…") { export(.minute, fileName: "TermoBar-historico.csv") }
-                if let exportMessage { SettingsFootnote(exportMessage) }
+            Section {
+                Picker("Guardar histórico por", selection: $preferences.retentionDays) {
+                    Text("7 dias").tag(7)
+                    Text("30 dias").tag(30)
+                    Text("90 dias").tag(90)
+                }
+            } footer: {
+                SettingsFootnote(
+                    "As leituras finas ficam 24 horas; depois disso fica o resumo por minuto. Tudo fica só neste Mac, sem envio de dados."
+                )
             }
             Section {
-                Button("Mostrar no Finder") {
-                    NSWorkspace.shared.activateFileViewerSelecting([HistoryStore.defaultURL])
+                LabeledContent("Últimas 24 horas, leitura a leitura") {
+                    Button("Exportar…") { export(.raw, fileName: "TermoBar-24h.csv") }
                 }
-                Button("Apagar histórico…", role: .destructive) { isConfirmingClear = true }
+                LabeledContent("Histórico completo, por minuto") {
+                    Button("Exportar…") { export(.minute, fileName: "TermoBar-historico.csv") }
+                }
+            } header: {
+                Text("Exportar CSV")
+            } footer: {
+                if let exportMessage { SettingsFootnote(exportMessage) }
+            }
+            Section("Histórico neste Mac") {
+                LabeledContent("Arquivo do histórico") {
+                    Button("Mostrar no Finder") {
+                        NSWorkspace.shared.activateFileViewerSelecting([HistoryStore.defaultURL])
+                    }
+                }
+                LabeledContent("Apagar todas as leituras") {
+                    Button(role: .destructive) {
+                        isConfirmingClear = true
+                    } label: {
+                        Text("Apagar…").foregroundStyle(Theme.critical)
+                    }
+                }
             }
         }
         .formStyle(.grouped)
