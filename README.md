@@ -143,6 +143,22 @@ swift format lint --strict --recursive TermoBar TermoBarTests
 
 Os testes (Swift Testing) cobrem a lógica pura — agregação, ranking, alertas, histórico SQLite, CSV e preferências — e não dependem de sensores. O CI (`.github/workflows/ci.yml`) roda a formatação e os testes em cada pull request.
 
+### Distribuir (assinado e notarizado)
+
+```sh
+./scripts/release.sh
+```
+
+Gera `build/release/TermoBar-<versão>.zip`, só arm64, assinado com o Developer ID do time `F22LFNZSAZ`, notarizado pela Apple e com o resultado carimbado no app (abre mesmo sem internet). O script para se a assinatura, a notarização ou o Gatekeeper recusarem o app.
+
+Pré-requisitos, uma vez por Mac: o certificado **Developer ID Application** do time no Keychain e as credenciais do `notarytool` no perfil `TermoBar`:
+
+```sh
+xcrun notarytool store-credentials TermoBar --apple-id <apple-id> --team-id F22LFNZSAZ
+```
+
+Rode esse comando no Terminal, não por outra ferramenta: ele pede a senha de app (gerada em account.apple.com) de forma interativa. Os builds de desenvolvimento e o CI continuam com assinatura local e não precisam do certificado.
+
 ## Arquitetura
 
 O código é dividido em camadas; as de cima dependem das de baixo, nunca o contrário.
