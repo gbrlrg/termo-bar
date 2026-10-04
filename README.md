@@ -149,7 +149,7 @@ Os testes (Swift Testing) cobrem a lógica pura — agregação, ranking, alerta
 ./scripts/release.sh
 ```
 
-Gera `build/release/TermoBar-<versão>.zip`, só arm64, assinado com o Developer ID do time `F22LFNZSAZ`, notarizado pela Apple e com o resultado carimbado no app (abre mesmo sem internet). O script para se a assinatura, a notarização ou o Gatekeeper recusarem o app.
+Gera em `build/release/` o `TermoBar-<versão>.dmg` (janela com o app e o atalho para Aplicativos, o jeito de instalar) e o `TermoBar-<versão>.zip`. O app é só arm64, assinado com o Developer ID do time `F22LFNZSAZ`, notarizado pela Apple e com o resultado carimbado (abre mesmo sem internet); o DMG também é assinado, notarizado e carimbado. O script para se a assinatura, a notarização ou o Gatekeeper recusarem o app.
 
 Pré-requisitos, uma vez por Mac: o certificado **Developer ID Application** do time no Keychain e as credenciais do `notarytool` no perfil `TermoBar`:
 

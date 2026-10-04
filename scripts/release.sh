@@ -7,7 +7,9 @@
 #   - Credenciais do notarytool guardadas no perfil "TermoBar":
 #       xcrun notarytool store-credentials TermoBar --apple-id <apple-id> --team-id F22LFNZSAZ
 #
-# Resultado: build/release/TermoBar-<versão>.zip, com o app já carimbado (stapled).
+# Resultado em build/release/, com o app já carimbado (stapled):
+#   - TermoBar-<versão>.dmg: janela com o app e o atalho para Aplicativos (o jeito de instalar).
+#   - TermoBar-<versão>.zip: o mesmo app compactado.
 set -euo pipefail
 
 TEAM_ID=F22LFNZSAZ
@@ -53,4 +55,25 @@ spctl --assess --type execute --verbose=2 $APP
 # O zip final leva o app já carimbado, para abrir mesmo sem internet.
 rm -f $ZIP
 ditto -c -k --keepParent $APP $ZIP
-echo "==> Pronto: $ZIP"
+
+echo "==> Montando o DMG"
+DMG=$OUT/TermoBar-$VERSION.dmg
+STAGE=$OUT/dmg
+rm -rf $STAGE $DMG
+mkdir -p $STAGE
+ditto $APP $STAGE/TermoBar.app
+ln -s /Applications $STAGE/Aplicativos
+hdiutil create -volname TermoBar -srcfolder $STAGE -format UDZO -ov -quiet $DMG
+rm -rf $STAGE
+
+IDENTITY=$(security find-identity -v -p codesigning | grep "Developer ID Application" | grep "($TEAM_ID)" | head -1 | awk '{print $2}')
+codesign --sign $IDENTITY --timestamp $DMG
+
+echo "==> Notarizando o DMG"
+xcrun notarytool submit $DMG --keychain-profile $PROFILE --wait
+xcrun stapler staple $DMG
+spctl --assess --type open --context context:primary-signature --verbose=2 $DMG
+
+echo "==> Pronto:"
+echo "    $DMG"
+echo "    $ZIP"
