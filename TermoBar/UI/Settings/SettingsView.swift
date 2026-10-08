@@ -10,22 +10,61 @@ enum SettingsTab: String, CaseIterable {
     case about = "sobre"
 }
 
+extension SettingsTab {
+    var title: String {
+        switch self {
+        case .general: "Geral"
+        case .menuBar: "Barra de menus"
+        case .alerts: "Alertas"
+        case .sensors: "Sensores"
+        case .data: "Dados"
+        case .methodology: "Precisão"
+        case .about: "Sobre"
+        }
+    }
+
+    var symbol: String {
+        switch self {
+        case .general: "gearshape"
+        case .menuBar: "menubar.rectangle"
+        case .alerts: "bell.badge"
+        case .sensors: "sensor"
+        case .data: "externaldrive"
+        case .methodology: "scope"
+        case .about: "info.circle"
+        }
+    }
+
+    /// Conteúdo da aba, também usado sozinho nas capturas de tela da documentação.
+    @ViewBuilder @MainActor
+    var content: some View {
+        switch self {
+        case .general: GeneralSettingsView()
+        case .menuBar: MenuBarSettingsView()
+        case .alerts: AlertSettingsView()
+        case .sensors: SensorSettingsView()
+        case .data: DataSettingsView()
+        case .methodology: MethodologyView()
+        case .about: AboutView()
+        }
+    }
+}
+
 /// Janela de Ajustes.
 struct SettingsView: View {
+    /// Largura da janela, igual em todas as abas.
+    static let width: CGFloat = 560
+
     @State var selection: SettingsTab = .general
 
     var body: some View {
         TabView(selection: $selection) {
-            Tab("Geral", systemImage: "gearshape", value: .general) { GeneralSettingsView() }
-            Tab("Barra de menus", systemImage: "menubar.rectangle", value: .menuBar) { MenuBarSettingsView() }
-            Tab("Alertas", systemImage: "bell.badge", value: .alerts) { AlertSettingsView() }
-            Tab("Sensores", systemImage: "sensor", value: .sensors) { SensorSettingsView() }
-            Tab("Dados", systemImage: "externaldrive", value: .data) { DataSettingsView() }
-            Tab("Precisão", systemImage: "scope", value: .methodology) { MethodologyView() }
-            Tab("Sobre", systemImage: "info.circle", value: .about) { AboutView() }
+            ForEach(SettingsTab.allCases, id: \.self) { tab in
+                Tab(tab.title, systemImage: tab.symbol, value: tab) { tab.content }
+            }
         }
         // O Form agrupado já tem margens próprias; sem `scenePadding` o espaçamento fica igual ao do macOS.
-        .frame(width: 560)
+        .frame(width: Self.width)
     }
 }
 

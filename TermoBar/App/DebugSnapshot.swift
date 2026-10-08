@@ -42,11 +42,16 @@
         private static func makeWindow(settingsTab: SettingsTab?) -> NSWindow {
             let window = NSWindow(
                 contentRect: NSRect(x: 200, y: 200, width: 480, height: 800),
-                styleMask: settingsTab == nil ? [.borderless] : [.titled], backing: .buffered, defer: false)
+                styleMask: [.borderless], backing: .buffered, defer: false)
             let content: NSView
             if let settingsTab {
+                // Só o conteúdo da aba: fora da cena Settings, a barra de abas não teria onde aparecer.
                 if settingsTab == .sensors { AppDependencies.monitor.showAllSensors = true }
-                content = NSHostingView(rootView: SettingsView(selection: settingsTab).appDependencies())
+                content = NSHostingView(
+                    rootView: settingsTab.content
+                        .frame(width: SettingsView.width)
+                        .background(Color(nsColor: .windowBackgroundColor))
+                        .appDependencies())
             } else {
                 window.isOpaque = false
                 window.backgroundColor = .clear
