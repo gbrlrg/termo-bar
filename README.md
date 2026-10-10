@@ -21,11 +21,12 @@ TermoBar é um app nativo de barra de menus para Macs com Apple Silicon. Ele mos
 - **Gráfico de temperatura** com a linha colorida pela própria temperatura e os trechos de limitação térmica destacados.
 - **Energia por app** em barras empilhadas, no mesmo eixo de tempo da temperatura.
 - **Ranking "Apps que mais aquecem"**: watts médios, fatia da energia, se a GPU pesa, e uma linha do tempo de quando cada app esteve aberto e consumindo.
+- **Processos de cada app agora**: clicando num app, a lista mostra os processos dele que estão consumindo, com nome legível, projeto e há quanto tempo rodam (ex.: *wrangler · dev · Mindminer*, *Testes Swift*, um app no Simulador).
 - **Períodos** de 15 min, 1 h, 24 h e 7 dias.
 - **Alertas** de temperatura alta, limitação de desempenho e app gastando demais.
 - **Exportação CSV** com CPU e GPU por app, leitura a leitura.
 
-Passar o mouse sobre os gráficos mostra os valores do instante; passar o mouse (ou clicar) num app destaca a cor dele no gráfico de energia.
+Passar o mouse sobre os gráficos mostra os valores do instante; passar o mouse num app destaca a cor dele no gráfico de energia, e clicar nele também abre os processos.
 
 ## Como cada número é medido
 

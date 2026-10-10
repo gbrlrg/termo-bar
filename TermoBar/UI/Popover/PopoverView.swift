@@ -9,7 +9,13 @@ struct PopoverView: View {
     /// App sob o cursor na lista; destacado no gráfico de energia.
     @State private var hoveredApp: String?
     /// App fixado com um clique; tem prioridade sobre o cursor.
-    @State private var pinnedApp: String?
+    @State private var pinnedApp: String? = {
+        #if DEBUG
+            ProcessInfo.processInfo.environment["TERMOBAR_PIN"]
+        #else
+            nil
+        #endif
+    }()
 
     var body: some View {
         let summary = monitor.summary(range: range)

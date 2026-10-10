@@ -40,6 +40,8 @@ final class Monitor {
     /// Última leitura de cada sensor (tela de Ajustes).
     private(set) var sensors: [TemperatureSensors.Sensor] = []
     var showAllSensors = false
+    /// Potência recente de cada processo, para detalhar um app na lista.
+    private(set) var processActivity = ProcessActivity()
 
     let chipName = SystemInfo.chipName
 
@@ -56,6 +58,8 @@ final class Monitor {
     @ObservationIgnored private var currentMinute: Date?
     @ObservationIgnored private var lastDiskPrune = Date.distantPast
     @ObservationIgnored private var savedNames: [String: String] = [:]
+    /// Detalhes já lidos de cada processo, com o início dele para notar PID reaproveitado.
+    @ObservationIgnored private var processDetails: [pid_t: (start: UInt64, details: ProcessDetails)] = [:]
 
     init(preferences: Preferences, alerts: AlertNotifier, store: HistoryStore?) {
         self.preferences = preferences
@@ -84,6 +88,30 @@ final class Monitor {
 
     func name(_ id: String) -> String {
         id == AppID.others ? AppID.othersName : appNames[id] ?? id
+    }
+
+    /// Processos do app consumindo agora, com processos iguais (mesmo nome e projeto) juntos.
+    func liveProcesses(of id: String) -> [LiveProcess] {
+        var groups: [ProcessDescription: LiveProcess] = [:]
+        var order: [ProcessDescription] = []
+        for (pid, power) in processActivity.average(of: id) {
+            // Processos do sistema não revelam detalhes; aparecem pelo nome do grupo.
+            let details =
+                details(of: pid)
+                ?? ProcessDetails(
+                    pid: pid,
+                    description: ProcessDescription(
+                        ProcessFacts(name: name(id), executablePath: nil, arguments: [], workingDirectory: nil),
+                        homeDirectory: ""),
+                    commandLine: nil, startDate: nil)
+            let key = details.description
+            if groups[key] == nil {
+                order.append(key)
+                groups[key] = LiveProcess(description: key)
+            }
+            groups[key]?.add(details, power: power)
+        }
+        return order.compactMap { groups[$0] }.sorted { $0.power.total > $1.power.total }
     }
 
     func summary(range: TimeRange) -> RangeSummary {
@@ -139,6 +167,9 @@ final class Monitor {
     private func recordSample(at now: Date) {
         // A energia é medida mesmo sem temperatura, para manter a base de comparação do próximo registro.
         let measurement = energySampler.sample()
+        if let measurement {
+            processActivity.record(measurement.byProcess, at: now, duration: measurement.duration)
+        }
         guard !pendingReadings.isEmpty else { return }
         let averageTemperature = pendingReadings.map(\.average).reduce(0, +) / Double(pendingReadings.count)
         let maxTemperature = pendingReadings.map(\.maximum).max() ?? averageTemperature
@@ -170,6 +201,17 @@ final class Monitor {
         #if DEBUG
             logIfRequested(sample)
         #endif
+    }
+
+    private func details(of pid: pid_t) -> ProcessDetails? {
+        guard let start = ProcessInspector.startTime(of: pid) else {
+            processDetails[pid] = nil
+            return nil
+        }
+        if let cached = processDetails[pid], cached.start == start { return cached.details }
+        guard let details = ProcessInspector.details(of: pid) else { return nil }
+        processDetails[pid] = (start, details)
+        return details
     }
 
     /// Apps comuns (com ícone no Dock) abertos agora.
@@ -208,6 +250,8 @@ final class Monitor {
     }
 
     private func prune(now: Date) {
+        let active = processActivity.pids
+        processDetails = processDetails.filter { active.contains($0.key) }
         recent.removeAll { $0.date < now.addingTimeInterval(-Self.recentWindow) }
         minutes.removeAll { $0.date < now.addingTimeInterval(-Self.minuteWindow) }
 
@@ -267,4 +311,25 @@ final class Monitor {
             print(head + top.joined(separator: " | "))
         }
     #endif
+}
+
+/// Um processo (ou vários iguais, como as abas do Chrome) de um app, com a potência recente.
+struct LiveProcess: Identifiable {
+    let description: ProcessDescription
+    private(set) var pids: [pid_t] = []
+    private(set) var power = Power.zero
+    /// Só quando é um processo único.
+    private(set) var details: ProcessDetails?
+
+    var id: ProcessDescription { description }
+
+    fileprivate init(description: ProcessDescription) {
+        self.description = description
+    }
+
+    fileprivate mutating func add(_ details: ProcessDetails, power: Power) {
+        pids.append(details.pid)
+        self.power += power
+        self.details = pids.count == 1 ? details : nil
+    }
 }

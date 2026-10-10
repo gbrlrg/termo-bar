@@ -17,8 +17,12 @@ final class EnergySampler {
     struct Measurement: Sendable {
         /// Potência média (W) de cada grupo desde a medição anterior.
         let byGroup: [Group: Power]
+        /// Potência média de cada processo e o grupo a que ela foi somada.
+        let byProcess: [ProcessActivity.Entry]
         /// Potência total da GPU (W).
         let gpuTotal: Double?
+        /// Período coberto pela medição (s).
+        let duration: TimeInterval
     }
 
     /// Processos cujo responsável não é um app comum, mas pertencem a um.
@@ -43,7 +47,7 @@ final class EnergySampler {
         let isFirstSample = lastDate == nil
 
         var energy: [pid_t: UInt64] = [:]
-        var joules: [Group: Double] = [:]
+        var joules: [pid_t: Double] = [:]
         for pid in pids {
             guard let total = ProcessInfoReader.cpuEnergy(of: pid) else { continue }
             energy[pid] = total
@@ -51,7 +55,7 @@ final class EnergySampler {
             // Processo novo (ou PID reaproveitado): toda a energia é deste intervalo.
             let previous = lastEnergy[pid].flatMap { $0 <= total ? $0 : nil } ?? 0
             guard total > previous else { continue }
-            joules[group(for: pid), default: 0] += Double(total - previous) / Self.nanojoulesPerJoule
+            joules[pid] = Double(total - previous) / Self.nanojoulesPerJoule
         }
 
         let alive = Set(pids)
@@ -62,11 +66,18 @@ final class EnergySampler {
         let elapsed = now.timeIntervalSince(lastDate)
         guard elapsed > 0 else { return nil }
 
-        var power = joules.mapValues { Power(cpu: $0 / elapsed, gpu: 0) }
+        var perProcess = joules.mapValues { Power(cpu: $0 / elapsed, gpu: 0) }
         for (pid, watts) in gpuSample?.perProcess ?? [:] where watts > 0 {
-            power[group(for: pid), default: .zero].gpu += watts
+            perProcess[pid, default: .zero].gpu += watts
         }
-        return Measurement(byGroup: power, gpuTotal: gpuSample?.total)
+        var byGroup: [Group: Power] = [:]
+        var byProcess: [ProcessActivity.Entry] = []
+        for (pid, power) in perProcess {
+            let group = group(for: pid)
+            byGroup[group, default: .zero] += power
+            byProcess.append(.init(pid: pid, group: group.id, power: power))
+        }
+        return Measurement(byGroup: byGroup, byProcess: byProcess, gpuTotal: gpuSample?.total, duration: elapsed)
     }
 
     private func group(for pid: pid_t) -> Group {

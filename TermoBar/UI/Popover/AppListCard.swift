@@ -15,7 +15,9 @@ struct AppListCard: View {
                 CardTitle(title: "Apps que mais aquecem", detail: "energia no período")
                 VStack(spacing: 2) {
                     ForEach(isExpanded ? summary.rows : Array(summary.rows.prefix(collapsedCount))) { row in
-                        AppRowView(summary: summary, row: row, isHighlighted: (pinnedApp ?? hoveredApp) == row.id)
+                        AppRowView(
+                            summary: summary, row: row, isHighlighted: (pinnedApp ?? hoveredApp) == row.id,
+                            isExpanded: pinnedApp == row.id)
                             .onHover { inside in
                                 if inside {
                                     hoveredApp = row.id
@@ -23,7 +25,11 @@ struct AppListCard: View {
                                     hoveredApp = nil
                                 }
                             }
+                            // Sem animar a altura: a janela da barra de menus pisca ao redimensionar animada.
                             .onTapGesture { pinnedApp = pinnedApp == row.id ? nil : row.id }
+                        if pinnedApp == row.id {
+                            ProcessListView(appID: row.id)
+                        }
                     }
                 }
                 if summary.rows.count > collapsedCount {
@@ -63,6 +69,8 @@ private struct AppRowView: View {
     let summary: RangeSummary
     let row: AppRow
     let isHighlighted: Bool
+    /// Processos do app abertos logo abaixo.
+    let isExpanded: Bool
 
     /// Abaixo desta fatia da energia o app aparece como ocioso.
     private static let idleShare = 0.005
@@ -79,6 +87,11 @@ private struct AppRowView: View {
                         .lineLimit(1)
                     Spacer(minLength: 8)
                     usage
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 9, weight: .semibold))
+                        .foregroundStyle(.tertiary)
+                        .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                        .animation(.smooth(duration: 0.2), value: isExpanded)
                 }
                 .monospacedDigit()
                 HeatStrip(
@@ -94,7 +107,7 @@ private struct AppRowView: View {
         )
         .contentShape(Rectangle())
         .help(
-            "CPU \(row.average.cpu.formatted(.watts)) · GPU \(row.average.gpu.formatted(.watts)) em média. Clique para destacar no gráfico."
+            "CPU \(row.average.cpu.formatted(.watts)) · GPU \(row.average.gpu.formatted(.watts)) em média. Clique para destacar no gráfico e ver os processos."
         )
     }
 

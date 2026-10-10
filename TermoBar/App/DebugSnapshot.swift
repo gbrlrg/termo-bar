@@ -6,6 +6,7 @@
     /// - `TERMOBAR_SNAPSHOT=<png>`: abre o popover numa janela comum e salva uma captura dela.
     /// - `TERMOBAR_SNAPSHOT_DELAY=<s>`: espera antes da captura (padrão 3 s).
     /// - `TERMOBAR_SETTINGS_TAB=<aba>`: captura uma aba dos Ajustes em vez do popover.
+    /// - `TERMOBAR_PIN=<bundle id>`: abre com o app fixado na lista, mostrando os processos dele.
     /// - `TERMOBAR_APPEARANCE=light|dark`: força o tema.
     /// - `TERMOBAR_EXPORT=<csv>`: exporta as leituras das últimas 24 h antes de sair.
     @MainActor
