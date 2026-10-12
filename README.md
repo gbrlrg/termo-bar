@@ -14,6 +14,16 @@ TermoBar é um app nativo de barra de menus para Macs com Apple Silicon. Ele mos
   <img src="docs/popover-escuro.png" width="360" alt="Popover no tema escuro">
 </p>
 
+> [!WARNING]
+> **Beta.** O TermoBar está em fase de testes e pode ter erros, medir valores imprecisos ou mudar sem aviso. Ao usar, você participa como testador. O software é fornecido no estado em que se encontra, sem garantias; veja a [licença](LICENSE).
+
+## Instalar
+
+1. Baixe o `TermoBar-<versão>.dmg` da [última release](https://github.com/gbrlrg/termo-bar/releases/latest) e abra.
+2. Arraste o **TermoBar** para **Aplicativos** e abra o app por lá. A temperatura aparece na barra de menus.
+
+Requer um Mac com Apple Silicon e macOS 15 ou superior. O app e o DMG são assinados com Developer ID e notarizados pela Apple.
+
 ## O que ele mostra
 
 - **Temperatura do chip na barra**, em °C ou °F, com ou sem casa decimal.
@@ -208,6 +218,10 @@ O código é dividido em camadas; as de cima dependem das de baixo, nunca o cont
 TERMOBAR_LOG=1 build/Build/Products/Debug/TermoBar.app/Contents/MacOS/TermoBar
 ```
 
----
+## Licença
 
-© Gabriel Rigon. Todos os direitos reservados.
+O código está disponível sob a [PolyForm Noncommercial 1.0.0](LICENSE): você pode usar, estudar, modificar e redistribuir o TermoBar para fins **não comerciais** (uso pessoal, estudo, pesquisa, organizações sem fins lucrativos e instituições públicas). Uso comercial não é permitido sem autorização por escrito.
+
+Por ter essa restrição, o TermoBar é *source-available*, não open source na definição da OSI.
+
+Copyright © 2026 Gabriel Rigon.
