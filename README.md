@@ -1,227 +1,195 @@
-# TermoBar
+<p align="center">
+  <img src="docs/icone.png" width="128" alt="TermoBar icon">
+</p>
 
-**Descubra qual app está esquentando seu Mac — em watts, com histórico.**
-
-TermoBar é um app nativo de barra de menus para Macs com Apple Silicon. Ele mostra a temperatura do chip na barra e, ao clicar, cruza essa temperatura com a energia que cada app está gastando: dá para ver o pico no gráfico e, logo abaixo, qual app causou.
+<h1 align="center">TermoBar</h1>
 
 <p align="center">
-  <img src="docs/barra.png" width="200" alt="Temperatura na barra de menus">
+  <b>Find out which app is heating up your Mac — in watts, with history.</b>
 </p>
 
 <p align="center">
-  <img src="docs/popover-claro.png" width="360" alt="Popover no tema claro">
+  <a href="https://github.com/gbrlrg/termo-bar/releases/latest"><img src="https://img.shields.io/github/v/release/gbrlrg/termo-bar?label=download&color=7b3ff2" alt="Download the latest release"></a>
+  <img src="https://img.shields.io/badge/macOS-15%2B-black?logo=apple" alt="macOS 15 or later">
+  <img src="https://img.shields.io/badge/Apple%20Silicon-only-black" alt="Apple Silicon only">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-PolyForm%20Noncommercial-blue" alt="PolyForm Noncommercial license"></a>
+</p>
+
+<p align="center">
+  <b>English</b> · <a href="README.pt-BR.md">Português</a>
+</p>
+
+TermoBar is a native menu bar app for Apple Silicon Macs. It shows the chip temperature in the menu bar and, when you click it, lines that temperature up with the energy each app is using: you see the spike on the chart and, right below, the app that caused it.
+
+Unlike Activity Monitor's "Energy Impact", which is a relative score, TermoBar shows **real watts**, read from the kernel's energy counters, with CPU and GPU split apart and up to 90 days of history.
+
+<p align="center">
+  <img src="docs/barra.png" width="200" alt="Temperature in the menu bar">
+</p>
+
+<p align="center">
+  <img src="docs/popover-claro.png" width="360" alt="Popover, light theme">
   &nbsp;&nbsp;
-  <img src="docs/popover-escuro.png" width="360" alt="Popover no tema escuro">
+  <img src="docs/popover-escuro.png" width="360" alt="Popover, dark theme">
 </p>
 
-> [!WARNING]
-> **Beta.** O TermoBar está em fase de testes e pode ter erros, medir valores imprecisos ou mudar sem aviso. Ao usar, você participa como testador. O software é fornecido no estado em que se encontra, sem garantias; veja a [licença](LICENSE).
+> [!NOTE]
+> This is the first public release, and the app's interface is in Brazilian Portuguese. The software is provided as is, without warranty; see the [license](LICENSE). Found a problem? [Open an issue](https://github.com/gbrlrg/termo-bar/issues).
 
-## Instalar
+## Install
 
-1. Baixe o `TermoBar-<versão>.dmg` da [última release](https://github.com/gbrlrg/termo-bar/releases/latest) e abra.
-2. Arraste o **TermoBar** para **Aplicativos** e abra o app por lá. A temperatura aparece na barra de menus.
+1. Download `TermoBar-<version>.dmg` from the [latest release](https://github.com/gbrlrg/termo-bar/releases/latest) and open it.
+2. Drag **TermoBar** to **Applications** and open it from there. The temperature appears in the menu bar.
 
-Requer um Mac com Apple Silicon e macOS 15 ou superior. O app e o DMG são assinados com Developer ID e notarizados pela Apple.
+Requires an Apple Silicon Mac with macOS 15 or later. The app and the DMG are signed with a Developer ID and notarized by Apple, so they open without Gatekeeper warnings.
 
-## O que ele mostra
+To update, download the new version and replace the app in Applications. Your history and settings are kept.
 
-- **Temperatura do chip na barra**, em °C ou °F, com ou sem casa decimal.
-- **Estado térmico do macOS** — de *Normal* a *Limitando desempenho* — direto da pressão térmica do kernel.
-- **Gráfico de temperatura** com a linha colorida pela própria temperatura e os trechos de limitação térmica destacados.
-- **Energia por app** em barras empilhadas, no mesmo eixo de tempo da temperatura.
-- **Ranking "Apps que mais aquecem"**: watts médios, fatia da energia, se a GPU pesa, e uma linha do tempo de quando cada app esteve aberto e consumindo.
-- **Processos de cada app agora**: clicando num app, a lista mostra os processos dele que estão consumindo, com nome legível, projeto e há quanto tempo rodam (ex.: *wrangler · dev · Mindminer*, *Testes Swift*, um app no Simulador).
-- **Períodos** de 15 min, 1 h, 24 h e 7 dias.
-- **Alertas** de temperatura alta, limitação de desempenho e app gastando demais.
-- **Exportação CSV** com CPU e GPU por app, leitura a leitura.
+## What it shows
 
-Passar o mouse sobre os gráficos mostra os valores do instante; passar o mouse num app destaca a cor dele no gráfico de energia, e clicar nele também abre os processos.
+- **Chip temperature in the menu bar**, in °C or °F, with or without a decimal place.
+- **macOS thermal state** — from *Normal* to *Throttling* — straight from the kernel's thermal pressure.
+- **Temperature chart**, with the line colored by the temperature itself and throttling periods highlighted.
+- **Energy per app** as stacked bars, on the same time axis as the temperature.
+- **"Apps heating up the most" ranking**: average watts, share of energy, whether the GPU dominates, and a timeline of when each app was open and drawing power.
+- **Each app's processes, right now**: click an app to see which of its processes are drawing power, with a readable name, project and how long they've been running (e.g. *wrangler · dev · my-site*, *Swift tests*, an app in the Simulator).
+- **Time ranges** of 15 min, 1 h, 24 h and 7 days.
+- **Alerts** for high temperature, throttling and apps using too much power.
+- **CSV export** with CPU and GPU per app, reading by reading.
 
-## Como cada número é medido
+Hovering over the charts shows the values at that moment; hovering over an app highlights its color in the energy chart, and clicking it opens its processes.
 
-Precisão é o ponto central do TermoBar. Nenhuma das medições abaixo exige senha de administrador.
+## How each number is measured
+
+Accuracy is the core of TermoBar. None of the measurements below needs an administrator password.
 
 ```mermaid
 flowchart LR
-    subgraph Kernel e hardware
-        HID["Sensores HID<br/>PMU tdie1…14"]
+    subgraph Kernel and hardware
+        HID["HID sensors<br/>PMU tdie1…14"]
         RU["proc_pid_rusage<br/>ri_energy_nj"]
         IOR["IOReport<br/>GPU Energy"]
         AGX["IORegistry<br/>AGXDeviceUserClient<br/>accumulatedGPUTime"]
         RESP["responsibility_get_pid_<br/>responsible_for_pid"]
         TP["notify<br/>thermalpressurelevel"]
     end
-    HID -->|"1 Hz, filtro de mediana"| T["Temperatura<br/>média e ponto mais quente"]
-    RU -->|"nJ por processo"| CPU["W de CPU por processo"]
-    IOR -->|"energia total"| GPU["W de GPU por processo"]
-    AGX -->|"rateio por tempo de GPU"| GPU
-    CPU --> APP["W por app"]
+    HID -->|"1 Hz, median filter"| T["Temperature<br/>average and hottest spot"]
+    RU -->|"nJ per process"| CPU["CPU W per process"]
+    IOR -->|"total energy"| GPU["GPU W per process"]
+    AGX -->|"split by GPU time"| GPU
+    CPU --> APP["W per app"]
     GPU --> APP
-    RESP -->|"agrupa helpers no app"| APP
-    TP --> TH["Limitação térmica"]
-    T --> DB[("SQLite<br/>24 h fino + resumo por minuto")]
+    RESP -->|"groups helpers under the app"| APP
+    TP --> TH["Throttling"]
+    T --> DB[("SQLite<br/>24 h detailed + per-minute summary")]
     APP --> DB
     TH --> DB
 ```
 
-| Dado | De onde vem | Como é tratado |
+| Data | Source | How it's handled |
 |---|---|---|
-| **Temperatura do chip** | Sensores do die do SoC (`PMU tdie*`) via `IOHIDEventSystemClient` | Lidos a cada segundo. Leituras fora de 10–130 °C ou que destoam mais de 25 °C da mediana são descartadas. Cada registro guarda a média das leituras do intervalo (tira ruído) e, à parte, o sensor mais quente (não esconde picos). |
-| **CPU por app** | Contador de energia que o kernel mantém para cada processo (`proc_pid_rusage`, `ri_energy_nj`) | São nanojoules físicos — não o "Impacto de Energia" relativo do Monitor de Atividade. A diferença entre duas leituras dividida pelo tempo dá watts. |
-| **GPU por app** | Energia total da GPU (`IOReport`, canal *GPU Energy*) + tempo de GPU de cada processo (`AGXDeviceUserClient` → `accumulatedGPUTime`) | A energia é dividida na proporção do tempo de GPU. O WindowServer recebe correção (veja abaixo). |
-| **Agrupamento por app** | `responsibility_get_pid_responsible_for_pid` | Cada processo conta para o app responsável por ele, como no Monitor de Atividade: helpers do navegador vão para o navegador, compiladores lançados no terminal vão para o terminal. |
-| **Limitação térmica** | Notificação `com.apple.system.thermalpressurelevel` | Cinco níveis (nominal, moderada, pesada, crítica, suspensão). A partir de *pesada* o macOS reduz a frequência do chip. |
-| **Apps abertos e em uso** | `NSWorkspace` | Apps com janela/ícone no Dock e o app em primeiro plano em cada registro. |
+| **Chip temperature** | SoC die sensors (`PMU tdie*`) via `IOHIDEventSystemClient` | Read every second. Readings outside 10–130 °C or more than 25 °C off the median are discarded. Each record stores the average of the interval's readings (removes noise) and, separately, the hottest sensor (doesn't hide spikes). |
+| **CPU per app** | The energy counter the kernel keeps for each process (`proc_pid_rusage`, `ri_energy_nj`) | Physical nanojoules — not Activity Monitor's relative "Energy Impact". The difference between two readings divided by the elapsed time gives watts. |
+| **GPU per app** | Total GPU energy (`IOReport`, *GPU Energy* channel) + each process's GPU time (`AGXDeviceUserClient` → `accumulatedGPUTime`) | Energy is split in proportion to GPU time. WindowServer gets a correction (see below). |
+| **Grouping by app** | `responsibility_get_pid_responsible_for_pid` | Each process counts toward the app responsible for it, as in Activity Monitor: browser helpers go to the browser, compilers launched from a terminal go to the terminal. |
+| **Throttling** | `com.apple.system.thermalpressurelevel` notification | Five levels (nominal, moderate, heavy, critical, sleeping). From *heavy* on, macOS lowers the chip's frequency. |
+| **Open and active apps** | `NSWorkspace` | Apps with a window/Dock icon and the frontmost app in each record. |
 
-### A correção do WindowServer
+### The WindowServer correction
 
-O tempo de GPU que o macOS registra inclui o tempo em que o trabalho espera na fila. Quando outro processo ocupa a GPU, o tempo do WindowServer (que desenha a tela) quase triplica sem que ele gaste mais energia — e um rateio ingênuo daria a ele quase metade do consumo de quem realmente está usando a GPU.
+The GPU time macOS records includes time spent waiting in the queue. When another process keeps the GPU busy, WindowServer's time (it draws the screen) nearly triples without it using more energy — and a naive split would hand it almost half of the power actually used by whoever is driving the GPU.
 
-O TermoBar aprende quanto a GPU gasta quando só o WindowServer a usa e, quando há disputa, limita a parte dele a 1,5× esse valor. O restante vai para os processos que disputam a GPU, na proporção do tempo de cada um.
+TermoBar learns how much the GPU uses when only WindowServer is active and, under contention, caps WindowServer's share at 1.5× that value. The rest goes to the competing processes, in proportion to each one's GPU time.
 
-### Validação
+### Validation
 
-Medições feitas num MacBook com Apple M5 e macOS 27:
+Measured on a MacBook with an Apple M5 running macOS 27:
 
-| Teste | Resultado |
+| Test | Result |
 |---|---|
-| Um núcleo de desempenho a 100% (`yes > /dev/null`) | **6,6 W** de CPU atribuídos ao processo |
-| Laço de cálculo em Metal saturando a GPU (~17 W) | Rateio ingênuo: 1,6–2,8 W para a carga e 8–13 W para o WindowServer. **Com a correção: 13–16 W para a carga e 1,5 W para o WindowServer** |
-| Atraso do contador de energia da GPU | Nenhum: sobe e desce no mesmo meio segundo da carga |
-| Consumo do próprio TermoBar | **0,57%** de um núcleo em média, abaixo de 5 mW |
+| One performance core at 100% (`yes > /dev/null`) | **6.6 W** of CPU attributed to the process |
+| Metal compute loop saturating the GPU (~17 W) | Naive split: 1.6–2.8 W for the workload and 8–13 W for WindowServer. **With the correction: 13–16 W for the workload and 1.5 W for WindowServer** |
+| GPU energy counter lag | None: it rises and falls within the same half second as the load |
+| TermoBar's own usage | **0.57%** of one core on average, under 5 mW |
 
-### Limites conhecidos
+### Known limits
 
-- A **CPU** de processos que rodam como outro usuário (kernel, WindowServer, daemons de root) não é legível sem privilégio e fica de fora. A **GPU** desses processos entra na conta.
-- No macOS 27, o IOReport sem root só entrega a energia da **GPU**; CPU e Neural Engine vêm zerados. Por isso a CPU vem do contador por processo.
-- A GPU por app é um rateio corrigido, não uma leitura direta: o macOS não expõe energia de GPU por processo.
-- O app usa APIs privadas do macOS, então não é compatível com a Mac App Store.
+- **CPU** for processes running as another user (kernel, WindowServer, root daemons) can't be read without privileges and is left out. Their **GPU** usage is counted.
+- On macOS 27, IOReport without root only reports **GPU** energy; CPU and Neural Engine come back as zero. That's why CPU comes from the per-process counter.
+- GPU per app is a corrected split, not a direct reading: macOS doesn't expose GPU energy per process.
 
-## Ajustes
+## Settings
 
 <p align="center">
-  <img src="docs/ajustes-sensores.png" width="420" alt="Ajustes: sensores ao vivo">
+  <img src="docs/ajustes-sensores.png" width="420" alt="Settings: live sensors">
   &nbsp;
-  <img src="docs/ajustes-precisao.png" width="420" alt="Ajustes: como medimos">
+  <img src="docs/ajustes-precisao.png" width="420" alt="Settings: how we measure">
 </p>
 <p align="center">
-  <img src="docs/ajustes-alertas.png" width="420" alt="Ajustes: alertas">
+  <img src="docs/ajustes-alertas.png" width="420" alt="Settings: alerts">
   &nbsp;
-  <img src="docs/ajustes-barra.png" width="420" alt="Ajustes: barra de menus">
+  <img src="docs/ajustes-barra.png" width="420" alt="Settings: menu bar">
 </p>
 
-| Aba | Opções |
+| Tab | Options |
 |---|---|
-| **Geral** | Unidade (°C/°F), casas decimais, temperatura exibida (média do chip ou ponto mais quente), intervalo de registro (2/5/10 s), abrir ao iniciar sessão |
-| **Barra de menus** | Só temperatura, temperatura e watts, ícone e temperatura ou só ícone; colorir quando quente; mostrar só o ícone enquanto estiver frio |
-| **Alertas** | Temperatura acima de um limite por 30 s; limitação de desempenho; app acima de X W em média por N minutos |
-| **Sensores** | Leitura ao vivo de cada sensor, com nome legível e indicação de quais entram na média |
-| **Dados** | Retenção (7/30/90 dias), exportar CSV, mostrar no Finder, apagar histórico |
-| **Precisão** | A metodologia acima, dentro do app |
+| **General** (Geral) | Open at login, displayed temperature (chip average or hottest spot), unit (°C/°F), decimal places, recording interval (2/5/10 s) |
+| **Menu bar** (Barra de menus) | Temperature only, temperature and watts, icon and temperature, or icon only; color when hot; show only the icon while cool |
+| **Alerts** (Alertas) | Temperature above a threshold for 30 s; throttling; an app above X W on average for N minutes |
+| **Sensors** (Sensores) | Live reading of each sensor, with a readable name and which ones count toward the average |
+| **Data** (Dados) | Retention (7/30/90 days), CSV export, show in Finder, delete history |
+| **Accuracy** (Precisão) | The methodology above, inside the app |
+| **About** (Sobre) | Version, a link to the releases on GitHub and a button that copies system info for support requests |
 
-## Histórico e privacidade
+## History and privacy
 
-Tudo fica só neste Mac, em `~/Library/Application Support/TermoBar/history.sqlite`:
+Everything stays on your Mac, in `~/Library/Application Support/TermoBar/history.sqlite`:
 
-- **Leituras finas** (um registro a cada 2–10 s) por 24 horas.
-- **Resumo por minuto** pelo período escolhido (7, 30 ou 90 dias).
+- **Detailed readings** (one record every 2–10 s) for 24 hours.
+- **Per-minute summary** for the chosen period (7, 30 or 90 days).
 
-Nenhum dado sai do computador. Não há telemetria.
+No data leaves your computer. There's no telemetry, no account and no internet connection.
 
-## Compilar
+## FAQ
 
-Requisitos: Mac com Apple Silicon, macOS 15 ou superior, Xcode 16 ou superior e [XcodeGen](https://github.com/yonaskolb/XcodeGen).
+**Why isn't it on the Mac App Store?**
+To measure each app's energy, TermoBar reads other processes' counters and uses private macOS APIs. The App Store requires the App Sandbox, which blocks both.
 
-```sh
-brew install xcodegen
-xcodegen generate
-xcodebuild -project TermoBar.xcodeproj -scheme TermoBar -configuration Release -derivedDataPath build build
-cp -R build/Build/Products/Release/TermoBar.app /Applications/
-open /Applications/TermoBar.app
-```
+**Does it need an administrator password or a helper?**
+No. Everything is read as a regular user; nothing is installed outside the app itself.
 
-O projeto Xcode é gerado a partir do `project.yml` e não fica no repositório.
+**How much battery does it use?**
+0.57% of one core on average, under 5 mW.
 
-O ícone (`TermoBar/AppIcon.icon`) é um documento do Icon Composer e só é compilado a partir do Xcode 26. Com versões anteriores, o app compila e funciona, mas fica com o ícone genérico do macOS.
+**Why does the temperature differ from another app's?**
+Each app picks different sensors. By default TermoBar shows the average of the chip's die sensors, which is the most stable; in Settings › General you can switch to the hottest spot, which reacts faster to spikes. The Sensors tab shows every reading.
 
-### Testes e formatação
+**Does it work on Intel Macs?**
+No. The sensors and counters it uses only exist on Apple Silicon.
 
-```sh
-xcodebuild test -project TermoBar.xcodeproj -scheme TermoBar -destination 'platform=macOS'
-swift format lint --strict --recursive TermoBar TermoBarTests
-```
+**Why do some system processes show no CPU?**
+macOS doesn't let a regular app read the CPU energy of processes owned by other users, such as the kernel and WindowServer. Their GPU usage is counted. See [Known limits](#known-limits).
 
-Os testes (Swift Testing) cobrem a lógica pura — agregação, ranking, alertas, histórico SQLite, CSV e preferências — e não dependem de sensores. O CI (`.github/workflows/ci.yml`) roda a formatação e os testes em cada pull request.
+## Uninstall
 
-### Distribuir (assinado e notarizado)
-
-```sh
-./scripts/release.sh
-```
-
-Gera em `build/release/` o `TermoBar-<versão>.dmg` (janela com o app e o atalho para Aplicativos, o jeito de instalar) e o `TermoBar-<versão>.zip`. O app é só arm64, assinado com o Developer ID do time `F22LFNZSAZ`, notarizado pela Apple e com o resultado carimbado (abre mesmo sem internet); o DMG também é assinado, notarizado e carimbado. O script para se a assinatura, a notarização ou o Gatekeeper recusarem o app.
-
-Pré-requisitos, uma vez por Mac: o certificado **Developer ID Application** do time no Keychain e as credenciais do `notarytool` no perfil `TermoBar`:
+1. If it opens at login, turn that off first (gear › Abrir ao iniciar sessão).
+2. Quit TermoBar: click the temperature in the menu bar, then the gear › Sair do TermoBar.
+3. Delete `TermoBar.app` from Applications.
+4. To also delete the history and settings:
 
 ```sh
-xcrun notarytool store-credentials TermoBar --apple-id <apple-id> --team-id F22LFNZSAZ
+rm -rf ~/Library/Application\ Support/TermoBar
+defaults delete br.com.gbrlrg.termobar
 ```
 
-Rode esse comando no Terminal, não por outra ferramenta: ele pede a senha de app (gerada em account.apple.com) de forma interativa. Os builds de desenvolvimento e o CI continuam com assinatura local e não precisam do certificado.
+## Building from source
 
-## Arquitetura
+See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) (in Portuguese): building, testing, distributing and how the code is organized.
 
-O código é dividido em camadas; as de cima dependem das de baixo, nunca o contrário.
+## License
 
-| Pasta | Responsabilidade |
-|---|---|
-| `App/` | Ponto de entrada, raiz de composição (`AppDependencies`) e captura de tela de diagnóstico |
-| `UI/` | Telas SwiftUI: barra de menus, popover, Ajustes, componentes e tema. Recebem os serviços pelo `Environment` |
-| `Services/` | Estado do app e integração com o macOS: coleta (`Monitor`), preferências, notificações, item de login e log |
-| `Hardware/` | Leitura do hardware: sensores de temperatura (IOHID), energia de CPU por processo, GPU (IOReport/IORegistry) e pressão térmica; `Bridging.h` declara as funções privadas usadas |
-| `Persistence/` | Histórico em SQLite (instruções preparadas, transações) e exportação CSV |
-| `Domain/` | Modelo e regras puras, sem AppKit nem SwiftUI: amostras, resumo por minuto e por período, cores por app, política de alertas, unidades e formatação |
+The code is available under the [PolyForm Noncommercial 1.0.0](LICENSE) license: you may use, study, modify and redistribute TermoBar for **noncommercial** purposes (personal use, study, research, nonprofit organizations and public institutions). Commercial use is not allowed without written permission.
 
-| Arquivo | Responsabilidade |
-|---|---|
-| `Domain/Sample.swift` | Registro do histórico, resumo por minuto e cálculos sobre coleções de amostras |
-| `Domain/RangeSummary.swift` | Agregação por período: ranking, barras empilhadas, linhas do tempo |
-| `Domain/AlertPolicy.swift` | Quando avisar: temperatura sustentada, limitação térmica, app acima do limite, intervalo entre repetições |
-| `Hardware/TemperatureSensors.swift` | Sensores do die e filtro de leituras implausíveis |
-| `Hardware/EnergySampler.swift` | Energia de CPU por processo e agrupamento por app responsável |
-| `Hardware/GPUSampler.swift` | Energia da GPU, tempo de GPU por processo e correção do WindowServer |
-| `Services/Monitor.swift` | Coleta a cada segundo, fecha registros, resume por minuto e mantém o estado da interface |
-| `Persistence/HistoryStore.swift` | Leitura e escrita do histórico |
-
-### Segurança e privacidade
-
-- Todo valor gravado no SQLite entra por parâmetro (`?`), nunca interpolado no SQL; as escritas de cada registro são atômicas.
-- O CSV exportado neutraliza nomes de processo que começam com `=`, `+`, `-` ou `@`, para não virarem fórmulas numa planilha.
-- A pasta do histórico é criada com permissão só para o usuário, e "Apagar histórico" compacta o arquivo para não deixar os dados no disco.
-- Preferências fora da faixa válida (editadas com `defaults write`) são corrigidas ao abrir o app.
-- O app roda com o runtime endurecido do macOS. Ele não pode usar o App Sandbox, porque lê a energia de processos de outros apps e usa APIs privadas do IOKit.
-- Falhas de banco e de notificação vão para o log unificado (`log stream --predicate 'subsystem == "br.com.gbrlrg.termobar"'`).
-
-### Diagnóstico (build Debug)
-
-| Variável | Efeito |
-|---|---|
-| `TERMOBAR_SNAPSHOT=<arquivo.png>` | Abre o popover numa janela e salva uma captura |
-| `TERMOBAR_SNAPSHOT_DELAY=<s>` | Espera antes da captura (padrão 3 s) |
-| `TERMOBAR_SETTINGS_TAB=<aba>` | Captura uma aba dos Ajustes (`geral`, `barra`, `alertas`, `sensores`, `dados`, `precisao`) |
-| `TERMOBAR_APPEARANCE=light\|dark` | Força o tema |
-| `TERMOBAR_LOG=1` | Imprime cada registro: temperatura, GPU total, pressão térmica e os apps que mais consomem |
-| `TERMOBAR_EXPORT=<arquivo.csv>` | Exporta as leituras das últimas 24 h antes de sair |
-
-```sh
-TERMOBAR_LOG=1 build/Build/Products/Debug/TermoBar.app/Contents/MacOS/TermoBar
-```
-
-## Licença
-
-O código está disponível sob a [PolyForm Noncommercial 1.0.0](LICENSE): você pode usar, estudar, modificar e redistribuir o TermoBar para fins **não comerciais** (uso pessoal, estudo, pesquisa, organizações sem fins lucrativos e instituições públicas). Uso comercial não é permitido sem autorização por escrito.
-
-Por ter essa restrição, o TermoBar é *source-available*, não open source na definição da OSI.
+Because of this restriction, TermoBar is *source-available*, not open source as defined by the OSI.
 
 Copyright © 2026 Gabriel Rigon.
