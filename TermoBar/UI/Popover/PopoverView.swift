@@ -17,9 +17,26 @@ struct PopoverView: View {
         #endif
     }()
 
+    /// Fechado, o popover mostra só um espaço do mesmo tamanho e para de acompanhar as leituras.
+    @State private var isVisible = true
+    @State private var height: CGFloat = 0
+
     var body: some View {
+        Group {
+            if isVisible {
+                content.onGeometryChange(for: CGFloat.self, of: \.size.height) { height = $0 }
+            } else {
+                Color.clear.frame(width: Self.width, height: height)
+            }
+        }
+        .onWindowVisibilityChange { isVisible = $0 }
+    }
+
+    private static let width: CGFloat = 360
+
+    private var content: some View {
         let summary = monitor.summary(range: range)
-        VStack(spacing: 10) {
+        return VStack(spacing: 10) {
             HeaderView(summary: summary)
             ChartsCard(summary: summary, range: $range, hoverDate: $hoverDate, focusedApp: pinnedApp ?? hoveredApp)
             if summary.hasEnoughData {
@@ -28,7 +45,7 @@ struct PopoverView: View {
             FooterView()
         }
         .padding(12)
-        .frame(width: 360)
+        .frame(width: Self.width)
         .animation(.smooth(duration: 0.25), value: range)
     }
 }

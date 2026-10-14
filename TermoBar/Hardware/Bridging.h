@@ -31,3 +31,27 @@ int64_t IOReportSimpleGetIntegerValue(CFDictionaryRef _Nonnull channel, int32_t 
 
 // Pressão térmica do kernel (0 nominal, 1 moderada, 2 pesada, 3 crítica, 4 suspensão).
 #include <notify.h>
+
+// SMC (AppleSMC): rotação das ventoinhas, legível sem root. A estrutura é a do user client
+// do kernel e precisa do layout do C; declarada em Swift, o preenchimento sairia diferente.
+typedef struct {
+    uint8_t major, minor, build, reserved;
+    uint16_t release;
+} SMCVersion;
+typedef struct {
+    uint16_t version, length;
+    uint32_t cpuPLimit, gpuPLimit, memPLimit;
+} SMCPLimitData;
+typedef struct {
+    uint32_t dataSize, dataType;
+    uint8_t dataAttributes;
+} SMCKeyInfo;
+typedef struct {
+    uint32_t key;
+    SMCVersion version;
+    SMCPLimitData pLimitData;
+    SMCKeyInfo keyInfo;
+    uint8_t result, status, data8;
+    uint32_t data32;
+    uint8_t bytes[32];
+} SMCKeyData;

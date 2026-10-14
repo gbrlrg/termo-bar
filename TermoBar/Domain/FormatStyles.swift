@@ -29,3 +29,14 @@ struct WattsFormatStyle: FormatStyle {
 extension FormatStyle where Self == WattsFormatStyle {
     static var watts: WattsFormatStyle { WattsFormatStyle() }
 }
+
+/// Rotação de ventoinha, inteira e com separador de milhar: "2.503 rpm".
+struct RPMFormatStyle: FormatStyle {
+    func format(_ rpm: Double) -> String {
+        "\(rpm.formatted(.number.precision(.fractionLength(0)))) rpm"
+    }
+}
+
+extension FormatStyle where Self == RPMFormatStyle {
+    static var rpm: RPMFormatStyle { RPMFormatStyle() }
+}

@@ -10,7 +10,8 @@ func makeSample(
     frontmostApp: String? = nil,
     appPower: [String: Power]? = nil,
     pressure: Int? = 0,
-    gpuPower: Double? = nil
+    gpuPower: Double? = nil,
+    fanSpeed: Double? = nil
 ) -> Sample {
     Sample(
         date: Date(timeIntervalSinceReferenceDate: seconds),
@@ -21,5 +22,6 @@ func makeSample(
         frontmostApp: frontmostApp,
         appPower: appPower,
         pressure: pressure,
-        gpuPower: gpuPower)
+        gpuPower: gpuPower,
+        fanSpeed: fanSpeed)
 }

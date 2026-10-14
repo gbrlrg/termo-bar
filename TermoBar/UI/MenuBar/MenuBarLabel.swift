@@ -27,7 +27,9 @@ struct MenuBarLabel: View {
     /// Enquanto estiver frio, o modo compacto mostra só o ícone.
     private func effectiveStyle(temperature: Double?) -> MenuBarStyle {
         let isCool = (temperature ?? 0) < preferences.compactThreshold
-        return preferences.compactWhenCool && isCool ? .icon : preferences.menuBarStyle
+        if preferences.compactWhenCool && isCool { return .icon }
+        let style = preferences.menuBarStyle
+        return style.showsFan && !monitor.hasFans ? .temperature : style
     }
 
     private func text(style: MenuBarStyle, temperature: Double?) -> String? {
@@ -35,6 +37,9 @@ struct MenuBarLabel: View {
         let value =
             temperature.map { preferences.format($0).replacingOccurrences(of: " ", with: "") }
             ?? "--\(preferences.unit.symbol)"
+        if style.showsFan, let rpm = monitor.current?.fanSpeed {
+            return "\(value) · \(rpm.formatted(.rpm))"
+        }
         guard style.showsPower, let watts = monitor.currentPower else { return value }
         return "\(value) · \(watts.formatted(.watts))"
     }

@@ -14,6 +14,19 @@ struct SensorSettingsView: View {
                     "A temperatura do chip é a média dos sensores do die do SoC. Leituras fora de 10–130 °C ou que destoam mais de 25 °C da mediana são descartadas."
                 )
             }
+            if !monitor.fans.isEmpty {
+                Section {
+                    ForEach(monitor.fans) { fan in
+                        FanRow(fan: fan, label: fanLabel(fan))
+                    }
+                } header: {
+                    Text("Ventoinhas")
+                } footer: {
+                    SettingsFootnote(
+                        "Rotação lida do controlador do sistema (SMC). Parada abaixo de \(Int(Fan.spinningThreshold)) rpm."
+                    )
+                }
+            }
             Section("Leituras ao vivo") {
                 ForEach(monitor.sensors) { sensor in
                     SensorRow(sensor: sensor, value: sensor.value.map { preferences.format($0, decimals: 1) })
@@ -22,6 +35,34 @@ struct SensorSettingsView: View {
         }
         .formStyle(.grouped)
         .frame(height: 460)
+        .onAppear { monitor.isShowingSensors = true }
+        .onDisappear { monitor.isShowingSensors = false }
+    }
+
+    private func fanLabel(_ fan: Fan) -> String {
+        monitor.fans.count == 1 ? String(localized: "Ventoinha") : String(localized: "Ventoinha \(fan.id + 1)")
+    }
+}
+
+private struct FanRow: View {
+    let fan: Fan
+    let label: String
+
+    var body: some View {
+        HStack {
+            Image(systemName: fan.isSpinning ? "fan.fill" : "fan.slash")
+                .foregroundStyle(fan.isSpinning ? Theme.good : Color.secondary)
+                .frame(width: 16)
+            VStack(alignment: .leading, spacing: 1) {
+                Text(label)
+                Text("Mín. \(fan.minimum.formatted(.rpm)) · máx. \(fan.maximum.formatted(.rpm))")
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+            }
+            Spacer()
+            Text(fan.isSpinning ? fan.rpm.formatted(.rpm) : String(localized: "Parada"))
+                .monospacedDigit()
+        }
     }
 }
 

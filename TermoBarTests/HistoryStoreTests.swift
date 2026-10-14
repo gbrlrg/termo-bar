@@ -6,7 +6,7 @@ struct HistoryStoreTests {
         let store = try HistoryStore.inMemory()
         let measured = makeSample(
             at: 100, duration: 5, temperature: 55, maxTemperature: 70, openApps: ["a", "b"], frontmostApp: "a",
-            appPower: ["a": Power(cpu: 1.5, gpu: 0.25)], pressure: 2, gpuPower: 0.25)
+            appPower: ["a": Power(cpu: 1.5, gpu: 0.25)], pressure: 2, gpuPower: 0.25, fanSpeed: 2500)
         let unmeasured = makeSample(at: 105, appPower: nil, pressure: nil)
 
         try store.insert(unmeasured, resolution: .raw)
@@ -24,9 +24,36 @@ struct HistoryStoreTests {
         #expect(first.appPower == ["a": Power(cpu: 1.5, gpu: 0.25)])
         #expect(first.pressure == 2)
         #expect(first.gpuPower == 0.25)
+        #expect(first.fanSpeed == 2500)
+        #expect(loaded[1].fanSpeed == nil)
         #expect(loaded[1].appPower == nil)
         #expect(loaded[1].pressure == nil)
         #expect(loaded[1].gpuPower == nil)
+    }
+
+    @Test func addsTheFanColumnToAnOlderHistory() throws {
+        let directory = FileManager.default.temporaryDirectory.appending(path: "termobar-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: directory) }
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let url = directory.appending(path: "history.sqlite")
+        // Esquema da versão 1.1.0, sem a coluna `fan`.
+        try SQLiteDatabase(path: url.path(percentEncoded: false)).execute(
+            """
+            CREATE TABLE samples(
+                ts REAL NOT NULL, resolution INTEGER NOT NULL, duration REAL NOT NULL,
+                temp REAL NOT NULL, max_temp REAL NOT NULL, pressure INTEGER, gpu REAL,
+                front TEXT, apps TEXT NOT NULL, has_power INTEGER NOT NULL,
+                PRIMARY KEY(resolution, ts));
+            INSERT INTO samples VALUES(0, 0, 5, 50, 60, 0, NULL, NULL, '[]', 0);
+            """)
+
+        let store = try HistoryStore(url: url)
+        try store.insert(makeSample(at: 10, fanSpeed: 1800), resolution: .raw)
+
+        let loaded = try store.samples(resolution: .raw, since: .distantPast)
+        #expect(loaded.map(\.fanSpeed) == [nil, 1800])
+        // Abrir de novo não tenta criar a coluna outra vez.
+        _ = try HistoryStore(url: url)
     }
 
     @Test func prunesOldSamplesOfOneResolution() throws {

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MenuBarSettingsView: View {
     @Environment(Preferences.self) private var preferences
+    @Environment(Monitor.self) private var monitor
 
     var body: some View {
         @Bindable var preferences = preferences
@@ -16,7 +17,9 @@ struct MenuBarSettingsView: View {
             }
             Section {
                 Picker("Mostrar", selection: $preferences.menuBarStyle) {
-                    ForEach(MenuBarStyle.allCases) { Text($0.label).tag($0) }
+                    ForEach(MenuBarStyle.allCases.filter { !$0.showsFan || monitor.hasFans }) {
+                        Text($0.label).tag($0)
+                    }
                 }
             }
             Section {

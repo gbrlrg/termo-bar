@@ -80,7 +80,7 @@ O código é dividido em camadas; as de cima dependem das de baixo, nunca o cont
 | `App/` | Ponto de entrada, raiz de composição (`AppDependencies`) e captura de tela de diagnóstico |
 | `UI/` | Telas SwiftUI: barra de menus, popover, Ajustes, componentes e tema. Recebem os serviços pelo `Environment` |
 | `Services/` | Estado do app e integração com o macOS: coleta (`Monitor`), preferências, notificações, item de login e log |
-| `Hardware/` | Leitura do hardware: sensores de temperatura (IOHID), energia de CPU por processo, GPU (IOReport/IORegistry) e pressão térmica; `Bridging.h` declara as funções privadas usadas |
+| `Hardware/` | Leitura do hardware: sensores de temperatura (IOHID), ventoinhas (SMC), energia de CPU por processo, GPU (IOReport/IORegistry) e pressão térmica; `Bridging.h` declara as funções privadas e a estrutura do SMC |
 | `Persistence/` | Histórico em SQLite (instruções preparadas, transações) e exportação CSV |
 | `Domain/` | Modelo e regras puras, sem AppKit nem SwiftUI: amostras, resumo por minuto e por período, cores por app, política de alertas, unidades e formatação |
 
@@ -90,6 +90,7 @@ O código é dividido em camadas; as de cima dependem das de baixo, nunca o cont
 | `Domain/RangeSummary.swift` | Agregação por período: ranking, barras empilhadas, linhas do tempo |
 | `Domain/AlertPolicy.swift` | Quando avisar: temperatura sustentada, limitação térmica, app acima do limite, intervalo entre repetições |
 | `Hardware/TemperatureSensors.swift` | Sensores do die e filtro de leituras implausíveis |
+| `Hardware/FanReader.swift` | Rotação, mínimo e máximo de cada ventoinha, lidos do AppleSMC |
 | `Hardware/EnergySampler.swift` | Energia de CPU por processo e agrupamento por app responsável |
 | `Hardware/GPUSampler.swift` | Energia da GPU, tempo de GPU por processo e correção do WindowServer |
 | `Services/Monitor.swift` | Coleta a cada segundo, fecha registros, resume por minuto e mantém o estado da interface |

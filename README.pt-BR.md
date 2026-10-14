@@ -50,12 +50,13 @@ Para atualizar, baixe a versão nova e substitua o app em Aplicativos. O histór
 - **Temperatura do chip na barra**, em °C ou °F, com ou sem casa decimal.
 - **Estado térmico do macOS** — de *Normal* a *Limitando desempenho* — direto da pressão térmica do kernel.
 - **Gráfico de temperatura** com a linha colorida pela própria temperatura e os trechos de limitação térmica destacados.
+- **Ventoinha**: rotação em rpm, se está parada ou girando e um gráfico de quando girou, no mesmo eixo de tempo. Em Macs com ventoinha, como o MacBook Pro e o Mac mini; o MacBook Air não tem.
 - **Energia por app** em barras empilhadas, no mesmo eixo de tempo da temperatura.
 - **Ranking "Apps que mais aquecem"**: watts médios, fatia da energia, se a GPU pesa, e uma linha do tempo de quando cada app esteve aberto e consumindo.
 - **Processos de cada app agora**: clicando num app, a lista mostra os processos dele que estão consumindo, com nome legível, projeto e há quanto tempo rodam (ex.: *wrangler · dev · meu-site*, *Testes Swift*, um app no Simulador).
 - **Períodos** de 15 min, 1 h, 24 h e 7 dias.
 - **Alertas** de temperatura alta, limitação de desempenho e app gastando demais.
-- **Exportação CSV** com CPU e GPU por app, leitura a leitura.
+- **Exportação CSV** com CPU e GPU por app e a rotação da ventoinha, leitura a leitura.
 - **Em português e inglês**, conforme o idioma do Mac.
 
 Passar o mouse sobre os gráficos mostra os valores do instante; passar o mouse num app destaca a cor dele no gráfico de energia, e clicar nele também abre os processos.
@@ -73,6 +74,7 @@ flowchart LR
         AGX["IORegistry<br/>AGXDeviceUserClient<br/>accumulatedGPUTime"]
         RESP["responsibility_get_pid_<br/>responsible_for_pid"]
         TP["notify<br/>thermalpressurelevel"]
+        SMC["AppleSMC<br/>F0Ac"]
     end
     HID -->|"1 Hz, filtro de mediana"| T["Temperatura<br/>média e ponto mais quente"]
     RU -->|"nJ por processo"| CPU["W de CPU por processo"]
@@ -85,6 +87,8 @@ flowchart LR
     T --> DB[("SQLite<br/>24 h fino + resumo por minuto")]
     APP --> DB
     TH --> DB
+    SMC -->|"1 Hz"| FAN["rpm da ventoinha"]
+    FAN --> DB
 ```
 
 | Dado | De onde vem | Como é tratado |
@@ -93,6 +97,7 @@ flowchart LR
 | **CPU por app** | Contador de energia que o kernel mantém para cada processo (`proc_pid_rusage`, `ri_energy_nj`) | São nanojoules físicos — não o "Impacto de Energia" relativo do Monitor de Atividade. A diferença entre duas leituras dividida pelo tempo dá watts. |
 | **GPU por app** | Energia total da GPU (`IOReport`, canal *GPU Energy*) + tempo de GPU de cada processo (`AGXDeviceUserClient` → `accumulatedGPUTime`) | A energia é dividida na proporção do tempo de GPU. O WindowServer recebe correção (veja abaixo). |
 | **Agrupamento por app** | `responsibility_get_pid_responsible_for_pid` | Cada processo conta para o app responsável por ele, como no Monitor de Atividade: helpers do navegador vão para o navegador, compiladores lançados no terminal vão para o terminal. |
+| **Ventoinha** | Controlador do sistema (SMC, chaves `F0Ac`, `F0Mn`, `F0Mx`) via `AppleSMC` | Lida a cada segundo, sem root. Cada registro guarda a média das ventoinhas no intervalo. Abaixo de 100 rpm conta como parada. |
 | **Limitação térmica** | Notificação `com.apple.system.thermalpressurelevel` | Cinco níveis (nominal, moderada, pesada, crítica, suspensão). A partir de *pesada* o macOS reduz a frequência do chip. |
 | **Apps abertos e em uso** | `NSWorkspace` | Apps com janela/ícone no Dock e o app em primeiro plano em cada registro. |
 
@@ -111,7 +116,7 @@ Medições feitas num MacBook com Apple M5 e macOS 27:
 | Um núcleo de desempenho a 100% (`yes > /dev/null`) | **6,6 W** de CPU atribuídos ao processo |
 | Laço de cálculo em Metal saturando a GPU (~17 W) | Rateio ingênuo: 1,6–2,8 W para a carga e 8–13 W para o WindowServer. **Com a correção: 13–16 W para a carga e 1,5 W para o WindowServer** |
 | Atraso do contador de energia da GPU | Nenhum: sobe e desce no mesmo meio segundo da carga |
-| Consumo do próprio TermoBar | **0,57%** de um núcleo em média, abaixo de 5 mW |
+| Consumo do próprio TermoBar | **0,6%** de um núcleo em média, abaixo de 5 mW; cerca de 1,5% enquanto o popover está aberto |
 
 ### Limites conhecidos
 
@@ -135,9 +140,9 @@ Medições feitas num MacBook com Apple M5 e macOS 27:
 | Aba | Opções |
 |---|---|
 | **Geral** | Abrir ao iniciar sessão, temperatura exibida (média do chip ou ponto mais quente), unidade (°C/°F), casas decimais, intervalo de registro (2/5/10 s) |
-| **Barra de menus** | Só temperatura, temperatura e watts, ícone e temperatura ou só ícone; colorir quando quente; mostrar só o ícone enquanto estiver frio |
+| **Barra de menus** | Só temperatura, temperatura e watts, temperatura e ventoinha, ícone e temperatura ou só ícone; colorir quando quente; mostrar só o ícone enquanto estiver frio |
 | **Alertas** | Temperatura acima de um limite por 30 s; limitação de desempenho; app acima de X W em média por N minutos |
-| **Sensores** | Leitura ao vivo de cada sensor, com nome legível e indicação de quais entram na média |
+| **Sensores** | Leitura ao vivo de cada sensor, com nome legível e indicação de quais entram na média, e de cada ventoinha, com mínimo e máximo |
 | **Dados** | Retenção (7/30/90 dias), exportar CSV, mostrar no Finder, apagar histórico |
 | **Precisão** | A metodologia acima, dentro do app |
 | **Sobre** | Versão, link para as versões no GitHub e um botão que copia as informações do sistema para pedidos de suporte |
@@ -160,10 +165,13 @@ Para medir a energia de cada app, o TermoBar lê contadores de outros processos 
 Não. Tudo é lido como usuário comum; nada é instalado fora do próprio app.
 
 **Quanto ele gasta de bateria?**
-Em média 0,57% de um núcleo, abaixo de 5 mW.
+Em média 0,6% de um núcleo, abaixo de 5 mW. Enquanto o popover está aberto, cerca de 1,5%.
 
 **Por que a temperatura é diferente da de outro app?**
 Cada app escolhe sensores diferentes. O TermoBar mostra por padrão a média dos sensores do die do chip, que é a mais estável; em Ajustes › Geral dá para trocar pelo ponto mais quente, que reage mais rápido a picos. A aba Sensores mostra cada leitura.
+
+**A ventoinha aparece em todos os Macs?**
+Só nos que têm ventoinha, como o MacBook Pro e o Mac mini. No MacBook Air, que não tem, o TermoBar esconde essa parte. O MacBook Pro desliga a ventoinha quando o chip está frio, e ela aparece como parada; no Mac mini ela costuma girar sempre, na rotação mínima.
 
 **Funciona em Mac com Intel?**
 Não. Os sensores e contadores usados só existem no Apple Silicon.

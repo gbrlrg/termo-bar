@@ -13,7 +13,13 @@ struct HeaderView: View {
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.secondary)
                 currentTemperature
-                PressureBadge(pressure: monitor.pressure)
+                // Com "Limitando desempenho", o selo da ventoinha desce para a linha de baixo.
+                FlowLayout(spacing: 6) {
+                    PressureBadge(pressure: monitor.pressure)
+                    if let rpm = monitor.current?.fanSpeed {
+                        FanBadge(rpm: rpm)
+                    }
+                }
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 10) {
@@ -32,10 +38,10 @@ struct HeaderView: View {
     private var currentTemperature: some View {
         let temperature = monitor.currentTemperature
         return HStack(alignment: .firstTextBaseline, spacing: 2) {
+            // Sem `contentTransition(.numericText)`: o desfoque dos dígitos é calculado na CPU e, a cada
+            // registro, custava mais que todo o resto do popover.
             Text(temperature.map { preferences.format($0, symbol: false) } ?? "--")
                 .font(.system(size: 44, weight: .semibold))
-                .contentTransition(.numericText(value: temperature ?? 0))
-                .animation(.snappy, value: temperature)
             Text(preferences.unit.symbol)
                 .font(.title2.weight(.medium))
                 .foregroundStyle(.secondary)
@@ -50,6 +56,28 @@ struct HeaderView: View {
     }
 }
 
+/// Ventoinha parada ou girando, com a rotação média do último registro.
+private struct FanBadge: View {
+    let rpm: Double
+
+    private var isSpinning: Bool { rpm >= Fan.spinningThreshold }
+
+    var body: some View {
+        Label(
+            isSpinning ? rpm.formatted(.rpm) : String(localized: "Parada"),
+            systemImage: isSpinning ? "fan.fill" : "fan.slash"
+        )
+        .font(.caption.weight(.semibold))
+        .monospacedDigit()
+        .foregroundStyle(.secondary)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 3)
+        .background(.fill.tertiary, in: Capsule())
+        .fixedSize()
+        .help(isSpinning ? String(localized: "Ventoinha girando") : String(localized: "Ventoinha parada"))
+    }
+}
+
 private struct PressureBadge: View {
     let pressure: ThermalPressure
 
@@ -60,6 +88,7 @@ private struct PressureBadge: View {
             .padding(.horizontal, 8)
             .padding(.vertical, 3)
             .background(pressure.color.opacity(0.14), in: Capsule())
+            .fixedSize()
             .help("Pressão térmica informada pelo kernel do macOS")
     }
 }

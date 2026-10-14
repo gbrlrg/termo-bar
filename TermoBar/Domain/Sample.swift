@@ -22,8 +22,12 @@ struct Sample: Sendable {
     let pressure: Int?
     /// Potência total da GPU (W).
     let gpuPower: Double?
+    /// Rotação média das ventoinhas no período (rpm); `nil` em Macs sem ventoinha.
+    let fanSpeed: Double?
 
     var isThrottling: Bool { (pressure ?? 0) >= ThermalPressure.heavy.rawValue }
+
+    var isFanSpinning: Bool { (fanSpeed ?? 0) >= Fan.spinningThreshold }
 
     func temperature(for source: TemperatureSource) -> Double {
         source == .average ? averageTemperature : maxTemperature
@@ -39,6 +43,7 @@ extension Sample {
         let duration = samples.totalDuration
         guard duration > 0 else { return nil }
         let gpu = samples.compactMap(\.gpuPower)
+        let fans = samples.filter { $0.fanSpeed != nil }
         let frontCounts = samples.compactMap(\.frontmostApp).reduce(into: [:]) { $0[$1, default: 0] += 1 }
 
         self.init(
@@ -50,7 +55,9 @@ extension Sample {
             frontmostApp: frontCounts.max { ($0.value, $1.key) < ($1.value, $0.key) }?.key,
             appPower: samples.averagePowerByApp().map(Self.significant),
             pressure: samples.compactMap(\.pressure).max(),
-            gpuPower: gpu.isEmpty ? nil : gpu.reduce(0, +) / Double(gpu.count))
+            gpuPower: gpu.isEmpty ? nil : gpu.reduce(0, +) / Double(gpu.count),
+            fanSpeed: fans.totalDuration > 0
+                ? fans.reduce(0) { $0 + ($1.fanSpeed ?? 0) * $1.duration } / fans.totalDuration : nil)
     }
 
     static func significant(_ power: [String: Power]) -> [String: Power] {
@@ -80,6 +87,14 @@ extension Collection where Element == Sample {
         let measured = measuredDuration
         guard measured > 0 else { return nil }
         return energyByApp().mapValues { $0 / measured }
+    }
+
+    /// Fração do tempo com as ventoinhas girando (0–1); `nil` sem leitura de ventoinha.
+    var fanSpinningShare: Double? {
+        let read = filter { $0.fanSpeed != nil }
+        let duration = read.totalDuration
+        guard duration > 0 else { return nil }
+        return read.filter(\.isFanSpinning).totalDuration / duration
     }
 
     /// Média da temperatura ponderada pela duração de cada amostra.

@@ -13,7 +13,7 @@ final class HistoryStore {
         CREATE TABLE IF NOT EXISTS samples(
             ts REAL NOT NULL, resolution INTEGER NOT NULL, duration REAL NOT NULL,
             temp REAL NOT NULL, max_temp REAL NOT NULL, pressure INTEGER, gpu REAL,
-            front TEXT, apps TEXT NOT NULL, has_power INTEGER NOT NULL,
+            front TEXT, apps TEXT NOT NULL, has_power INTEGER NOT NULL, fan REAL,
             PRIMARY KEY(resolution, ts));
         CREATE TABLE IF NOT EXISTS app_power(
             ts REAL NOT NULL, resolution INTEGER NOT NULL, app TEXT NOT NULL, cpu REAL NOT NULL, gpu REAL NOT NULL);
@@ -41,6 +41,18 @@ final class HistoryStore {
     private init(database: SQLiteDatabase) throws {
         db = database
         try db.execute(Self.schema)
+        try migrate()
+    }
+
+    /// Históricos criados antes da leitura das ventoinhas não têm a coluna `fan`.
+    private func migrate() throws {
+        var columns: Set<String> = []
+        try db.query("PRAGMA table_info(samples)") { row in
+            if let name = row.text(1) { columns.insert(name) }
+        }
+        if !columns.contains("fan") {
+            try db.execute("ALTER TABLE samples ADD COLUMN fan REAL")
+        }
     }
 
     // MARK: - Escrita
@@ -50,12 +62,16 @@ final class HistoryStore {
         let apps = String(decoding: try JSONEncoder().encode(sample.openApps), as: UTF8.self)
         try db.transaction {
             try db.run(
-                "INSERT OR REPLACE INTO samples VALUES(?,?,?,?,?,?,?,?,?,?)",
+                """
+                INSERT OR REPLACE INTO samples(
+                    ts, resolution, duration, temp, max_temp, pressure, gpu, front, apps, has_power, fan)
+                VALUES(?,?,?,?,?,?,?,?,?,?,?)
+                """,
                 [
                     .real(timestamp), .integer(resolution.rawValue), .real(sample.duration),
                     .real(sample.averageTemperature), .real(sample.maxTemperature), .integer(sample.pressure),
                     .real(sample.gpuPower), .text(sample.frontmostApp), .text(apps),
-                    .integer(sample.appPower == nil ? 0 : 1),
+                    .integer(sample.appPower == nil ? 0 : 1), .real(sample.fanSpeed),
                 ])
             let insertPower = try db.prepare("INSERT INTO app_power VALUES(?,?,?,?,?)")
             for (app, power) in sample.appPower ?? [:] {
@@ -107,7 +123,7 @@ final class HistoryStore {
         let decoder = JSONDecoder()
         try db.query(
             """
-            SELECT ts, duration, temp, max_temp, pressure, gpu, front, apps, has_power
+            SELECT ts, duration, temp, max_temp, pressure, gpu, front, apps, has_power, fan
             FROM samples WHERE resolution = ? AND ts >= ? ORDER BY ts
             """, filter
         ) { row in
@@ -123,7 +139,8 @@ final class HistoryStore {
                     frontmostApp: row.text(6),
                     appPower: row.integer(8) == 1 ? power[timestamp] ?? [:] : nil,
                     pressure: row.optionalInteger(4),
-                    gpuPower: row.optionalDouble(5)))
+                    gpuPower: row.optionalDouble(5),
+                    fanSpeed: row.optionalDouble(9)))
         }
         return samples
     }

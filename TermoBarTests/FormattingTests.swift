@@ -21,9 +21,15 @@ struct FormattingTests {
         #expect(17.4.formatted(.watts) == "17 W")
     }
 
+    @Test func formatsRPMAsWholeNumber() {
+        #expect(0.0.formatted(.rpm) == "0 rpm")
+        #expect(812.6.formatted(.rpm) == "813 rpm")
+    }
+
     @Test func menuBarStyleFlags() {
         #expect(MenuBarStyle.icon.showsIcon && !MenuBarStyle.icon.showsTemperature)
         #expect(MenuBarStyle.temperatureAndPower.showsPower)
+        #expect(MenuBarStyle.temperatureAndFan.showsFan && !MenuBarStyle.temperatureAndFan.showsPower)
         #expect(TemperatureSource.average.alternate == .hottest)
     }
 }

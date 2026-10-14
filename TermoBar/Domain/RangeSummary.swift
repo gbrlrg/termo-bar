@@ -51,6 +51,9 @@ struct RangeSummary: Sendable {
 
     var hasEnoughData: Bool { samples.count >= 3 }
 
+    /// Há leitura de ventoinha no período (Macs sem ventoinha nunca têm).
+    var hasFanData: Bool { samples.contains { $0.fanSpeed != nil } }
+
     func bin(for date: Date) -> Date { range.bin(containing: date) }
 
     /// Potência média de todos os apps no período.

@@ -21,6 +21,9 @@ struct ChartsCard: View {
 
                 if summary.hasEnoughData {
                     TemperatureChart(summary: summary, hoverDate: $hoverDate)
+                    if summary.hasFanData {
+                        FanChart(summary: summary, hoverDate: $hoverDate)
+                    }
                     EnergyChart(summary: summary, hoverDate: $hoverDate, focusedApp: focusedApp)
                 } else {
                     CollectingView(range: range)

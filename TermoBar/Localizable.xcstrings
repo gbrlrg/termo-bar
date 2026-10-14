@@ -1585,6 +1585,22 @@
         }
       }
     },
+    "Mín. %@ · máx. %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Min %@ · max %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mín. %@ · máx. %@"
+          }
+        }
+      }
+    },
     "Nenhum processo consumindo agora.": {
       "localizations": {
         "en": {
@@ -1825,6 +1841,22 @@
         }
       }
     },
+    "Parada": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stopped"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parada"
+          }
+        }
+      }
+    },
     "Período": {
       "localizations": {
         "en": {
@@ -1981,6 +2013,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Quem mais consome: %@."
+          }
+        }
+      }
+    },
+    "Rotação lida do controlador do sistema (SMC) a cada segundo, também sem privilégio de administrador. Abaixo de 100 rpm a ventoinha conta como parada. O MacBook Air não tem ventoinha, e o TermoBar esconde essa parte.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speed read from the System Management Controller (SMC) every second, also without administrator privileges. Below 100 rpm the fan counts as stopped. The MacBook Air has no fan, so TermoBar hides this part."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rotação lida do controlador do sistema (SMC) a cada segundo, também sem privilégio de administrador. Abaixo de 100 rpm a ventoinha conta como parada. O MacBook Air não tem ventoinha, e o TermoBar esconde essa parte."
+          }
+        }
+      }
+    },
+    "Rotação lida do controlador do sistema (SMC). Parada abaixo de %lld rpm.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speed read from the System Management Controller (SMC). Counts as stopped below %lld rpm."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rotação lida do controlador do sistema (SMC). Parada abaixo de %lld rpm."
           }
         }
       }
@@ -2161,6 +2225,22 @@
         }
       }
     },
+    "Temperatura e ventoinha": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temperature and fan"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temperatura e ventoinha"
+          }
+        }
+      }
+    },
     "Temperatura e watts": {
       "localizations": {
         "en": {
@@ -2289,6 +2369,86 @@
         }
       }
     },
+    "Ventoinha": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fan"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ventoinha"
+          }
+        }
+      }
+    },
+    "Ventoinha %lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fan %lld"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ventoinha %lld"
+          }
+        }
+      }
+    },
+    "Ventoinha girando": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fan spinning"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ventoinha girando"
+          }
+        }
+      }
+    },
+    "Ventoinha parada": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fan stopped"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ventoinha parada"
+          }
+        }
+      }
+    },
+    "Ventoinhas": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fans"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ventoinhas"
+          }
+        }
+      }
+    },
     "Versão %@ (%@)": {
       "localizations": {
         "en": {
@@ -2385,6 +2545,22 @@
         }
       }
     },
+    "girando %@ do tempo": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "spinning %@ of the time"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "girando %@ do tempo"
+          }
+        }
+      }
+    },
     "há %@": {
       "localizations": {
         "en": {
@@ -2429,6 +2605,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "ocioso"
+          }
+        }
+      }
+    },
+    "parada": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stopped"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "parada"
+          }
+        }
+      }
+    },
+    "parada no período": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stopped throughout"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "parada no período"
+          }
+        }
+      }
+    },
+    "rpm": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "rpm"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "rpm"
           }
         }
       }

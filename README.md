@@ -50,12 +50,13 @@ To update, download the new version and replace the app in Applications. Your hi
 - **Chip temperature in the menu bar**, in °C or °F, with or without a decimal place.
 - **macOS thermal state** — from *Normal* to *Throttling* — straight from the kernel's thermal pressure.
 - **Temperature chart**, with the line colored by the temperature itself and throttling periods highlighted.
+- **Fan**: speed in rpm, whether it's stopped or spinning, and a chart of when it spun, on the same time axis. On Macs with a fan, such as the MacBook Pro and Mac mini; the MacBook Air has none.
 - **Energy per app** as stacked bars, on the same time axis as the temperature.
 - **"Apps heating up the most" ranking**: average watts, share of energy, whether the GPU dominates, and a timeline of when each app was open and drawing power.
 - **Each app's processes, right now**: click an app to see which of its processes are drawing power, with a readable name, project and how long they've been running (e.g. *wrangler · dev · my-site*, *Swift tests*, an app in the Simulator).
 - **Time ranges** of 15 min, 1 h, 24 h and 7 days.
 - **Alerts** for high temperature, throttling and apps using too much power.
-- **CSV export** with CPU and GPU per app, reading by reading.
+- **CSV export** with CPU and GPU per app and the fan speed, reading by reading.
 - **English and Portuguese**, following your Mac's language.
 
 Hovering over the charts shows the values at that moment; hovering over an app highlights its color in the energy chart, and clicking it opens its processes.
@@ -73,6 +74,7 @@ flowchart LR
         AGX["IORegistry<br/>AGXDeviceUserClient<br/>accumulatedGPUTime"]
         RESP["responsibility_get_pid_<br/>responsible_for_pid"]
         TP["notify<br/>thermalpressurelevel"]
+        SMC["AppleSMC<br/>F0Ac"]
     end
     HID -->|"1 Hz, median filter"| T["Temperature<br/>average and hottest spot"]
     RU -->|"nJ per process"| CPU["CPU W per process"]
@@ -85,6 +87,8 @@ flowchart LR
     T --> DB[("SQLite<br/>24 h detailed + per-minute summary")]
     APP --> DB
     TH --> DB
+    SMC -->|"1 Hz"| FAN["Fan rpm"]
+    FAN --> DB
 ```
 
 | Data | Source | How it's handled |
@@ -93,6 +97,7 @@ flowchart LR
 | **CPU per app** | The energy counter the kernel keeps for each process (`proc_pid_rusage`, `ri_energy_nj`) | Physical nanojoules — not Activity Monitor's relative "Energy Impact". The difference between two readings divided by the elapsed time gives watts. |
 | **GPU per app** | Total GPU energy (`IOReport`, *GPU Energy* channel) + each process's GPU time (`AGXDeviceUserClient` → `accumulatedGPUTime`) | Energy is split in proportion to GPU time. WindowServer gets a correction (see below). |
 | **Grouping by app** | `responsibility_get_pid_responsible_for_pid` | Each process counts toward the app responsible for it, as in Activity Monitor: browser helpers go to the browser, compilers launched from a terminal go to the terminal. |
+| **Fan** | System Management Controller (SMC keys `F0Ac`, `F0Mn`, `F0Mx`) via `AppleSMC` | Read every second, without root. Each record stores the average of the fans over the interval. Below 100 rpm it counts as stopped. |
 | **Throttling** | `com.apple.system.thermalpressurelevel` notification | Five levels (nominal, moderate, heavy, critical, sleeping). From *heavy* on, macOS lowers the chip's frequency. |
 | **Open and active apps** | `NSWorkspace` | Apps with a window/Dock icon and the frontmost app in each record. |
 
@@ -111,7 +116,7 @@ Measured on a MacBook with an Apple M5 running macOS 27:
 | One performance core at 100% (`yes > /dev/null`) | **6.6 W** of CPU attributed to the process |
 | Metal compute loop saturating the GPU (~17 W) | Naive split: 1.6–2.8 W for the workload and 8–13 W for WindowServer. **With the correction: 13–16 W for the workload and 1.5 W for WindowServer** |
 | GPU energy counter lag | None: it rises and falls within the same half second as the load |
-| TermoBar's own usage | **0.57%** of one core on average, under 5 mW |
+| TermoBar's own usage | **0.6%** of one core on average, under 5 mW; about 1.5% while the popover is open |
 
 ### Known limits
 
@@ -137,9 +142,9 @@ Tab names below are the English ones; the Portuguese names are in parentheses.
 | Tab | Options |
 |---|---|
 | **General** (Geral) | Open at login, displayed temperature (chip average or hottest spot), unit (°C/°F), decimal places, recording interval (2/5/10 s) |
-| **Menu bar** (Barra de menus) | Temperature only, temperature and watts, icon and temperature, or icon only; color when hot; show only the icon while cool |
+| **Menu bar** (Barra de menus) | Temperature only, temperature and watts, temperature and fan, icon and temperature, or icon only; color when hot; show only the icon while cool |
 | **Alerts** (Alertas) | Temperature above a threshold for 30 s; throttling; an app above X W on average for N minutes |
-| **Sensors** (Sensores) | Live reading of each sensor, with a readable name and which ones count toward the average |
+| **Sensors** (Sensores) | Live reading of each sensor, with a readable name and which ones count toward the average, and of each fan, with its minimum and maximum |
 | **Data** (Dados) | Retention (7/30/90 days), CSV export, show in Finder, delete history |
 | **Accuracy** (Precisão) | The methodology above, inside the app |
 | **About** (Sobre) | Version, a link to the releases on GitHub and a button that copies system info for support requests |
@@ -162,10 +167,13 @@ To measure each app's energy, TermoBar reads other processes' counters and uses 
 No. Everything is read as a regular user; nothing is installed outside the app itself.
 
 **How much battery does it use?**
-0.57% of one core on average, under 5 mW.
+0.6% of one core on average, under 5 mW. About 1.5% while the popover is open.
 
 **Why does the temperature differ from another app's?**
 Each app picks different sensors. By default TermoBar shows the average of the chip's die sensors, which is the most stable; in Settings › General you can switch to the hottest spot, which reacts faster to spikes. The Sensors tab shows every reading.
+
+**Does the fan show up on every Mac?**
+Only on Macs that have one, such as the MacBook Pro and Mac mini. On the MacBook Air, which has none, TermoBar hides it. The MacBook Pro turns its fan off when the chip is cool, and it shows as stopped; on the Mac mini it usually spins all the time, at its minimum speed.
 
 **Does it work on Intel Macs?**
 No. The sensors and counters it uses only exist on Apple Silicon.

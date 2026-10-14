@@ -26,10 +26,11 @@ struct SampleTests {
         let samples = [
             makeSample(
                 at: 0, duration: 20, temperature: 40, maxTemperature: 70, openApps: ["b", "a"],
-                frontmostApp: "a", appPower: ["a": Power(cpu: 3, gpu: 0)], pressure: 1, gpuPower: 1),
+                frontmostApp: "a", appPower: ["a": Power(cpu: 3, gpu: 0)], pressure: 1, gpuPower: 1, fanSpeed: 0),
             makeSample(
                 at: 20, duration: 40, temperature: 70, maxTemperature: 80, openApps: ["a", "c"],
-                frontmostApp: "c", appPower: ["a": Power(cpu: 0, gpu: 0.003)], pressure: 2, gpuPower: 3),
+                frontmostApp: "c", appPower: ["a": Power(cpu: 0, gpu: 0.003)], pressure: 2, gpuPower: 3,
+                fanSpeed: 3000),
             makeSample(at: 40, duration: 0, frontmostApp: "c", pressure: nil),
         ]
         let date = Date(timeIntervalSinceReferenceDate: 0)
@@ -44,7 +45,25 @@ struct SampleTests {
         #expect(summary.frontmostApp == "c")
         #expect(summary.pressure == 2)
         #expect(summary.gpuPower == 2)
+        #expect(summary.fanSpeed == 2000)
         #expect(summary.appPower?["a"]?.cpu == 1)
+    }
+
+    @Test func minuteSummaryHasNoFanSpeedWithoutFans() throws {
+        let summary = try #require(Sample(summarizing: [makeSample(at: 0)], at: .now))
+        #expect(summary.fanSpeed == nil)
+    }
+
+    @Test func fanSpinningShareCountsOnlyReadSamples() throws {
+        let samples = [
+            makeSample(at: 0, duration: 10, fanSpeed: 0),
+            makeSample(at: 10, duration: 30, fanSpeed: 2500),
+            makeSample(at: 40, duration: 60, fanSpeed: nil),
+            makeSample(at: 100, duration: 10, fanSpeed: 50),
+        ]
+        #expect(samples.fanSpinningShare == 0.6)
+        #expect([makeSample(at: 0)].fanSpinningShare == nil)
+        #expect(samples[1].isFanSpinning && !samples[3].isFanSpinning)
     }
 
     @Test func minuteSummaryDropsInsignificantPower() throws {

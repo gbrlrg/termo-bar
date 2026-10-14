@@ -37,9 +37,16 @@ final class Monitor {
     /// Cor de cada app que mais gastou na última hora; estável enquanto continuar no topo.
     private(set) var palette = PaletteSlots(capacity: Monitor.highlightedApps)
     private(set) var pressure = ThermalPressure.nominal
-    /// Última leitura de cada sensor (tela de Ajustes).
+    /// Última leitura de cada sensor e de cada ventoinha, atualizadas só com a aba Sensores aberta.
     private(set) var sensors: [TemperatureSensors.Sensor] = []
-    var showAllSensors = false
+    private(set) var fans: [Fan] = []
+    var showAllSensors = false {
+        didSet { refreshLiveReadings() }
+    }
+    /// A aba Sensores está na tela: só então vale ler os sensores fora do chip e publicar as leituras.
+    @ObservationIgnored var isShowingSensors = false {
+        didSet { refreshLiveReadings() }
+    }
     /// Potência recente de cada processo, para detalhar um app na lista.
     private(set) var processActivity = ProcessActivity()
 
@@ -51,9 +58,12 @@ final class Monitor {
     private let temperatureSensors = TemperatureSensors()
     private let energySampler = EnergySampler()
     private let pressureReader = ThermalPressureReader()
+    private let fanReader = FanReader()
 
     @ObservationIgnored private var timer: Timer?
     @ObservationIgnored private var pendingReadings: [TemperatureSensors.Reading] = []
+    /// Rotação média das ventoinhas em cada leitura do intervalo (rpm).
+    @ObservationIgnored private var pendingFanSpeeds: [Double] = []
     @ObservationIgnored private var lastSampleDate: Date?
     @ObservationIgnored private var currentMinute: Date?
     @ObservationIgnored private var lastDiskPrune = Date.distantPast
@@ -80,6 +90,9 @@ final class Monitor {
     }
 
     var currentTemperature: Double? { current.map(temperature(of:)) }
+
+    /// O Mac tem ventoinha (o MacBook Air não tem).
+    var hasFans: Bool { fanReader.hasFans }
 
     /// Potência somada dos apps na leitura mais recente que tem medição de energia.
     var currentPower: Double? {
@@ -150,11 +163,18 @@ final class Monitor {
     }
 
     private func tick() {
-        if let reading = temperatureSensors.read(includeOthers: showAllSensors) {
+        if let reading = temperatureSensors.read(includeOthers: isShowingSensors && showAllSensors) {
             pendingReadings.append(reading)
-            sensors = reading.sensors
+            if isShowingSensors { sensors = reading.sensors }
         }
-        pressure = pressureReader.read()
+        let fans = fanReader.read()
+        if !fans.isEmpty {
+            pendingFanSpeeds.append(fans.reduce(0) { $0 + $1.rpm } / Double(fans.count))
+        }
+        if isShowingSensors, fans != self.fans { self.fans = fans }
+        // O Observation avisa as telas a cada atribuição, mesmo de um valor igual.
+        let pressure = pressureReader.read()
+        if pressure != self.pressure { self.pressure = pressure }
 
         let now = Date()
         let isDue =
@@ -174,6 +194,8 @@ final class Monitor {
         let averageTemperature = pendingReadings.map(\.average).reduce(0, +) / Double(pendingReadings.count)
         let maxTemperature = pendingReadings.map(\.maximum).max() ?? averageTemperature
         pendingReadings.removeAll()
+        let fanSpeed = pendingFanSpeeds.isEmpty ? nil : pendingFanSpeeds.reduce(0, +) / Double(pendingFanSpeeds.count)
+        pendingFanSpeeds.removeAll()
 
         let interval = preferences.sampleInterval
         let duration =
@@ -189,7 +211,8 @@ final class Monitor {
             frontmostApp: NSWorkspace.shared.frontmostApplication.map(Self.identifier),
             appPower: measurement.map { appPower(from: $0) },
             pressure: pressure.rawValue,
-            gpuPower: measurement?.gpuTotal)
+            gpuPower: measurement?.gpuTotal,
+            fanSpeed: fanSpeed)
         recent.append(sample)
         persist("gravar a leitura") { try $0.insert(sample, resolution: .raw) }
 
@@ -201,6 +224,13 @@ final class Monitor {
         #if DEBUG
             logIfRequested(sample)
         #endif
+    }
+
+    /// Atualiza na hora as leituras da aba Sensores, sem esperar o próximo tique.
+    private func refreshLiveReadings() {
+        guard isShowingSensors else { return }
+        sensors = temperatureSensors.read(includeOthers: showAllSensors)?.sensors ?? []
+        fans = fanReader.read()
     }
 
     private func details(of pid: pid_t) -> ProcessDetails? {
@@ -220,7 +250,7 @@ final class Monitor {
         for app in NSWorkspace.shared.runningApplications where app.activationPolicy == .regular {
             let id = Self.identifier(of: app)
             ids.append(id)
-            appNames[id] = app.localizedName ?? id
+            setName(app.localizedName ?? id, for: id)
         }
         return ids
     }
@@ -229,9 +259,14 @@ final class Monitor {
         var power: [String: Power] = [:]
         for (group, watts) in measurement.byGroup {
             power[group.id, default: .zero] += watts
-            appNames[group.id] = group.name
+            setName(group.name, for: group.id)
         }
         return Sample.significant(power)
+    }
+
+    /// Só grava nomes novos: cada atribuição faria as telas que mostram nomes se redesenharem.
+    private func setName(_ name: String, for id: String) {
+        if appNames[id] != name { appNames[id] = name }
     }
 
     private static func identifier(of app: NSRunningApplication) -> String {
@@ -279,7 +314,9 @@ final class Monitor {
 
     /// Dá as cores aos apps que mais gastaram na última hora.
     private func updatePalette() {
+        var palette = palette
         palette.update(ranking: recent.energyByApp().sorted { $0.value.total > $1.value.total }.map(\.key))
+        if palette != self.palette { self.palette = palette }
     }
 
     private func saveNewNames() {

@@ -6,7 +6,8 @@ struct CSVExporterTests {
         let samples = [
             makeSample(
                 at: 0, duration: 5, temperature: 50.5, maxTemperature: 60, frontmostApp: "b",
-                appPower: ["a": Power(cpu: 1, gpu: 0), "b": Power(cpu: 2, gpu: 0.5)], pressure: 1, gpuPower: 0.5),
+                appPower: ["a": Power(cpu: 1, gpu: 0), "b": Power(cpu: 2, gpu: 0.5)], pressure: 1, gpuPower: 0.5,
+                fanSpeed: 2498.6),
             makeSample(at: 5, duration: 5, temperature: 51, pressure: nil),
         ]
 
@@ -16,13 +17,13 @@ struct CSVExporterTests {
         #expect(lines.count == 5)
         #expect(
             lines[0]
-                == "timestamp,duracao_s,temp_media_c,temp_max_c,pressao_termica,gpu_total_w,app_id,app,cpu_w,gpu_w,primeiro_plano"
+                == "timestamp,duracao_s,temp_media_c,temp_max_c,pressao_termica,gpu_total_w,app_id,app,cpu_w,gpu_w,primeiro_plano,ventoinha_rpm"
         )
-        #expect(lines[1] == "2001-01-01T00:00:00Z,5.000,50.500,60.000,1,0.500,b,Navegador,2.000,0.500,1")
-        #expect(lines[2] == "2001-01-01T00:00:00Z,5.000,50.500,60.000,1,0.500,a,a,1.000,0.000,0")
-        #expect(lines[3] == "2001-01-01T00:00:05Z,5.000,51.000,51.000,,,,,,,")
+        #expect(lines[1] == "2001-01-01T00:00:00Z,5.000,50.500,60.000,1,0.500,b,Navegador,2.000,0.500,1,2499")
+        #expect(lines[2] == "2001-01-01T00:00:00Z,5.000,50.500,60.000,1,0.500,a,a,1.000,0.000,0,2499")
+        #expect(lines[3] == "2001-01-01T00:00:05Z,5.000,51.000,51.000,,,,,,,,")
         #expect(lines[4].isEmpty)
-        #expect(lines.dropLast().allSatisfy { $0.split(separator: ",", omittingEmptySubsequences: false).count == 11 })
+        #expect(lines.dropLast().allSatisfy { $0.split(separator: ",", omittingEmptySubsequences: false).count == 12 })
     }
 
     @Test func escapesSeparatorsAndQuotes() {
