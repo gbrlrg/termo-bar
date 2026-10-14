@@ -9,17 +9,18 @@ struct GeneralSettingsView: View {
         @Bindable var launchAtLogin = launchAtLogin
         Form {
             Section {
+                Toggle("Abrir ao iniciar sessão", isOn: $launchAtLogin.isEnabled)
+            }
+            Section {
+                Picker("Temperatura exibida", selection: $preferences.source) {
+                    ForEach(TemperatureSource.allCases) { Text($0.label).tag($0) }
+                }
                 Picker("Unidade", selection: $preferences.unit) {
                     ForEach(TemperatureUnit.allCases) { Text($0.label).tag($0) }
                 }
                 Picker("Casas decimais", selection: $preferences.decimals) {
                     Text("Nenhuma (79°)").tag(0)
                     Text("Uma (79,4°)").tag(1)
-                }
-            }
-            Section {
-                Picker("Temperatura exibida", selection: $preferences.source) {
-                    ForEach(TemperatureSource.allCases) { Text($0.label).tag($0) }
                 }
             } footer: {
                 SettingsFootnote(
@@ -35,9 +36,6 @@ struct GeneralSettingsView: View {
             } footer: {
                 SettingsFootnote(
                     "Os sensores são lidos a cada segundo; cada registro guarda a média das leituras do intervalo.")
-            }
-            Section {
-                Toggle("Abrir ao iniciar sessão", isOn: $launchAtLogin.isEnabled)
             }
         }
         .formStyle(.grouped)

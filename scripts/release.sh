@@ -8,7 +8,7 @@
 #       xcrun notarytool store-credentials TermoBar --apple-id <apple-id> --team-id F22LFNZSAZ
 #
 # Resultado em build/release/, com o app já carimbado (stapled):
-#   - TermoBar-<versão>.dmg: janela com o app e o atalho para Aplicativos (o jeito de instalar).
+#   - TermoBar-<versão>.dmg: janela com fundo, o app e uma seta para Aplicativos (o jeito de instalar).
 #   - TermoBar-<versão>.zip: o mesmo app compactado.
 set -euo pipefail
 
@@ -58,13 +58,7 @@ ditto -c -k --keepParent $APP $ZIP
 
 echo "==> Montando o DMG"
 DMG=$OUT/TermoBar-$VERSION.dmg
-STAGE=$OUT/dmg
-rm -rf $STAGE $DMG
-mkdir -p $STAGE
-ditto $APP $STAGE/TermoBar.app
-ln -s /Applications $STAGE/Aplicativos
-hdiutil create -volname TermoBar -srcfolder $STAGE -format UDZO -ov -quiet $DMG
-rm -rf $STAGE
+$ROOT/scripts/make-dmg.sh $APP $DMG
 
 IDENTITY=$(security find-identity -v -p codesigning | grep "Developer ID Application" | grep "($TEAM_ID)" | head -1 | awk '{print $2}')
 codesign --sign $IDENTITY --timestamp $DMG

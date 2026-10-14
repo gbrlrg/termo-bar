@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Ícone, versão e informações para suporte, como na aba Sobre de apps independentes para Mac.
 struct AboutView: View {
-    private static let website = URL(string: "https://github.com/gbrlrg/termo-bar")
+    private static let releases = URL(string: "https://github.com/gbrlrg/termo-bar/releases")
 
     @State private var didCopy = false
 
@@ -25,8 +25,9 @@ struct AboutView: View {
                 .multilineTextAlignment(.center)
 
             HStack(spacing: 12) {
-                if let website = Self.website {
-                    Button("GitHub") { NSWorkspace.shared.open(website) }
+                if let releases = Self.releases {
+                    Button("Versões no GitHub") { NSWorkspace.shared.open(releases) }
+                        .help("Novidades e downloads de cada versão")
                 }
                 Button(didCopy ? "Copiado" : "Copiar informações do sistema", action: copySystemInfo)
                     .help("Versão do app, do macOS e o chip, para pedidos de suporte")
