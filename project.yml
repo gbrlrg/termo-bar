@@ -20,8 +20,8 @@ targets:
         CFBundleDisplayName: TermoBar
         # Quem usa outro idioma que não português nem inglês vê o app em inglês.
         CFBundleDevelopmentRegion: en
-        CFBundleShortVersionString: "1.0.0"
-        CFBundleVersion: "1"
+        CFBundleShortVersionString: "1.1.0"
+        CFBundleVersion: "2"
         NSHumanReadableCopyright: "© 2026 Gabriel Rigon"
         LSUIElement: true
         LSApplicationCategoryType: public.app-category.utilities

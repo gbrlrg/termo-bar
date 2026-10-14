@@ -175,8 +175,8 @@ macOS doesn't let a regular app read the CPU energy of processes owned by other 
 
 ## Uninstall
 
-1. If it opens at login, turn that off first (gear › Abrir ao iniciar sessão).
-2. Quit TermoBar: click the temperature in the menu bar, then the gear › Sair do TermoBar.
+1. If it opens at login, turn that off first (gear › Open at login).
+2. Quit TermoBar: click the temperature in the menu bar, then the gear › Quit TermoBar.
 3. Delete `TermoBar.app` from Applications.
 4. To also delete the history and settings:
 
