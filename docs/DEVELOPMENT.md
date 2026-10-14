@@ -50,6 +50,27 @@ xcrun notarytool store-credentials TermoBar --apple-id <apple-id> --team-id F22L
 
 Rode esse comando no Terminal, não por outra ferramenta: ele pede a senha de app (gerada em account.apple.com) de forma interativa. Os builds de desenvolvimento e o CI continuam com assinatura local e não precisam do certificado.
 
+## Idiomas
+
+O app está em português e inglês. Quem usa o Mac em outro idioma vê o inglês, que é o idioma padrão do projeto (`developmentLanguage: en` e `CFBundleDevelopmentRegion: en`).
+
+Os textos são escritos em português direto no código e funcionam como chaves do `TermoBar/Localizable.xcstrings`, que guarda o inglês e o português de cada um:
+
+- Literais do SwiftUI (`Text("…")`, `Button("…")`, `Toggle("…")`) são traduzidos sozinhos.
+- Texto montado como `String` (rótulos de enums, notificações, detalhes de gráfico) usa `String(localized: "…")`.
+- Componentes que recebem um título fixo usam `LocalizedStringKey` (`CardTitle`, `Stat`, `TemperatureStepper`, `SettingsFootnote`).
+- Logs e o cabeçalho do CSV não são traduzidos.
+
+Depois de criar ou mudar um texto, compile e sincronize o catálogo:
+
+```sh
+xcodebuild -project TermoBar.xcodeproj -scheme TermoBar -derivedDataPath build/l10n build
+xcrun xcstringstool sync TermoBar/Localizable.xcstrings \
+    --stringsdata $(find build/l10n -name '*.stringsdata' | grep -v Tests)
+```
+
+A chave nova entra no catálogo sem tradução: preencha o inglês e repita o texto em português (`pt-BR`). Sem o `pt-BR`, quem usa o Mac em português vê o inglês, porque o macOS cai no idioma padrão. Para conferir, abra o app com `-AppleLanguages "(en)"` ou `"(pt-BR)"`, junto das variáveis de captura abaixo.
+
 ## Arquitetura
 
 O código é dividido em camadas; as de cima dependem das de baixo, nunca o contrário.

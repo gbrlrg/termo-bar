@@ -47,7 +47,8 @@ final class AlertNotifier {
         Task {
             await Self.authorize()
             await refreshAuthorization()
-            await Self.deliver(id: "test", title: "TermoBar", body: "As notificações estão funcionando.")
+            await Self.deliver(
+                id: "test", title: "TermoBar", body: String(localized: "As notificações estão funcionando."))
         }
     }
 
@@ -59,20 +60,20 @@ final class AlertNotifier {
         switch event {
         case let .highTemperature(celsius, limit, topConsumer):
             return (
-                "Mac a \(preferences.format(celsius))",
-                topConsumer.map { "Quem mais consome: \(describe($0))." }
-                    ?? "Acima do limite de \(preferences.format(limit))."
+                String(localized: "Mac a \(preferences.format(celsius))"),
+                topConsumer.map { String(localized: "Quem mais consome: \(describe($0)).") }
+                    ?? String(localized: "Acima do limite de \(preferences.format(limit)).")
             )
         case let .throttling(pressure, topConsumer):
             return (
-                "O macOS está limitando o desempenho",
-                "Pressão térmica \(pressure?.label.lowercased() ?? "alta")."
-                    + (topConsumer.map { " Quem mais consome: \(describe($0))." } ?? "")
+                String(localized: "O macOS está limitando o desempenho"),
+                String(localized: "Pressão térmica \(pressure?.label.lowercased() ?? String(localized: "alta")).")
+                    + (topConsumer.map { " " + String(localized: "Quem mais consome: \(describe($0)).") } ?? "")
             )
         case let .appPower(consumer, window):
             return (
-                "\(appName(consumer.app)) está gastando \(consumer.watts.formatted(.watts))",
-                "Média dos últimos \(Int(window / 60)) minutos."
+                String(localized: "\(appName(consumer.app)) está gastando \(consumer.watts.formatted(.watts))"),
+                String(localized: "Média dos últimos \(Int(window / 60)) minutos.")
             )
         }
     }

@@ -19,7 +19,7 @@ struct HeaderView: View {
             VStack(alignment: .trailing, spacing: 10) {
                 if let current = monitor.current {
                     let alternate = preferences.source.alternate
-                    Stat(title: alternate.label, value: preferences.format(current.temperature(for: alternate)))
+                    Stat(title: "\(alternate.label)", value: preferences.format(current.temperature(for: alternate)))
                 }
                 Stat(title: "Apps agora", value: monitor.currentPower?.formatted(.watts) ?? "—")
                 Stat(title: "Mín · Máx", value: temperatureRange ?? "—")

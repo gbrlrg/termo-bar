@@ -96,16 +96,16 @@ final class TemperatureSensors {
 
     /// Nome legível de um sensor do IOHID.
     static func label(for name: String) -> String {
-        let number = name.drop { !$0.isNumber }
+        let number = String(name.drop { !$0.isNumber })
         return switch true {
-        case name.hasPrefix("PMU tdie"): "Chip · sensor \(number)"
-        case name.hasPrefix("PMU2 tdie"): "Chip, controlador 2 · sensor \(number)"
-        case name.hasPrefix("PMU tdev"): "Placa · sensor \(number)"
-        case name.hasPrefix("PMU2 tdev"): "Placa, controlador 2 · sensor \(number)"
-        case name.hasPrefix("als"): "Sensor de luz ambiente"
-        case name.contains("tcal"): "Calibração \(name.hasPrefix("PMU2") ? "2" : "1")"
+        case name.hasPrefix("PMU tdie"): String(localized: "Chip · sensor \(number)")
+        case name.hasPrefix("PMU2 tdie"): String(localized: "Chip, controlador 2 · sensor \(number)")
+        case name.hasPrefix("PMU tdev"): String(localized: "Placa · sensor \(number)")
+        case name.hasPrefix("PMU2 tdev"): String(localized: "Placa, controlador 2 · sensor \(number)")
+        case name.hasPrefix("als"): String(localized: "Sensor de luz ambiente")
+        case name.contains("tcal"): String(localized: "Calibração \(name.hasPrefix("PMU2") ? "2" : "1")")
         case name.hasPrefix("NAND"): "SSD"
-        case name.contains("battery"): "Bateria"
+        case name.contains("battery"): String(localized: "Bateria")
         default: name
         }
     }

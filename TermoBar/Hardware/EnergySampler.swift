@@ -27,8 +27,8 @@ final class EnergySampler {
 
     /// Processos cujo responsável não é um app comum, mas pertencem a um.
     private static let aliases: [String: Group] = [
-        "SimulatorTrampoline": Group(id: "com.apple.iphonesimulator", name: "Simulador iOS"),
-        "com.apple.CoreSimulator": Group(id: "com.apple.iphonesimulator", name: "Simulador iOS"),
+        "SimulatorTrampoline": Group(id: "com.apple.iphonesimulator", name: String(localized: "Simulador iOS")),
+        "com.apple.CoreSimulator": Group(id: "com.apple.iphonesimulator", name: String(localized: "Simulador iOS")),
         "com.docker.backend": Group(id: "com.docker.docker", name: "Docker"),
     ]
     private static let systemNames = ["kernel_task": "Kernel"]
@@ -102,7 +102,7 @@ final class EnergySampler {
     private static func processGroup(_ pid: pid_t, fallbackName: String?) -> Group {
         // Processos de outros usuários (WindowServer) não revelam o nome; o registro da GPU sim.
         guard let name = ProcessInfoReader.name(of: pid) ?? fallbackName else {
-            return Group(id: AppID.unknownProcess, name: "Outros processos")
+            return Group(id: AppID.unknownProcess, name: String(localized: "Outros processos"))
         }
         // Mesmo id do app, para somar com ele quando estiver aberto.
         if let alias = aliases[name] ?? aliases.first(where: { name.hasPrefix($0.key) })?.value {

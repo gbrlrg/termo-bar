@@ -34,7 +34,7 @@ Unlike Activity Monitor's "Energy Impact", which is a relative score, TermoBar s
 </p>
 
 > [!NOTE]
-> This is the first public release, and the app's interface is in Brazilian Portuguese. The software is provided as is, without warranty; see the [license](LICENSE). Found a problem? [Open an issue](https://github.com/gbrlrg/termo-bar/issues).
+> This is the first public release. The software is provided as is, without warranty; see the [license](LICENSE). Found a problem? [Open an issue](https://github.com/gbrlrg/termo-bar/issues).
 
 ## Install
 
@@ -56,6 +56,7 @@ To update, download the new version and replace the app in Applications. Your hi
 - **Time ranges** of 15 min, 1 h, 24 h and 7 days.
 - **Alerts** for high temperature, throttling and apps using too much power.
 - **CSV export** with CPU and GPU per app, reading by reading.
+- **English and Portuguese**, following your Mac's language.
 
 Hovering over the charts shows the values at that moment; hovering over an app highlights its color in the energy chart, and clicking it opens its processes.
 
@@ -130,6 +131,8 @@ Measured on a MacBook with an Apple M5 running macOS 27:
   &nbsp;
   <img src="docs/ajustes-barra.png" width="420" alt="Settings: menu bar">
 </p>
+
+Tab names below are the English ones; the Portuguese names are in parentheses.
 
 | Tab | Options |
 |---|---|

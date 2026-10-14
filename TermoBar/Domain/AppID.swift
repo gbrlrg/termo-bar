@@ -4,7 +4,7 @@
 /// usam `proc:<nome>`, e o grupo agregado do gráfico de energia usa `others`.
 enum AppID {
     static let others = "outros"
-    static let othersName = "Outros"
+    static let othersName = String(localized: "Outros")
     static let processPrefix = "proc:"
     static let unknownProcess = processPrefix + "?"
 

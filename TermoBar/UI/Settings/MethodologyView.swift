@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Como cada número é medido, dentro do app.
 struct MethodologyView: View {
-    private static let topics: [(title: String, symbol: String, text: String)] = [
+    private static let topics: [(title: LocalizedStringResource, symbol: String, text: LocalizedStringResource)] = [
         (
             "Temperatura", "thermometer.medium",
             "Lida direto dos sensores do die do chip, a cada segundo, sem privilégio de administrador. Cada registro é a média das leituras do intervalo, o que tira o ruído sem esconder picos: o ponto mais quente é guardado à parte."
@@ -31,7 +31,7 @@ struct MethodologyView: View {
 
     var body: some View {
         Form {
-            ForEach(Self.topics, id: \.title) { topic in
+            ForEach(Self.topics, id: \.symbol) { topic in
                 Section {
                     VStack(alignment: .leading, spacing: 6) {
                         HStack(spacing: 8) {

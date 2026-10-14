@@ -56,6 +56,7 @@ Para atualizar, baixe a versão nova e substitua o app em Aplicativos. O histór
 - **Períodos** de 15 min, 1 h, 24 h e 7 dias.
 - **Alertas** de temperatura alta, limitação de desempenho e app gastando demais.
 - **Exportação CSV** com CPU e GPU por app, leitura a leitura.
+- **Em português e inglês**, conforme o idioma do Mac.
 
 Passar o mouse sobre os gráficos mostra os valores do instante; passar o mouse num app destaca a cor dele no gráfico de energia, e clicar nele também abre os processos.
 

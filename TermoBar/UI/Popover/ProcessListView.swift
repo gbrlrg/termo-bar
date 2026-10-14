@@ -80,11 +80,11 @@ private struct ProcessRowView: View {
         .help(help)
     }
 
-    /// "dev · Mindminer · há 2 h 48 min".
+    /// "dev · meu-site · há 2 h 48 min".
     private var detail: String? {
         var parts = [process.description.subtitle].compactMap(\.self)
         if let start = process.details?.startDate {
-            parts.append("há " + Self.elapsed(since: start))
+            parts.append(String(localized: "há \(Self.elapsed(since: start))"))
         }
         return parts.isEmpty ? nil : parts.joined(separator: " · ")
     }
@@ -92,7 +92,7 @@ private struct ProcessRowView: View {
     private var help: String {
         let power = "CPU \(process.power.cpu.formatted(.watts)) · GPU \(process.power.gpu.formatted(.watts))"
         guard let details = process.details else {
-            return "\(process.pids.count) processos · \(power)"
+            return String(localized: "\(process.pids.count) processos · \(power)")
         }
         return ["PID \(details.pid) · \(power)", details.commandLine].compactMap(\.self).joined(separator: "\n")
     }

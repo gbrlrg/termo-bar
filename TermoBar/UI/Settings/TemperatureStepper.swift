@@ -3,7 +3,7 @@ import SwiftUI
 /// Stepper que edita um limite guardado em °C, avançando de grau em grau na unidade escolhida.
 struct TemperatureStepper: View {
     @Environment(Preferences.self) private var preferences
-    let title: String
+    let title: LocalizedStringKey
     @Binding var celsius: Double
 
     var body: some View {

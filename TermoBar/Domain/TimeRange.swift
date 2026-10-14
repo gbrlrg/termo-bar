@@ -16,7 +16,7 @@ enum TimeRange: Int, CaseIterable, Identifiable, Sendable {
         case .quarter: "15 min"
         case .hour: "1 h"
         case .day: "24 h"
-        case .week: "7 dias"
+        case .week: String(localized: "7 dias")
         }
     }
 

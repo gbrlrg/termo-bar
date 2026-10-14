@@ -14,7 +14,7 @@ struct Card<Content: View>: View {
 
 /// Título de um card com um detalhe numérico à direita.
 struct CardTitle: View {
-    let title: String
+    let title: LocalizedStringKey
     let detail: String
 
     var body: some View {
@@ -33,7 +33,7 @@ struct CardTitle: View {
 
 /// Valor com legenda, alinhado à direita.
 struct Stat: View {
-    let title: String
+    let title: LocalizedStringKey
     let value: String
 
     var body: some View {

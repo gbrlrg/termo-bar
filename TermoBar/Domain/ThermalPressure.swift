@@ -7,11 +7,11 @@ enum ThermalPressure: Int, CaseIterable, Comparable, Sendable {
 
     var label: String {
         switch self {
-        case .nominal: "Normal"
-        case .moderate: "Moderada"
-        case .heavy: "Limitando desempenho"
-        case .critical: "Crítica"
-        case .sleeping: "Suspensão térmica"
+        case .nominal: String(localized: "Normal")
+        case .moderate: String(localized: "Moderada")
+        case .heavy: String(localized: "Limitando desempenho")
+        case .critical: String(localized: "Crítica")
+        case .sleeping: String(localized: "Suspensão térmica")
         }
     }
 

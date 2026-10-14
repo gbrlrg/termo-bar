@@ -12,21 +12,22 @@ struct AppListCard: View {
     var body: some View {
         Card {
             VStack(alignment: .leading, spacing: 6) {
-                CardTitle(title: "Apps que mais aquecem", detail: "energia no período")
+                CardTitle(title: "Apps que mais aquecem", detail: String(localized: "energia no período"))
                 VStack(spacing: 2) {
                     ForEach(isExpanded ? summary.rows : Array(summary.rows.prefix(collapsedCount))) { row in
                         AppRowView(
                             summary: summary, row: row, isHighlighted: (pinnedApp ?? hoveredApp) == row.id,
-                            isExpanded: pinnedApp == row.id)
-                            .onHover { inside in
-                                if inside {
-                                    hoveredApp = row.id
-                                } else if hoveredApp == row.id {
-                                    hoveredApp = nil
-                                }
+                            isExpanded: pinnedApp == row.id
+                        )
+                        .onHover { inside in
+                            if inside {
+                                hoveredApp = row.id
+                            } else if hoveredApp == row.id {
+                                hoveredApp = nil
                             }
-                            // Sem animar a altura: a janela da barra de menus pisca ao redimensionar animada.
-                            .onTapGesture { pinnedApp = pinnedApp == row.id ? nil : row.id }
+                        }
+                        // Sem animar a altura: a janela da barra de menus pisca ao redimensionar animada.
+                        .onTapGesture { pinnedApp = pinnedApp == row.id ? nil : row.id }
                         if pinnedApp == row.id {
                             ProcessListView(appID: row.id)
                         }
@@ -50,7 +51,10 @@ struct AppListCard: View {
             withAnimation(.smooth) { isExpanded.toggle() }
         } label: {
             HStack(spacing: 4) {
-                Text(isExpanded ? "Mostrar menos" : "Mostrar todos os \(summary.rows.count) apps")
+                Text(
+                    isExpanded
+                        ? String(localized: "Mostrar menos")
+                        : String(localized: "Mostrar todos os \(summary.rows.count) apps"))
                 Image(systemName: "chevron.down")
                     .rotationEffect(.degrees(isExpanded ? 180 : 0))
             }

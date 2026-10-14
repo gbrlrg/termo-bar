@@ -10,7 +10,7 @@ struct ProcessFacts: Hashable, Sendable {
     let workingDirectory: String?
 }
 
-/// Nome legível de um processo e o que ele está fazendo: "wrangler" · "dev · Mindminer".
+/// Nome legível de um processo e o que ele está fazendo: "wrangler" · "dev · meu-site".
 struct ProcessDescription: Hashable, Sendable {
     let title: String
     let subtitle: String?
@@ -21,11 +21,11 @@ struct ProcessDescription: Hashable, Sendable {
     ]
     /// Executáveis com nome pouco claro.
     private static let friendlyNames = [
-        "swiftpm-testing-helper": "Testes Swift",
+        "swiftpm-testing-helper": String(localized: "Testes Swift"),
         "swift-test": "swift test",
-        "swift-frontend": "Compilador Swift",
-        "com.apple.Virtualization.VirtualMachine": "Máquina virtual",
-        "com.docker.virtualization": "Máquina virtual do Docker",
+        "swift-frontend": String(localized: "Compilador Swift"),
+        "com.apple.Virtualization.VirtualMachine": String(localized: "Máquina virtual"),
+        "com.docker.virtualization": String(localized: "Máquina virtual do Docker"),
     ]
     private static let simulatorDevicesMarker = "/CoreSimulator/Devices/"
 
@@ -42,7 +42,8 @@ struct ProcessDescription: Hashable, Sendable {
         if let udid = Self.simulatorUDID(in: path) {
             let app = path.split(separator: "/").last { $0.hasSuffix(".app") }.map { String($0.dropLast(4)) }
             title = app ?? executable
-            subtitle = ["Simulador", simulatorDevice(udid)].compactMap(\.self).joined(separator: " · ")
+            subtitle = [String(localized: "Simulador"), simulatorDevice(udid)].compactMap(\.self).joined(
+                separator: " · ")
             return
         }
 
@@ -78,7 +79,8 @@ struct ProcessDescription: Hashable, Sendable {
     /// ("~/.local/share/claude/versions/2.1.296" → "claude").
     private static func executableName(_ path: String) -> String? {
         let components = path.split(separator: "/").map(String.init)
-        let isVersion = { (name: String) in name.first?.isNumber == true && name.allSatisfy { $0.isNumber || $0 == "." } }
+        let isVersion = { (name: String) in name.first?.isNumber == true && name.allSatisfy { $0.isNumber || $0 == "." }
+        }
         guard let last = components.last else { return nil }
         guard isVersion(last) else { return last }
         return components.dropLast().reversed().first { !isVersion($0) && !["versions", "bin"].contains($0) } ?? last

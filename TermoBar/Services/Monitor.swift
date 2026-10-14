@@ -10,7 +10,7 @@ final class Monitor {
     enum HistoryError: LocalizedError {
         case unavailable
 
-        var errorDescription: String? { "O histórico não está disponível." }
+        var errorDescription: String? { String(localized: "O histórico não está disponível.") }
     }
 
     /// Leituras finas mantidas em memória.

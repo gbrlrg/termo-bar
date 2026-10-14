@@ -27,7 +27,7 @@ enum TemperatureSource: String, CaseIterable, Identifiable, Sendable {
 
     var id: Self { self }
 
-    var label: String { self == .average ? "Média do chip" : "Ponto mais quente" }
+    var label: String { self == .average ? String(localized: "Média do chip") : String(localized: "Ponto mais quente") }
 
     /// A outra fonte, mostrada como informação secundária.
     var alternate: TemperatureSource { self == .average ? .hottest : .average }
@@ -40,10 +40,10 @@ enum MenuBarStyle: String, CaseIterable, Identifiable, Sendable {
 
     var label: String {
         switch self {
-        case .temperature: "Temperatura"
-        case .temperatureAndPower: "Temperatura e watts"
-        case .iconAndTemperature: "Ícone e temperatura"
-        case .icon: "Só ícone"
+        case .temperature: String(localized: "Temperatura")
+        case .temperatureAndPower: String(localized: "Temperatura e watts")
+        case .iconAndTemperature: String(localized: "Ícone e temperatura")
+        case .icon: String(localized: "Só ícone")
         }
     }
 

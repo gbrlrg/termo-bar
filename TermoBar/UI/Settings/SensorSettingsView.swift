@@ -33,13 +33,16 @@ private struct SensorRow: View {
         HStack {
             Image(systemName: sensor.isIncluded ? "checkmark.circle.fill" : "minus.circle")
                 .foregroundStyle(sensor.isIncluded ? Theme.good : Color.secondary)
-                .help(sensor.isIncluded ? "Entra na média do chip" : "Fora da média")
+                .help(
+                    sensor.isIncluded
+                        ? String(localized: "Entra na média do chip") : String(localized: "Fora da média")
+                )
             VStack(alignment: .leading, spacing: 1) {
                 Text(sensor.label)
                 Text(sensor.id).font(.caption).foregroundStyle(.tertiary)
             }
             Spacer()
-            Text(value ?? "sem leitura")
+            Text(value ?? String(localized: "sem leitura"))
                 .monospacedDigit()
                 .foregroundStyle(value == nil ? .tertiary : .primary)
         }

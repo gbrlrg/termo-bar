@@ -13,13 +13,13 @@ enum SettingsTab: String, CaseIterable {
 extension SettingsTab {
     var title: String {
         switch self {
-        case .general: "Geral"
-        case .menuBar: "Barra de menus"
-        case .alerts: "Alertas"
-        case .sensors: "Sensores"
-        case .data: "Dados"
-        case .methodology: "Precisão"
-        case .about: "Sobre"
+        case .general: String(localized: "Geral")
+        case .menuBar: String(localized: "Barra de menus")
+        case .alerts: String(localized: "Alertas")
+        case .sensors: String(localized: "Sensores")
+        case .data: String(localized: "Dados")
+        case .methodology: String(localized: "Precisão")
+        case .about: String(localized: "Sobre")
         }
     }
 
@@ -70,14 +70,19 @@ struct SettingsView: View {
 
 /// Texto de apoio abaixo de um controle.
 struct SettingsFootnote: View {
-    let text: String
+    let text: Text
 
-    init(_ text: String) {
-        self.text = text
+    init(_ key: LocalizedStringKey) {
+        text = Text(key)
+    }
+
+    /// Texto já pronto, como uma mensagem montada em tempo de execução.
+    init(verbatim string: String) {
+        text = Text(string)
     }
 
     var body: some View {
-        Text(text)
+        text
             .font(.caption)
             .foregroundStyle(.secondary)
     }

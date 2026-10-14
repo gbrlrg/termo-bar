@@ -23,7 +23,7 @@ struct EnergyChart: View {
 
     private var detail: String {
         guard let hoverDate else {
-            return summary.averagePower.map { "média \($0.formatted(.watts))" } ?? ""
+            return summary.averagePower.map { String(localized: "média \($0.formatted(.watts))") } ?? ""
         }
         let bin = summary.bin(for: hoverDate)
         let total = (summary.binTotals[bin] ?? 0).formatted(.watts)
@@ -31,7 +31,7 @@ struct EnergyChart: View {
             .filter { $0.start == bin && $0.app != AppID.others }
             .max { $0.watts < $1.watts }
         guard let top else { return total }
-        return "\(monitor.name(top.app)) \(top.watts.formatted(.watts)) de \(total)"
+        return String(localized: "\(monitor.name(top.app)) \(top.watts.formatted(.watts)) de \(total)")
     }
 
     private var chart: some View {

@@ -29,8 +29,11 @@ struct AboutView: View {
                     Button("Versões no GitHub") { NSWorkspace.shared.open(releases) }
                         .help("Novidades e downloads de cada versão")
                 }
-                Button(didCopy ? "Copiado" : "Copiar informações do sistema", action: copySystemInfo)
-                    .help("Versão do app, do macOS e o chip, para pedidos de suporte")
+                Button(
+                    didCopy ? String(localized: "Copiado") : String(localized: "Copiar informações do sistema"),
+                    action: copySystemInfo
+                )
+                .help("Versão do app, do macOS e o chip, para pedidos de suporte")
             }
 
             Divider().padding(.vertical, 4)

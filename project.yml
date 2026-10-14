@@ -1,6 +1,9 @@
 name: TermoBar
 options:
   bundleIdPrefix: br.com.gbrlrg
+  # Inglês é o idioma padrão; as chaves dos textos no código continuam em português
+  # e o Localizable.xcstrings traz as duas traduções (veja docs/DEVELOPMENT.md).
+  developmentLanguage: en
   deploymentTarget:
     macOS: "15.0"
 settings:
@@ -15,6 +18,8 @@ targets:
       path: TermoBar/Info.plist
       properties:
         CFBundleDisplayName: TermoBar
+        # Quem usa outro idioma que não português nem inglês vê o app em inglês.
+        CFBundleDevelopmentRegion: en
         CFBundleShortVersionString: "1.0.0"
         CFBundleVersion: "1"
         NSHumanReadableCopyright: "© 2026 Gabriel Rigon"
@@ -35,6 +40,8 @@ targets:
         # O app não pode usar App Sandbox: lê processos de outros apps e APIs privadas do IOKit.
         ENABLE_HARDENED_RUNTIME: YES
         GENERATE_INFOPLIST_FILE: NO
+        LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+        SWIFT_EMIT_LOC_STRINGS: YES
     scheme:
       testTargets: [TermoBarTests]
 

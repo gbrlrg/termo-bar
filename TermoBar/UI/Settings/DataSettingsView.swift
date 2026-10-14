@@ -31,7 +31,7 @@ struct DataSettingsView: View {
             } header: {
                 Text("Exportar CSV")
             } footer: {
-                if let exportMessage { SettingsFootnote(exportMessage) }
+                if let exportMessage { SettingsFootnote(verbatim: exportMessage) }
             }
             Section("Histórico neste Mac") {
                 LabeledContent("Arquivo do histórico") {
@@ -63,9 +63,9 @@ struct DataSettingsView: View {
         guard panel.runModal() == .OK, let url = panel.url else { return }
         do {
             try monitor.exportCSV(resolution: resolution, to: url)
-            exportMessage = "Exportado para \(url.lastPathComponent)."
+            exportMessage = String(localized: "Exportado para \(url.lastPathComponent).")
         } catch {
-            exportMessage = "Não foi possível exportar: \(error.localizedDescription)"
+            exportMessage = String(localized: "Não foi possível exportar: \(error.localizedDescription)")
         }
     }
 }

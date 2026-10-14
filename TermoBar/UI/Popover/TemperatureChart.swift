@@ -28,7 +28,7 @@ struct TemperatureChart: View {
             return "\(date)  \(preferences.format(temperature(hovered), decimals: 1))"
         }
         guard let average = summary.samples.averageTemperature(for: preferences.source) else { return "" }
-        return "média \(preferences.format(average, decimals: 1))"
+        return String(localized: "média \(preferences.format(average, decimals: 1))")
     }
 
     private var chart: some View {
