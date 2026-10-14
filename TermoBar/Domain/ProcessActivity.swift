@@ -27,7 +27,8 @@ struct ProcessActivity: Sendable {
     mutating func record(_ entries: [Entry], at date: Date, duration: TimeInterval) {
         guard duration > 0 else { return }
         measurements.append(
-            Measurement(date: date, duration: duration, entries: entries.filter { $0.power.total >= Self.minimumPower }))
+            Measurement(
+                date: date, duration: duration, entries: entries.filter { $0.power.total >= Self.minimumPower }))
         measurements.removeAll { $0.date <= date.addingTimeInterval(-Self.window) }
     }
 

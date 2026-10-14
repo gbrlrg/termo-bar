@@ -53,7 +53,8 @@ struct ProcessDescriptionTests {
     }
 
     @Test func versionedExecutableIsNamedAfterItsFolder() {
-        let description = describe(["/Users/ana/.local/share/claude/versions/2.1.296"], directory: "/Users/ana/Tablewit")
+        let description = describe(
+            ["/Users/ana/.local/share/claude/versions/2.1.296"], directory: "/Users/ana/Tablewit")
         #expect(description.title == "claude")
         #expect(description.subtitle == "Tablewit")
     }
