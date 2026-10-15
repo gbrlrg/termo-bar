@@ -721,6 +721,22 @@
         }
       }
     },
+    "Chip": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chip"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chip"
+          }
+        }
+      }
+    },
     "Chip · sensor %@": {
       "localizations": {
         "en": {
@@ -1217,22 +1233,6 @@
         }
       }
     },
-    "Leituras ao vivo": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Live Readings"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Leituras ao vivo"
-          }
-        }
-      }
-    },
     "Lida direto dos sensores do die do chip, a cada segundo, sem privilégio de administrador. Cada registro é a média das leituras do intervalo, o que tira o ruído sem esconder picos: o ponto mais quente é guardado à parte.": {
       "localizations": {
         "en": {
@@ -1477,22 +1477,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mostrar só o ícone enquanto estiver frio"
-          }
-        }
-      }
-    },
-    "Mostrar também sensores fora do chip": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Also show sensors outside the chip"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mostrar também sensores fora do chip"
           }
         }
       }
@@ -1889,6 +1873,22 @@
         }
       }
     },
+    "Outros sensores": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other Sensors"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outros sensores"
+          }
+        }
+      }
+    },
     "Parado": {
       "localizations": {
         "en": {
@@ -1933,6 +1933,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Placa · sensor %@"
+          }
+        }
+      }
+    },
+    "Placa, bateria e luz ambiente. Ficam fora da média do chip.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Board, battery and ambient light. They don't count toward the chip average."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Placa, bateria e luz ambiente. Ficam fora da média do chip."
           }
         }
       }
@@ -2081,7 +2097,7 @@
         }
       }
     },
-    "Rotação lida do controlador do sistema (SMC). Parada abaixo de %lld rpm.": {
+    "Rotação lida do controlador do sistema (SMC). Parado abaixo de %lld rpm.": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2092,7 +2108,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rotação lida do controlador do sistema (SMC). Parada abaixo de %lld rpm."
+            "value": "Rotação lida do controlador do sistema (SMC). Parado abaixo de %lld rpm."
           }
         }
       }

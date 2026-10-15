@@ -40,9 +40,6 @@ final class Monitor {
     /// Última leitura de cada sensor e de cada ventoinha, atualizadas só com a aba Sensores aberta.
     private(set) var sensors: [TemperatureSensors.Sensor] = []
     private(set) var fans: [Fan] = []
-    var showAllSensors = false {
-        didSet { refreshLiveReadings() }
-    }
     /// A aba Sensores está na tela: só então vale ler os sensores fora do chip e publicar as leituras.
     @ObservationIgnored var isShowingSensors = false {
         didSet { refreshLiveReadings() }
@@ -163,7 +160,7 @@ final class Monitor {
     }
 
     private func tick() {
-        if let reading = temperatureSensors.read(includeOthers: isShowingSensors && showAllSensors) {
+        if let reading = temperatureSensors.read(includeOthers: isShowingSensors) {
             pendingReadings.append(reading)
             if isShowingSensors { sensors = reading.sensors }
         }
@@ -229,7 +226,7 @@ final class Monitor {
     /// Atualiza na hora as leituras da aba Sensores, sem esperar o próximo tique.
     private func refreshLiveReadings() {
         guard isShowingSensors else { return }
-        sensors = temperatureSensors.read(includeOthers: showAllSensors)?.sensors ?? []
+        sensors = temperatureSensors.read(includeOthers: true)?.sensors ?? []
         fans = fanReader.read()
     }
 

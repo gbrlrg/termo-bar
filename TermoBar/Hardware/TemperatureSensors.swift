@@ -6,6 +6,8 @@ final class TemperatureSensors {
         let id: String
         let label: String
         let value: Double?
+        /// Sensor da pastilha do SoC, candidato à média do chip; os outros são da placa, bateria etc.
+        let isOnDie: Bool
         /// Entrou na média? Fica de fora quando a leitura é implausível ou destoa das demais.
         let isIncluded: Bool
     }
@@ -53,11 +55,15 @@ final class TemperatureSensors {
             let isIncluded = value.map { abs($0 - median) <= Self.maxDeviation } ?? false
             if isIncluded, let value { accepted.append(value) }
             sensors.append(
-                Sensor(id: service.name, label: Self.label(for: service.name), value: value, isIncluded: isIncluded))
+                Sensor(
+                    id: service.name, label: Self.label(for: service.name), value: value, isOnDie: true,
+                    isIncluded: isIncluded))
         }
         if includeOthers {
             sensors += otherSensors.map {
-                Sensor(id: $0.name, label: Self.label(for: $0.name), value: value(of: $0.client), isIncluded: false)
+                Sensor(
+                    id: $0.name, label: Self.label(for: $0.name), value: value(of: $0.client), isOnDie: false,
+                    isIncluded: false)
             }
         }
 

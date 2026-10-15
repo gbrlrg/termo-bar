@@ -5,15 +5,9 @@ struct SensorSettingsView: View {
     @Environment(Preferences.self) private var preferences
 
     var body: some View {
-        @Bindable var monitor = monitor
+        let onDie = monitor.sensors.filter(\.isOnDie)
+        let others = monitor.sensors.filter { !$0.isOnDie }
         Form {
-            Section {
-                Toggle("Mostrar também sensores fora do chip", isOn: $monitor.showAllSensors)
-            } footer: {
-                SettingsFootnote(
-                    "A temperatura do chip é a média dos sensores do die do SoC. Leituras fora de 10–130 °C ou que destoam mais de 25 °C da mediana são descartadas."
-                )
-            }
             if !monitor.fans.isEmpty {
                 Section {
                     ForEach(monitor.fans) { fan in
@@ -23,13 +17,30 @@ struct SensorSettingsView: View {
                     Text("Ventiladores")
                 } footer: {
                     SettingsFootnote(
-                        "Rotação lida do controlador do sistema (SMC). Parada abaixo de \(Int(Fan.spinningThreshold)) rpm."
+                        "Rotação lida do controlador do sistema (SMC). Parado abaixo de \(Int(Fan.spinningThreshold)) rpm."
                     )
                 }
             }
-            Section("Leituras ao vivo") {
-                ForEach(monitor.sensors) { sensor in
+            Section {
+                ForEach(onDie) { sensor in
                     SensorRow(sensor: sensor, value: sensor.value.map { preferences.format($0, decimals: 1) })
+                }
+            } header: {
+                Text("Chip")
+            } footer: {
+                SettingsFootnote(
+                    "A temperatura do chip é a média dos sensores do die do SoC. Leituras fora de 10–130 °C ou que destoam mais de 25 °C da mediana são descartadas."
+                )
+            }
+            if !others.isEmpty {
+                Section {
+                    ForEach(others) { sensor in
+                        SensorRow(sensor: sensor, value: sensor.value.map { preferences.format($0, decimals: 1) })
+                    }
+                } header: {
+                    Text("Outros sensores")
+                } footer: {
+                    SettingsFootnote("Placa, bateria e luz ambiente. Ficam fora da média do chip.")
                 }
             }
         }

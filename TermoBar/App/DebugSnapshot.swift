@@ -47,7 +47,6 @@
             let content: NSView
             if let settingsTab {
                 // Só o conteúdo da aba: fora da cena Settings, a barra de abas não teria onde aparecer.
-                if settingsTab == .sensors { AppDependencies.monitor.showAllSensors = true }
                 content = NSHostingView(
                     rootView: settingsTab.content
                         .frame(width: SettingsView.width)
