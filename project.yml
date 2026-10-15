@@ -15,8 +15,8 @@ settings:
   base:
     SWIFT_VERSION: "6.0"
     # Versão do app e do widget, que precisam ser iguais.
-    MARKETING_VERSION: "1.2.0"
-    CURRENT_PROJECT_VERSION: "3"
+    MARKETING_VERSION: "1.3.0"
+    CURRENT_PROJECT_VERSION: "4"
 targets:
   TermoBar:
     type: application
