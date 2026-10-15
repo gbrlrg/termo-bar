@@ -38,10 +38,57 @@ struct ProcessListView: View {
                     .padding(.vertical, 3)
                 }
             }
+            if let app = runningApp {
+                QuitAppButton(app: app, name: monitor.name(appID))
+            }
         }
         .padding(.leading, 34)
         .padding(.top, 2)
         .padding(.bottom, 6)
+    }
+
+    /// O app aberto, se for um app de verdade (não um grupo de processos) e não o próprio TermoBar.
+    private var runningApp: NSRunningApplication? {
+        guard !AppID.isProcess(appID), appID != AppID.others, appID != Bundle.main.bundleIdentifier else {
+            return nil
+        }
+        return NSRunningApplication.runningApplications(withBundleIdentifier: appID).first
+    }
+}
+
+/// Encerra o app como o Dock faz, depois de confirmar: ele ainda pode pedir para salvar documentos.
+private struct QuitAppButton: View {
+    let app: NSRunningApplication
+    let name: String
+
+    @State private var isConfirming = false
+
+    var body: some View {
+        HStack(spacing: 10) {
+            if isConfirming {
+                Text("Encerrar \(name)?")
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Button("Cancelar") { isConfirming = false }
+                Button("Encerrar") {
+                    app.terminate()
+                    isConfirming = false
+                }
+                .foregroundStyle(Theme.critical)
+            } else {
+                Button {
+                    isConfirming = true
+                } label: {
+                    Label("Encerrar \(name)…", systemImage: "xmark.circle")
+                }
+                .foregroundStyle(.secondary)
+                Spacer()
+            }
+        }
+        .font(.caption.weight(.medium))
+        .buttonStyle(.plain)
+        .padding(.horizontal, 6)
+        .padding(.top, 4)
     }
 }
 
