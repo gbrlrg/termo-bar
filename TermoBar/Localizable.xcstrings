@@ -673,6 +673,22 @@
         }
       }
     },
+    "Bateria · carregando": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Battery · charging"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bateria · carregando"
+          }
+        }
+      }
+    },
     "CPU %@ · GPU %@ em média. Clique para destacar no gráfico e ver os processos.": {
       "localizations": {
         "en": {

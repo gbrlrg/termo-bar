@@ -33,6 +33,11 @@ struct HeaderView: View {
                 }
                 Stat(title: "Apps agora", value: monitor.currentPower?.formatted(.watts) ?? "—")
                 Stat(title: "Mín · Máx", value: temperatureRange ?? "—")
+                if let battery = monitor.batteryTemperature {
+                    Stat(
+                        title: monitor.isCharging ? "Bateria · carregando" : "Bateria",
+                        value: preferences.format(battery, decimals: 0))
+                }
             }
             .padding(.top, 2)
         }

@@ -37,6 +37,9 @@ final class Monitor {
     /// Cor de cada app que mais gastou na última hora; estável enquanto continuar no topo.
     private(set) var palette = PaletteSlots(capacity: Monitor.highlightedApps)
     private(set) var pressure = ThermalPressure.nominal
+    /// Temperatura da bateria, arredondada a 0,1 °C para não redesenhar o popover à toa; `nil` sem bateria.
+    private(set) var batteryTemperature: Double?
+    private(set) var isCharging = false
     /// Modo Pouca Energia ligado: o macOS segura o chip e o calor cai.
     private(set) var isLowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
     /// Última leitura de cada sensor e de cada ventoinha, atualizadas só com a aba Sensores aberta.
@@ -174,6 +177,10 @@ final class Monitor {
         // O Observation avisa as telas a cada atribuição, mesmo de um valor igual.
         let pressure = pressureReader.read()
         if pressure != self.pressure { self.pressure = pressure }
+        let battery = temperatureSensors.readBattery().map { ($0 * 10).rounded() / 10 }
+        if battery != batteryTemperature { batteryTemperature = battery }
+        let isCharging = battery != nil && PowerSource.isCharging()
+        if isCharging != self.isCharging { self.isCharging = isCharging }
         let isLowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
         if isLowPowerMode != self.isLowPowerMode { self.isLowPowerMode = isLowPowerMode }
 

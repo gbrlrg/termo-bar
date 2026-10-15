@@ -36,6 +36,7 @@ final class TemperatureSensors {
     private let client = IOHIDEventSystemClientCreate(kCFAllocatorDefault)
     private var dieSensors: [Service] = []
     private var otherSensors: [Service] = []
+    private var batterySensors: [Service] = []
 
     init() {
         loadSensors()
@@ -92,6 +93,12 @@ final class TemperatureSensors {
         dieSensors = die.isEmpty ? fallback : die
         let dieNames = Set(dieSensors.map(\.name))
         otherSensors = services.filter { !dieNames.contains($0.name) }
+        batterySensors = otherSensors.filter { $0.name.contains("battery") }
+    }
+
+    /// Temperatura da bateria (a maior entre as células); `nil` em Macs sem bateria.
+    func readBattery() -> Double? {
+        batterySensors.compactMap { value(of: $0.client) }.max()
     }
 
     private func value(of service: IOHIDServiceClient) -> Double? {
