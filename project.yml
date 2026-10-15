@@ -9,6 +9,9 @@ options:
 settings:
   base:
     SWIFT_VERSION: "6.0"
+    # Versão do app e do widget, que precisam ser iguais.
+    MARKETING_VERSION: "1.2.0"
+    CURRENT_PROJECT_VERSION: "3"
 targets:
   TermoBar:
     type: application
@@ -20,14 +23,20 @@ targets:
         CFBundleDisplayName: TermoBar
         # Quem usa outro idioma que não português nem inglês vê o app em inglês.
         CFBundleDevelopmentRegion: en
-        CFBundleShortVersionString: "1.2.0"
-        CFBundleVersion: "3"
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSHumanReadableCopyright: "© 2026 Gabriel Rigon"
         LSUIElement: true
         LSApplicationCategoryType: public.app-category.utilities
+    # O App Group é a pasta compartilhada com o widget; o app em si continua fora do sandbox.
+    entitlements:
+      path: TermoBar/TermoBar.entitlements
+      properties:
+        com.apple.security.application-groups: [F22LFNZSAZ.br.com.gbrlrg.termobar]
     dependencies:
       - sdk: libIOReport.tbd
       - sdk: libsqlite3.tbd
+      - target: TermoBarWidget
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: br.com.gbrlrg.termobar
@@ -44,6 +53,41 @@ targets:
         SWIFT_EMIT_LOC_STRINGS: YES
     scheme:
       testTargets: [TermoBarTests]
+
+  # Widget da mesa e da Central de Notificações. Roda em sandbox e só lê o resumo que o app grava
+  # no App Group (TermoBar/Shared/WidgetSnapshot.swift).
+  TermoBarWidget:
+    type: app-extension
+    platform: macOS
+    sources:
+      - TermoBarWidget
+      - TermoBar/Shared
+      - TermoBar/UI/Theme.swift
+      - TermoBar/Domain/ThermalPressure.swift
+    info:
+      path: TermoBarWidget/Info.plist
+      properties:
+        CFBundleDisplayName: TermoBar
+        CFBundleDevelopmentRegion: en
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSHumanReadableCopyright: "© 2026 Gabriel Rigon"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: TermoBarWidget/TermoBarWidget.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.application-groups: [F22LFNZSAZ.br.com.gbrlrg.termobar]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: br.com.gbrlrg.termobar.widget
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGN_STYLE: Manual
+        ENABLE_HARDENED_RUNTIME: YES
+        GENERATE_INFOPLIST_FILE: NO
+        LOCALIZATION_PREFERS_STRING_CATALOGS: YES
+        SWIFT_EMIT_LOC_STRINGS: YES
 
   # Testes da lógica pura (Domain, Persistence e Preferences), compilada junto com os testes:
   # não abre o app nem depende de sensores.

@@ -1,6 +1,9 @@
 # Gerados pelo XcodeGen (fonte: project.yml)
 TermoBar.xcodeproj/
 TermoBar/Info.plist
+TermoBar/TermoBar.entitlements
+TermoBarWidget/Info.plist
+TermoBarWidget/TermoBarWidget.entitlements
 
 # Build
 build/

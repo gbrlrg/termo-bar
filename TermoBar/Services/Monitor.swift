@@ -19,6 +19,8 @@ final class Monitor {
     static let minuteWindow: TimeInterval = 7 * 86400
     /// Quantos apps ganham cor própria no gráfico de energia.
     static let highlightedApps = 5
+    /// Apps listados no widget médio.
+    private static let widgetApps = 3
 
     private static let readInterval: TimeInterval = 1
     /// Tolerância para fechar o registro no tique mais próximo do intervalo escolhido.
@@ -61,6 +63,7 @@ final class Monitor {
     private let energySampler = EnergySampler()
     private let pressureReader = ThermalPressureReader()
     private let fanReader = FanReader()
+    private let widget = WidgetPublisher()
 
     @ObservationIgnored private var timer: Timer?
     @ObservationIgnored private var pendingReadings: [TemperatureSensors.Reading] = []
@@ -227,11 +230,29 @@ final class Monitor {
         summarizeMinute(at: now)
         prune(now: now)
         updatePalette()
+        publishWidget(at: now)
         saveNewNames()
         alerts.evaluate(recent) { self.name($0) }
         #if DEBUG
             logIfRequested(sample)
         #endif
+    }
+
+    /// Temperatura e os apps que mais gastaram nos últimos 15 minutos, para o widget.
+    private func publishWidget(at now: Date) {
+        guard let celsius = currentTemperature else { return }
+        let apps = summary(range: .quarter).rows
+            .filter { $0.id != AppID.others && $0.energy.total > 0 }
+            .prefix(Self.widgetApps)
+            .map {
+                WidgetSnapshot.App(
+                    id: $0.id, name: $0.name, watts: $0.average.total.formatted(.watts), share: $0.share,
+                    colorSlot: palette[$0.id])
+            }
+        widget.publish(
+            WidgetSnapshot(
+                date: now, celsius: celsius, temperature: preferences.format(celsius, decimals: 0),
+                pressure: pressure, apps: Array(apps)))
     }
 
     /// Atualiza na hora as leituras da aba Sensores, sem esperar o próximo tique.

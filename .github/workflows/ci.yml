@@ -19,7 +19,7 @@ jobs:
     container: swift:6.0
     steps:
       - uses: actions/checkout@v4
-      - run: swift format lint --strict --recursive TermoBar TermoBarTests
+      - run: swift format lint --strict --recursive TermoBar TermoBarTests TermoBarWidget
 
   build-and-test:
     name: Build e testes (macOS)

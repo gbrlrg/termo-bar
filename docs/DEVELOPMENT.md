@@ -22,7 +22,7 @@ O ícone (`TermoBar/AppIcon.icon`) é um documento do Icon Composer e só é com
 
 ```sh
 xcodebuild test -project TermoBar.xcodeproj -scheme TermoBar -destination 'platform=macOS,arch=arm64'
-swift format lint --strict --recursive TermoBar TermoBarTests
+swift format lint --strict --recursive TermoBar TermoBarTests TermoBarWidget
 ```
 
 Os testes (Swift Testing) cobrem a lógica pura — agregação, ranking, alertas, histórico SQLite, CSV e preferências — e não dependem de sensores. O CI (`.github/workflows/ci.yml`) roda a formatação e os testes em cada pull request.
