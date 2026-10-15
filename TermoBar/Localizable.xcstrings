@@ -753,22 +753,6 @@
         }
       }
     },
-    "Bateria · carregando": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Battery · charging"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bateria · carregando"
-          }
-        }
-      }
-    },
     "Buscar Atualizações…": {
       "localizations": {
         "en": {
@@ -1825,22 +1809,6 @@
         }
       }
     },
-    "Mín · Máx": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Min · Max"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Mín · Máx"
-          }
-        }
-      }
-    },
     "Mín. %@ · máx. %@": {
       "localizations": {
         "en": {
@@ -2625,6 +2593,38 @@
         }
       }
     },
+    "Temperatura da bateria": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Battery temperature"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temperatura da bateria"
+          }
+        }
+      }
+    },
+    "Temperatura da bateria, carregando": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Battery temperature, charging"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temperatura da bateria, carregando"
+          }
+        }
+      }
+    },
     "Temperatura do Mac": {
       "localizations": {
         "en": {
@@ -3037,6 +3037,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "média %@"
+          }
+        }
+      }
+    },
+    "média %@ · %@–%@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "average %1$@ · %2$@–%3$@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "média %@ · %@–%@"
           }
         }
       }

@@ -4,42 +4,41 @@ import SwiftUI
 struct HeaderView: View {
     @Environment(Monitor.self) private var monitor
     @Environment(Preferences.self) private var preferences
-    let summary: RangeSummary
 
     var body: some View {
-        HStack(alignment: .top) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("\(monitor.chipName) · \(preferences.source.label.lowercased())")
-                    .font(.subheadline.weight(.medium))
-                    .foregroundStyle(.secondary)
-                currentTemperature
-                // Com "Limitando desempenho", o selo da ventoinha desce para a linha de baixo.
-                FlowLayout(spacing: 6) {
-                    PressureBadge(pressure: monitor.pressure)
-                    if let rpm = monitor.current?.fanSpeed {
-                        FanBadge(rpm: rpm)
-                    }
-                    // Ligado, avisa; desligado, só aparece como sugestão quando o Mac já está sob pressão.
-                    if monitor.isLowPowerMode || monitor.pressure >= .moderate {
-                        LowPowerBadge(isOn: monitor.isLowPowerMode)
-                    }
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(monitor.chipName) · \(preferences.source.label.lowercased())")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.secondary)
+                    currentTemperature
                 }
+                Spacer()
+                // Só os números do instante; mínimo e máximo do período ficam no gráfico de temperatura.
+                VStack(alignment: .trailing, spacing: 10) {
+                    if let current = monitor.current {
+                        let alternate = preferences.source.alternate
+                        Stat(
+                            title: "\(alternate.label)", value: preferences.format(current.temperature(for: alternate)))
+                    }
+                    Stat(title: "Apps agora", value: monitor.currentPower?.formatted(.watts) ?? "—")
+                }
+                .padding(.top, 2)
             }
-            Spacer()
-            VStack(alignment: .trailing, spacing: 10) {
-                if let current = monitor.current {
-                    let alternate = preferences.source.alternate
-                    Stat(title: "\(alternate.label)", value: preferences.format(current.temperature(for: alternate)))
+            FlowLayout(spacing: 6) {
+                PressureBadge(pressure: monitor.pressure)
+                if let rpm = monitor.current?.fanSpeed {
+                    FanBadge(rpm: rpm)
                 }
-                Stat(title: "Apps agora", value: monitor.currentPower?.formatted(.watts) ?? "—")
-                Stat(title: "Mín · Máx", value: temperatureRange ?? "—")
                 if let battery = monitor.batteryTemperature {
-                    Stat(
-                        title: monitor.isCharging ? "Bateria · carregando" : "Bateria",
-                        value: preferences.format(battery, decimals: 0))
+                    BatteryBadge(temperature: preferences.format(battery, decimals: 0), isCharging: monitor.isCharging)
+                }
+                // Ligado, avisa; desligado, só aparece como sugestão quando o Mac já está sob pressão.
+                if monitor.isLowPowerMode || monitor.pressure >= .moderate {
+                    LowPowerBadge(isOn: monitor.isLowPowerMode)
                 }
             }
-            .padding(.top, 2)
         }
         .padding(.horizontal, 4)
     }
@@ -57,11 +56,29 @@ struct HeaderView: View {
         }
         .monospacedDigit()
     }
+}
 
-    private var temperatureRange: String? {
-        let temperatures = summary.samples.map(monitor.temperature(of:))
-        guard let low = temperatures.min(), let high = temperatures.max() else { return nil }
-        return "\(preferences.short(low)) · \(preferences.short(high))"
+/// Temperatura da bateria nos notebooks; carregando é quando ela mais esquenta.
+private struct BatteryBadge: View {
+    let temperature: String
+    let isCharging: Bool
+
+    var body: some View {
+        Label(temperature, systemImage: isCharging ? "battery.100percent.bolt" : "battery.75percent")
+            .font(.caption.weight(.semibold))
+            .monospacedDigit()
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 3)
+            .background(.fill.tertiary, in: Capsule())
+            .fixedSize()
+            .help(help)
+    }
+
+    private var help: String {
+        isCharging
+            ? String(localized: "Temperatura da bateria, carregando")
+            : String(localized: "Temperatura da bateria")
     }
 }
 

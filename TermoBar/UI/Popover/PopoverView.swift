@@ -37,7 +37,7 @@ struct PopoverView: View {
     private var content: some View {
         let summary = monitor.summary(range: range)
         return VStack(spacing: 10) {
-            HeaderView(summary: summary)
+            HeaderView()
             ChartsCard(summary: summary, range: $range, hoverDate: $hoverDate, focusedApp: pinnedApp ?? hoveredApp)
             if summary.hasEnoughData {
                 AppListCard(summary: summary, hoveredApp: $hoveredApp, pinnedApp: $pinnedApp)
