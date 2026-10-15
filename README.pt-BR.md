@@ -43,7 +43,7 @@ Diferente do "Impacto de Energia" do Monitor de Atividade, que é uma nota relat
 
 Requer um Mac com Apple Silicon e macOS 15 ou superior. O app e o DMG são assinados com Developer ID e notarizados pela Apple, então abrem sem alertas do Gatekeeper.
 
-Para atualizar, baixe a versão nova e substitua o app em Aplicativos. O histórico e os ajustes são mantidos.
+A partir da versão 1.3.0, o TermoBar se atualiza sozinho: busca versões novas no GitHub (você escolhe se ele faz isso automaticamente) e só instala uma atualização com a assinatura conferida. Para atualizar da 1.2.0 ou anterior, baixe a versão nova e substitua o app em Aplicativos. O histórico e os ajustes são mantidos.
 
 ## O que ele mostra
 
@@ -53,10 +53,14 @@ Para atualizar, baixe a versão nova e substitua o app em Aplicativos. O histór
 - **Ventilador**: rotação em rpm, se está parado ou girando e um gráfico de quando girou, no mesmo eixo de tempo. Em Macs com ventilador, como o MacBook Pro e o Mac mini; o MacBook Air não tem.
 - **Energia por app** em barras empilhadas, no mesmo eixo de tempo da temperatura.
 - **Ranking "Apps que mais aquecem"**: watts médios, fatia da energia, se a GPU pesa, e uma linha do tempo de quando cada app esteve aberto e consumindo.
-- **Processos de cada app agora**: clicando num app, a lista mostra os processos dele que estão consumindo, com nome legível, projeto e há quanto tempo rodam (ex.: *wrangler · dev · meu-site*, *Testes Swift*, um app no Simulador).
+- **Processos de cada app agora**: clicando num app, a lista mostra os processos dele que estão consumindo, com nome legível, projeto e há quanto tempo rodam (ex.: *wrangler · dev · meu-site*, *Testes Swift*, um app no Simulador). Dali também dá para encerrar o app.
+- **Temperatura da bateria** nos notebooks, e se ela está carregando.
+- **Modo Pouca Energia**: indica quando está ligado e sugere ligar quando o Mac está sob pressão térmica, com atalho para os Ajustes da Bateria.
 - **Períodos** de 15 min, 1 h, 24 h e 7 dias.
 - **Alertas** de temperatura alta, limitação de desempenho e app gastando demais.
 - **Exportação CSV** com CPU e GPU por app e a rotação do ventilador, leitura a leitura.
+- **Widget** para a mesa e a Central de Notificações, com a temperatura e os apps que mais aquecem.
+- **Atalhos e Siri**: ações "Obter a temperatura do Mac" e "Obter o app que mais aquece".
 - **Em português e inglês**, conforme o idioma do Mac.
 
 Passar o mouse sobre os gráficos mostra os valores do instante; passar o mouse num app destaca a cor dele no gráfico de energia, e clicar nele também abre os processos.
@@ -139,10 +143,10 @@ Medições feitas num MacBook com Apple M5 e macOS 27:
 
 | Aba | Opções |
 |---|---|
-| **Geral** | Abrir no início da sessão, temperatura exibida (média do chip ou ponto mais quente), unidade (°C/°F), casas decimais, intervalo de registro (2/5/10 s) |
+| **Geral** | Abrir no início da sessão, busca automática de atualizações, temperatura exibida (média do chip ou ponto mais quente), unidade (°C/°F), casas decimais, intervalo de registro (2/5/10 s) |
 | **Barra de menus** | Somente ícone, somente temperatura, temperatura e watts ou temperatura e velocidade do ventilador, com ícones ao lado dos valores se quiser; colorir quando quente; mostrar só o ícone enquanto estiver frio |
 | **Alertas** | Temperatura acima de um limite por 30 s; limitação de desempenho; app acima de X W em média por N minutos |
-| **Sensores** | Leitura ao vivo de cada sensor, com nome legível e indicação de quais entram na média, e de cada ventilador, com mínimo e máximo |
+| **Sensores** | Leitura ao vivo de cada ventilador, com mínimo e máximo; de cada sensor do chip, com nome legível e se entra na média; e dos outros sensores (placa, bateria, luz ambiente) |
 | **Dados** | Retenção (7/30/90 dias), exportar CSV, mostrar no Finder, apagar histórico |
 | **Precisão** | A metodologia acima, dentro do app |
 | **Sobre** | Versão, link para as versões no GitHub e um botão que copia as informações do sistema para pedidos de suporte |

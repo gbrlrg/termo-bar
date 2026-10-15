@@ -43,7 +43,7 @@ Unlike Activity Monitor's "Energy Impact", which is a relative score, TermoBar s
 
 Requires an Apple Silicon Mac with macOS 15 or later. The app and the DMG are signed with a Developer ID and notarized by Apple, so they open without Gatekeeper warnings.
 
-To update, download the new version and replace the app in Applications. Your history and settings are kept.
+From version 1.3.0 on, TermoBar updates itself: it checks GitHub for new versions (you choose whether it does this automatically) and only installs an update whose signature checks out. To update from 1.2.0 or earlier, download the new version and replace the app in Applications. Your history and settings are kept.
 
 ## What it shows
 
@@ -53,10 +53,14 @@ To update, download the new version and replace the app in Applications. Your hi
 - **Fan**: speed in rpm, whether it's stopped or spinning, and a chart of when it spun, on the same time axis. On Macs with a fan, such as the MacBook Pro and Mac mini; the MacBook Air has none.
 - **Energy per app** as stacked bars, on the same time axis as the temperature.
 - **"Apps heating up the most" ranking**: average watts, share of energy, whether the GPU dominates, and a timeline of when each app was open and drawing power.
-- **Each app's processes, right now**: click an app to see which of its processes are drawing power, with a readable name, project and how long they've been running (e.g. *wrangler · dev · my-site*, *Swift tests*, an app in the Simulator).
+- **Each app's processes, right now**: click an app to see which of its processes are drawing power, with a readable name, project and how long they've been running (e.g. *wrangler · dev · my-site*, *Swift tests*, an app in the Simulator). From there you can also quit the app.
+- **Battery temperature** on laptops, and whether it's charging.
+- **Low Power Mode**: shows when it's on and suggests it when the Mac is under thermal pressure, with a shortcut to the Battery settings.
 - **Time ranges** of 15 min, 1 h, 24 h and 7 days.
 - **Alerts** for high temperature, throttling and apps using too much power.
 - **CSV export** with CPU and GPU per app and the fan speed, reading by reading.
+- **Widget** for the desktop and Notification Center, with the temperature and the apps heating up the most.
+- **Shortcuts and Siri**: "Get Mac Temperature" and "Get App Heating Up the Most" actions.
 - **English and Portuguese**, following your Mac's language.
 
 Hovering over the charts shows the values at that moment; hovering over an app highlights its color in the energy chart, and clicking it opens its processes.
@@ -141,10 +145,10 @@ Tab names below are the English ones; the Portuguese names are in parentheses.
 
 | Tab | Options |
 |---|---|
-| **General** (Geral) | Open at login, displayed temperature (chip average or hottest spot), unit (°C/°F), decimal places, recording interval (2/5/10 s) |
+| **General** (Geral) | Open at login, automatic update checks, displayed temperature (chip average or hottest spot), unit (°C/°F), decimal places, recording interval (2/5/10 s) |
 | **Menu bar** (Barra de menus) | Icon only, temperature only, temperature and watts, or temperature and fan speed, optionally with icons next to the values; color when hot; show only the icon while cool |
 | **Alerts** (Alertas) | Temperature above a threshold for 30 s; throttling; an app above X W on average for N minutes |
-| **Sensors** (Sensores) | Live reading of each sensor, with a readable name and which ones count toward the average, and of each fan, with its minimum and maximum |
+| **Sensors** (Sensores) | Live reading of each fan, with its minimum and maximum; of each chip sensor, with a readable name and whether it counts toward the average; and of the other sensors (board, battery, ambient light) |
 | **Data** (Dados) | Retention (7/30/90 days), CSV export, show in Finder, delete history |
 | **Accuracy** (Precisão) | The methodology above, inside the app |
 | **About** (Sobre) | Version, a link to the releases on GitHub and a button that copies system info for support requests |
