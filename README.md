@@ -156,7 +156,7 @@ Everything stays on your Mac, in `~/Library/Application Support/TermoBar/history
 - **Detailed readings** (one record every 2–10 s) for 24 hours.
 - **Per-minute summary** for the chosen period (7, 30 or 90 days).
 
-No data leaves your computer. There's no telemetry, no account and no internet connection.
+No data leaves your computer. There's no telemetry and no account. The only connection is the update check, which reads the list of releases on GitHub.
 
 ## FAQ
 

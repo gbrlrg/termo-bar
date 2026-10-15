@@ -561,6 +561,22 @@
         }
       }
     },
+    "As atualizações vêm do GitHub e são conferidas pela assinatura antes de instalar.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Updates come from GitHub and their signature is verified before installing."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As atualizações vêm do GitHub e são conferidas pela assinatura antes de instalar."
+          }
+        }
+      }
+    },
     "As leituras finas ficam 24 horas; depois disso fica o resumo por minuto. Tudo fica só neste Mac, sem envio de dados.": {
       "localizations": {
         "en": {
@@ -605,6 +621,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ativar Pouca Energia"
+          }
+        }
+      }
+    },
+    "Atualizar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atualizar"
           }
         }
       }
@@ -733,6 +765,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bateria · carregando"
+          }
+        }
+      }
+    },
+    "Buscar Atualizações…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check for Updates…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar Atualizações…"
+          }
+        }
+      }
+    },
+    "Buscar atualizações automaticamente": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatically check for updates"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buscar atualizações automaticamente"
           }
         }
       }
@@ -2673,18 +2737,18 @@
         }
       }
     },
-    "Tudo fica neste Mac: o TermoBar não coleta nem envia dados.": {
+    "Tudo fica neste Mac: o TermoBar não coleta nem envia dados, só busca atualizações no GitHub.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Everything stays on this Mac: TermoBar doesn't collect or send any data."
+            "value": "Everything stays on this Mac: TermoBar doesn't collect or send any data, it only checks GitHub for updates."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tudo fica neste Mac: o TermoBar não coleta nem envia dados."
+            "value": "Tudo fica neste Mac: o TermoBar não coleta nem envia dados, só busca atualizações no GitHub."
           }
         }
       }
@@ -2829,6 +2893,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Versão %@ (%@)"
+          }
+        }
+      }
+    },
+    "Versão %@ disponível": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Version %@ available"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versão %@ disponível"
           }
         }
       }

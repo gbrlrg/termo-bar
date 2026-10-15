@@ -39,8 +39,11 @@ struct AboutView: View {
             Divider().padding(.vertical, 4)
 
             VStack(spacing: 6) {
-                Label("Tudo fica neste Mac: o TermoBar não coleta nem envia dados.", systemImage: "lock.shield")
-                    .foregroundStyle(.secondary)
+                Label(
+                    "Tudo fica neste Mac: o TermoBar não coleta nem envia dados, só busca atualizações no GitHub.",
+                    systemImage: "lock.shield"
+                )
+                .foregroundStyle(.secondary)
                 if let copyright = Self.copyright {
                     Text(copyright).foregroundStyle(.tertiary)
                 }

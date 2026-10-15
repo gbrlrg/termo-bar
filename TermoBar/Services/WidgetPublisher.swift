@@ -12,11 +12,15 @@ final class WidgetPublisher {
     private static let temperatureStep = 1.0
 
     private var lastReload: (date: Date, snapshot: WidgetSnapshot)?
+    /// Sem acesso ao App Group (build sem a assinatura do time), desiste depois do primeiro erro.
+    private var isUnavailable = false
 
     func publish(_ snapshot: WidgetSnapshot) {
+        guard !isUnavailable else { return }
         do {
             try snapshot.save()
         } catch {
+            isUnavailable = true
             Log.system.error("Resumo do widget não gravado: \(String(describing: error), privacy: .public)")
             return
         }

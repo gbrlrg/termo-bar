@@ -154,7 +154,7 @@ Tudo fica só neste Mac, em `~/Library/Application Support/TermoBar/history.sqli
 - **Leituras finas** (um registro a cada 2–10 s) por 24 horas.
 - **Resumo por minuto** pelo período escolhido (7, 30 ou 90 dias).
 
-Nenhum dado sai do computador. Não há telemetria, conta nem conexão com a internet.
+Nenhum dado sai do computador. Não há telemetria nem conta. A única conexão é a busca por atualizações, que lê a lista de versões no GitHub.
 
 ## Perguntas frequentes
 

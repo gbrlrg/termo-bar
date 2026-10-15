@@ -50,6 +50,29 @@ xcrun notarytool store-credentials TermoBar --apple-id <apple-id> --team-id F22L
 
 Rode esse comando no Terminal, não por outra ferramenta: ele pede a senha de app (gerada em account.apple.com) de forma interativa. Os builds de desenvolvimento e o CI continuam com assinatura local e não precisam do certificado.
 
+### Atualizações (Sparkle)
+
+O app se atualiza pelo [Sparkle](https://sparkle-project.org). Ele lê o `appcast.xml` em `https://github.com/gbrlrg/termo-bar/releases/latest/download/appcast.xml`, ou seja, o anexo da versão mais recente no GitHub, e só instala o zip se a assinatura EdDSA conferir com a chave pública do `Info.plist` (`SUPublicEDKey` no `project.yml`).
+
+O `release.sh` reassina os auxiliares do Sparkle com o Developer ID (o pacote vem com assinatura ad hoc, que a notarização recusa) e, no fim, gera o `build/release/appcast.xml` assinado. Para publicar uma versão, crie a tag `v<versão>` no GitHub e anexe **os três arquivos**: o DMG, o zip e o `appcast.xml`. Sem o `appcast.xml` anexado, quem já tem o app não fica sabendo da versão nova.
+
+A chave privada fica no Keychain deste Mac, na conta `br.com.gbrlrg.termobar`, e não vai para o repositório. Sem ela não dá para publicar atualizações que os apps instalados aceitem. Guarde uma cópia num lugar seguro e restaure em outro Mac com as ferramentas do pacote (ficam em `build/release/SourcePackages/artifacts/sparkle/Sparkle/bin/` depois de um build):
+
+```sh
+generate_keys --account br.com.gbrlrg.termobar -x termobar-sparkle.key   # exporta
+generate_keys --account br.com.gbrlrg.termobar -f termobar-sparkle.key   # importa
+```
+
+### Widget
+
+O widget (`TermoBarWidget/`) roda em sandbox e lê só o resumo que o app grava no App Group `F22LFNZSAZ.br.com.gbrlrg.termobar`. O App Group exige a assinatura do time: nos builds de desenvolvimento (assinatura ad hoc) o app não consegue gravar, registra um erro uma vez e segue sem o widget. Para testar o widget localmente, compile assinando com o Developer ID:
+
+```sh
+xcodebuild -project TermoBar.xcodeproj -scheme TermoBar -derivedDataPath build/signed \
+    CODE_SIGN_IDENTITY="Developer ID Application" DEVELOPMENT_TEAM=F22LFNZSAZ \
+    CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO build
+```
+
 ## Idiomas
 
 O app está em português e inglês. Quem usa o Mac em outro idioma vê o inglês, que é o idioma padrão do projeto (`developmentLanguage: en` e `CFBundleDevelopmentRegion: en`).
@@ -78,8 +101,10 @@ O código é dividido em camadas; as de cima dependem das de baixo, nunca o cont
 | Pasta | Responsabilidade |
 |---|---|
 | `App/` | Ponto de entrada, raiz de composição (`AppDependencies`) e captura de tela de diagnóstico |
+| `Intents/` | Ações do app Atalhos e frases da Siri (App Intents) |
+| `Shared/` | Resumo gravado pelo app e lido pelo widget (`WidgetSnapshot`), compilado nos dois alvos |
 | `UI/` | Telas SwiftUI: barra de menus, popover, Ajustes, componentes e tema. Recebem os serviços pelo `Environment` |
-| `Services/` | Estado do app e integração com o macOS: coleta (`Monitor`), preferências, notificações, item de login e log |
+| `Services/` | Estado do app e integração com o macOS: coleta (`Monitor`), preferências, notificações, item de login, widget, atualizações (Sparkle) e log |
 | `Hardware/` | Leitura do hardware: sensores de temperatura (IOHID), ventoinhas (SMC), energia de CPU por processo, GPU (IOReport/IORegistry) e pressão térmica; `Bridging.h` declara as funções privadas e a estrutura do SMC |
 | `Persistence/` | Histórico em SQLite (instruções preparadas, transações) e exportação CSV |
 | `Domain/` | Modelo e regras puras, sem AppKit nem SwiftUI: amostras, resumo por minuto e por período, cores por app, política de alertas, unidades e formatação |
@@ -102,7 +127,8 @@ O código é dividido em camadas; as de cima dependem das de baixo, nunca o cont
 - O CSV exportado neutraliza nomes de processo que começam com `=`, `+`, `-` ou `@`, para não virarem fórmulas numa planilha.
 - A pasta do histórico é criada com permissão só para o usuário, e "Apagar histórico" compacta o arquivo para não deixar os dados no disco.
 - Preferências fora da faixa válida (editadas com `defaults write`) são corrigidas ao abrir o app.
-- O app roda com o runtime endurecido do macOS. Ele não pode usar o App Sandbox, porque lê a energia de processos de outros apps e usa APIs privadas do IOKit.
+- O app roda com o runtime endurecido do macOS. Ele não pode usar o App Sandbox, porque lê a energia de processos de outros apps e usa APIs privadas do IOKit. O widget, que só lê o resumo do App Group, roda em sandbox.
+- A única conexão de rede é a busca por atualizações (Sparkle), que lê o `appcast.xml` no GitHub; cada atualização só é instalada se a assinatura EdDSA conferir.
 - Falhas de banco e de notificação vão para o log unificado (`log stream --predicate 'subsystem == "br.com.gbrlrg.termobar"'`).
 
 ## Diagnóstico (build Debug)

@@ -3,13 +3,18 @@ import SwiftUI
 struct GeneralSettingsView: View {
     @Environment(Preferences.self) private var preferences
     @Environment(LaunchAtLogin.self) private var launchAtLogin
+    @Environment(Updater.self) private var updater
 
     var body: some View {
         @Bindable var preferences = preferences
         @Bindable var launchAtLogin = launchAtLogin
+        @Bindable var updater = updater
         Form {
             Section {
                 Toggle("Abrir no início da sessão", isOn: $launchAtLogin.isEnabled)
+                Toggle("Buscar atualizações automaticamente", isOn: $updater.automaticallyChecks)
+            } footer: {
+                SettingsFootnote("As atualizações vêm do GitHub e são conferidas pela assinatura antes de instalar.")
             }
             Section {
                 Picker("Temperatura exibida", selection: $preferences.source) {

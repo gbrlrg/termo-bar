@@ -6,6 +6,11 @@ options:
   developmentLanguage: en
   deploymentTarget:
     macOS: "15.0"
+packages:
+  # Atualização automática: lê o appcast publicado junto com cada versão no GitHub.
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    exactVersion: 2.10.0
 settings:
   base:
     SWIFT_VERSION: "6.0"
@@ -28,6 +33,10 @@ targets:
         NSHumanReadableCopyright: "© 2026 Gabriel Rigon"
         LSUIElement: true
         LSApplicationCategoryType: public.app-category.utilities
+        # Sparkle: o appcast.xml vai como anexo de cada versão no GitHub, e a chave pública confere
+        # a assinatura de cada atualização (a privada fica no Keychain de quem publica).
+        SUFeedURL: https://github.com/gbrlrg/termo-bar/releases/latest/download/appcast.xml
+        SUPublicEDKey: b3odm7qNLCbQbzA/ZZseiT3pcRQigPozW4NsKZ20Sek=
     # O App Group é a pasta compartilhada com o widget; o app em si continua fora do sandbox.
     entitlements:
       path: TermoBar/TermoBar.entitlements
@@ -37,6 +46,7 @@ targets:
       - sdk: libIOReport.tbd
       - sdk: libsqlite3.tbd
       - target: TermoBarWidget
+      - package: Sparkle
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: br.com.gbrlrg.termobar
