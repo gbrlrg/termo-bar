@@ -11,7 +11,7 @@ final class Preferences {
     static let appMinutesRange: ClosedRange<Double> = 2...60
 
     private enum Key: String {
-        case unit, decimals, source, menuBarStyle, compactWhenCool, compactThreshold, colorWhenHot, showValueIcons
+        case unit, decimals, source, menuBarStyle, compactWhenCool, compactThreshold, showValueIcons
         case sampleInterval, retentionDays
         case alertTemperature, alertTemperatureLimit, alertThrottling, alertAppPower, alertAppWatts, alertAppMinutes
     }
@@ -25,7 +25,6 @@ final class Preferences {
     /// Na barra, mostra só o ícone enquanto a temperatura estiver abaixo do limite.
     var compactWhenCool: Bool { didSet { save(compactWhenCool, .compactWhenCool) } }
     var compactThreshold: Double { didSet { save(compactThreshold, .compactThreshold) } }
-    var colorWhenHot: Bool { didSet { save(colorWhenHot, .colorWhenHot) } }
     /// Na barra, põe um ícone antes de cada valor (termômetro, raio, ventoinha).
     var showValueIcons: Bool { didSet { save(showValueIcons, .showValueIcons) } }
     /// Intervalo entre registros no histórico (s).
@@ -50,7 +49,6 @@ final class Preferences {
             Key.menuBarStyle.rawValue: MenuBarStyle.temperature.rawValue,
             Key.compactWhenCool.rawValue: false,
             Key.compactThreshold.rawValue: 70.0,
-            Key.colorWhenHot.rawValue: false,
             Key.showValueIcons.rawValue: false,
             Key.sampleInterval.rawValue: 5.0,
             Key.retentionDays.rawValue: 30,
@@ -71,7 +69,6 @@ final class Preferences {
         compactWhenCool = defaults.bool(forKey: Key.compactWhenCool.rawValue)
         compactThreshold = defaults.double(forKey: Key.compactThreshold.rawValue).clamped(
             to: Self.temperatureLimitRange)
-        colorWhenHot = defaults.bool(forKey: Key.colorWhenHot.rawValue)
         showValueIcons = defaults.bool(forKey: Key.showValueIcons.rawValue)
         sampleInterval = defaults.double(forKey: Key.sampleInterval.rawValue).clamped(to: Self.sampleIntervalRange)
         retentionDays = defaults.integer(forKey: Key.retentionDays.rawValue).clamped(to: Self.retentionDaysRange)

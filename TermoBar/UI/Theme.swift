@@ -17,9 +17,6 @@ enum Theme {
     static let serious = dynamic(light: 0xec835a, dark: 0xec835a)
     static let critical = dynamic(light: 0xd03b3b, dark: 0xd03b3b)
 
-    /// A partir desta temperatura (°C) a barra de menus pode colorir o valor.
-    static let hotTemperature = 75.0
-
     /// Escala de temperatura do chip, do frio ao quente, como no app Tempo.
     private static let temperatureStops: [(celsius: Double, color: NSColor)] = [
         (40, .systemTeal), (58, .systemGreen), (70, .systemYellow), (82, .systemOrange), (95, .systemRed),

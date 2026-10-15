@@ -24,7 +24,7 @@ struct MenuBarLabel: View {
 
         if segments.isEmpty {
             Image(systemName: Symbol.temperature)
-        } else if let image = renderedImage(segments, temperature: temperature) {
+        } else if let image = renderedImage(segments) {
             Image(nsImage: image)
         } else {
             content(segments)
@@ -64,20 +64,17 @@ struct MenuBarLabel: View {
         }
     }
 
-    /// A barra só mostra uma imagem e um texto do rótulo, e os pinta como modelo (monocromáticos):
-    /// vários valores com ícones, ou a cor, exigem uma imagem pronta.
-    private func renderedImage(_ segments: [Segment], temperature: Double?) -> NSImage? {
-        let color = temperature.flatMap { celsius in
-            preferences.colorWhenHot && celsius >= Theme.hotTemperature ? Theme.temperatureColor(celsius) : nil
-        }
-        guard color != nil || segments.count > 1 else { return nil }
+    /// A barra só mostra uma imagem e um texto do rótulo: vários valores com ícones exigem uma imagem pronta,
+    /// desenhada como modelo para a barra pintar na cor do tema.
+    private func renderedImage(_ segments: [Segment]) -> NSImage? {
+        guard segments.count > 1 else { return nil }
         let renderer = ImageRenderer(
             content: content(segments)
                 .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(color ?? .black))
+                .foregroundStyle(.black))
         renderer.scale = NSScreen.main?.backingScaleFactor ?? 2
         guard let image = renderer.nsImage else { return nil }
-        image.isTemplate = color == nil
+        image.isTemplate = true
         return image
     }
 }

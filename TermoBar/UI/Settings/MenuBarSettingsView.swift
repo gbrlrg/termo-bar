@@ -26,11 +26,6 @@ struct MenuBarSettingsView: View {
                 }
             }
             Section {
-                Toggle("Colorir a temperatura quando estiver quente", isOn: $preferences.colorWhenHot)
-            } footer: {
-                SettingsFootnote("A partir de \(preferences.format(Theme.hotTemperature, decimals: 0)).")
-            }
-            Section {
                 Toggle("Mostrar só o ícone enquanto estiver frio", isOn: $preferences.compactWhenCool)
                 if preferences.compactWhenCool {
                     TemperatureStepper(

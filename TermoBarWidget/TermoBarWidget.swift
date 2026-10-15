@@ -118,7 +118,6 @@ private struct TemperatureView: View {
         return HStack(alignment: .firstTextBaseline, spacing: 2) {
             Text(parts.first.map(String.init) ?? snapshot.temperature)
                 .font(.system(size: 38, weight: .semibold, design: .rounded))
-                .foregroundStyle(Theme.temperatureColor(snapshot.celsius))
             if parts.count > 1 {
                 Text(parts[1])
                     .font(.title3.weight(.medium))

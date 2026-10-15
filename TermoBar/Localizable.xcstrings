@@ -241,22 +241,6 @@
         }
       }
     },
-    "A partir de %@.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "From %@ up."
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "A partir de %@."
-          }
-        }
-      }
-    },
     "A temperatura do chip é a média dos sensores do die do SoC. Leituras fora de 10–130 °C ou que destoam mais de 25 °C da mediana são descartadas.": {
       "localizations": {
         "en": {
@@ -925,22 +909,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Coletando dados…"
-          }
-        }
-      }
-    },
-    "Colorir a temperatura quando estiver quente": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Color the temperature when hot"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Colorir a temperatura quando estiver quente"
           }
         }
       }
