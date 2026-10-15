@@ -37,6 +37,8 @@ final class Monitor {
     /// Cor de cada app que mais gastou na última hora; estável enquanto continuar no topo.
     private(set) var palette = PaletteSlots(capacity: Monitor.highlightedApps)
     private(set) var pressure = ThermalPressure.nominal
+    /// Modo Pouca Energia ligado: o macOS segura o chip e o calor cai.
+    private(set) var isLowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
     /// Última leitura de cada sensor e de cada ventoinha, atualizadas só com a aba Sensores aberta.
     private(set) var sensors: [TemperatureSensors.Sensor] = []
     private(set) var fans: [Fan] = []
@@ -172,6 +174,8 @@ final class Monitor {
         // O Observation avisa as telas a cada atribuição, mesmo de um valor igual.
         let pressure = pressureReader.read()
         if pressure != self.pressure { self.pressure = pressure }
+        let isLowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
+        if isLowPowerMode != self.isLowPowerMode { self.isLowPowerMode = isLowPowerMode }
 
         let now = Date()
         let isDue =

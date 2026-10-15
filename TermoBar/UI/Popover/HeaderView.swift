@@ -19,6 +19,10 @@ struct HeaderView: View {
                     if let rpm = monitor.current?.fanSpeed {
                         FanBadge(rpm: rpm)
                     }
+                    // Ligado, avisa; desligado, só aparece como sugestão quando o Mac já está sob pressão.
+                    if monitor.isLowPowerMode || monitor.pressure >= .moderate {
+                        LowPowerBadge(isOn: monitor.isLowPowerMode)
+                    }
                 }
             }
             Spacer()
@@ -75,6 +79,33 @@ private struct FanBadge: View {
         .background(.fill.tertiary, in: Capsule())
         .fixedSize()
         .help(isSpinning ? String(localized: "Ventilador girando") : String(localized: "Ventilador parado"))
+    }
+}
+
+/// Modo Pouca Energia: abre os Ajustes da Bateria (em Macs de mesa, Energia), onde ele é ligado.
+private struct LowPowerBadge: View {
+    let isOn: Bool
+
+    private static let settingsURL = URL(string: "x-apple.systempreferences:com.apple.Battery-Settings.extension")
+
+    var body: some View {
+        Button {
+            if let url = Self.settingsURL { NSWorkspace.shared.open(url) }
+        } label: {
+            Label(isOn ? "Pouca Energia" : "Ativar Pouca Energia", systemImage: isOn ? "leaf.fill" : "leaf")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(isOn ? Theme.warning : Color.secondary)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 3)
+                .background(isOn ? Theme.warning.opacity(0.14) : Color.clear, in: Capsule())
+                .overlay(Capsule().strokeBorder(.quaternary, lineWidth: isOn ? 0 : 1))
+        }
+        .buttonStyle(.plain)
+        .fixedSize()
+        .help(
+            isOn
+                ? String(localized: "Modo Pouca Energia ativado: o chip esquenta menos. Clique para abrir os Ajustes.")
+                : String(localized: "O Modo Pouca Energia reduz o calor e o ruído. Clique para ativar nos Ajustes."))
     }
 }
 

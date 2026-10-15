@@ -545,6 +545,22 @@
         }
       }
     },
+    "Ativar Pouca Energia": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn On Low Power"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ativar Pouca Energia"
+          }
+        }
+      }
+    },
     "Avisa quando a temperatura fica acima do limite por 30 segundos seguidos.": {
       "localizations": {
         "en": {
@@ -1385,6 +1401,22 @@
         }
       }
     },
+    "Modo Pouca Energia ativado: o chip esquenta menos. Clique para abrir os Ajustes.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Low Power Mode is on: the chip runs cooler. Click to open Settings."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modo Pouca Energia ativado: o chip esquenta menos. Clique para abrir os Ajustes."
+          }
+        }
+      }
+    },
     "Monitor de Atividade": {
       "localizations": {
         "en": {
@@ -1745,6 +1777,22 @@
         }
       }
     },
+    "O Modo Pouca Energia reduz o calor e o ruído. Clique para ativar nos Ajustes.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Low Power Mode reduces heat and fan noise. Click to turn it on in Settings."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Modo Pouca Energia reduz o calor e o ruído. Clique para ativar nos Ajustes."
+          }
+        }
+      }
+    },
     "O histórico de %@ se forma com o uso.": {
       "localizations": {
         "en": {
@@ -1981,6 +2029,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ponto mais quente"
+          }
+        }
+      }
+    },
+    "Pouca Energia": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Low Power"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pouca Energia"
           }
         }
       }
