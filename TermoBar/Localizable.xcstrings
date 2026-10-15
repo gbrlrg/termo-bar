@@ -65,6 +65,22 @@
         }
       }
     },
+    "%@ é o app que mais aquece: %@ em média, %@ da energia dos apps.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ is heating up the most: %2$@ on average, %3$@ of app energy."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ é o app que mais aquece: %@ em média, %@ da energia dos apps."
+          }
+        }
+      }
+    },
     "%lld processos · %@": {
       "localizations": {
         "en": {
@@ -461,6 +477,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "App gastando demais"
+          }
+        }
+      }
+    },
+    "App que mais aquece": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App Heating Up the Most"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App que mais aquece"
+          }
+        }
+      }
+    },
+    "App que mais gastou energia nos últimos 15 minutos.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The app that used the most energy in the last 15 minutes."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "App que mais gastou energia nos últimos 15 minutos."
           }
         }
       }
@@ -1745,6 +1793,22 @@
         }
       }
     },
+    "Nenhum app gastou energia nos últimos 15 minutos.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No app used energy in the last 15 minutes."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nenhum app gastou energia nos últimos 15 minutos."
+          }
+        }
+      }
+    },
     "Nenhum processo consumindo agora.": {
       "localizations": {
         "en": {
@@ -1873,6 +1937,38 @@
         }
       }
     },
+    "O TermoBar ainda não tem uma leitura do chip.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TermoBar doesn't have a chip reading yet."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O TermoBar ainda não tem uma leitura do chip."
+          }
+        }
+      }
+    },
+    "O chip está a %@, com pressão térmica %@.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The chip is at %1$@, with %2$@ thermal pressure."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O chip está a %@, com pressão térmica %@."
+          }
+        }
+      }
+    },
     "O histórico de %@ se forma com o uso.": {
       "localizations": {
         "en": {
@@ -1933,6 +2029,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "O macOS está limitando o desempenho"
+          }
+        }
+      }
+    },
+    "Obter a temperatura do Mac": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get Mac Temperature"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obter a temperatura do Mac"
+          }
+        }
+      }
+    },
+    "Obter o app que mais aquece": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get App Heating Up the Most"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obter o app que mais aquece"
           }
         }
       }
@@ -2413,6 +2541,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Temperatura alta"
+          }
+        }
+      }
+    },
+    "Temperatura atual do chip, como aparece na barra de menus.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The chip's current temperature, as shown in the menu bar."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temperatura atual do chip, como aparece na barra de menus."
+          }
+        }
+      }
+    },
+    "Temperatura do Mac": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mac Temperature"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temperatura do Mac"
           }
         }
       }
