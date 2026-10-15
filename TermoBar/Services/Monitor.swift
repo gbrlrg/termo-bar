@@ -251,7 +251,7 @@ final class Monitor {
             }
         widget.publish(
             WidgetSnapshot(
-                date: now, celsius: celsius, temperature: preferences.format(celsius, decimals: 0),
+                date: now, celsius: celsius, temperature: preferences.format(celsius),
                 pressure: pressure, apps: Array(apps)))
     }
 

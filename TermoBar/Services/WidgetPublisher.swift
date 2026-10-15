@@ -26,8 +26,11 @@ final class WidgetPublisher {
         }
         if let last = lastReload {
             guard snapshot.date.timeIntervalSince(last.date) >= Self.minimumReloadInterval else { return }
+            // Unidade ou casas decimais trocadas mudam o formato do texto, não só o valor.
             let changed =
                 abs(snapshot.celsius - last.snapshot.celsius) >= Self.temperatureStep
+                || snapshot.temperature.count != last.snapshot.temperature.count
+                || snapshot.temperature.last != last.snapshot.temperature.last
                 || snapshot.pressure != last.snapshot.pressure
                 || snapshot.apps.first?.id != last.snapshot.apps.first?.id
             guard changed else { return }

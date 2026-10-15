@@ -7,8 +7,9 @@ struct TermoBarWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: WidgetSnapshot.kind, provider: Provider()) { entry in
             WidgetView(snapshot: entry.snapshot)
-                .containerBackground(.fill.tertiary, for: .widget)
+                .containerBackground(for: .widget) { Color.clear }
         }
+        .containerBackgroundRemovable()
         .configurationDisplayName("TermoBar")
         .description("Temperatura do chip e os apps que mais aquecem.")
         .supportedFamilies([.systemSmall, .systemMedium])
@@ -59,22 +60,35 @@ struct WidgetView: View {
         if let snapshot {
             switch family {
             case .systemMedium:
-                HStack(alignment: .top, spacing: 16) {
+                HStack(spacing: 14) {
                     TemperatureView(snapshot: snapshot)
+                    Rectangle().fill(.quaternary).frame(width: 1).padding(.vertical, 2)
                     AppsView(apps: snapshot.apps)
                 }
             default:
                 TemperatureView(snapshot: snapshot)
             }
         } else {
-            VStack(alignment: .leading, spacing: 4) {
-                Label("TermoBar", systemImage: "thermometer.medium").font(.headline)
+            VStack(alignment: .leading, spacing: 6) {
+                Header()
+                Spacer(minLength: 0)
                 Text("Abra o TermoBar para ver a temperatura aqui.")
-                    .font(.caption)
+                    .font(.callout)
                     .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
+    }
+}
+
+private struct Header: View {
+    var body: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "thermometer.medium")
+            Text("TermoBar")
+        }
+        .font(.caption.weight(.semibold))
+        .foregroundStyle(.secondary)
     }
 }
 
@@ -83,36 +97,101 @@ private struct TemperatureView: View {
     let snapshot: WidgetSnapshot
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Label("TermoBar", systemImage: "thermometer.medium")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-            Text(snapshot.temperature)
-                .font(.system(size: 34, weight: .semibold))
-                .monospacedDigit()
-                .foregroundStyle(Theme.temperatureColor(snapshot.celsius))
-                .minimumScaleFactor(0.6)
-                .lineLimit(1)
-            Label(snapshot.pressure.label, systemImage: snapshot.pressure.symbol)
+        VStack(alignment: .leading, spacing: 0) {
+            Header()
+            Spacer(minLength: 4)
+            temperature
+            Text(snapshot.pressure.label)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(snapshot.pressure.color)
-            Spacer(minLength: 0)
-            if snapshot.isStale {
-                Text("Abra o TermoBar para atualizar.")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-            } else if family == .systemSmall, let top = snapshot.apps.first {
-                Text("\(top.name) · \(top.watts)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-            } else {
-                Text(snapshot.date, style: .time)
-                    .font(.caption2)
-                    .foregroundStyle(.tertiary)
-            }
+                .padding(.bottom, 8)
+            TemperatureScale(celsius: snapshot.celsius)
+            Spacer(minLength: 6)
+            footer
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+
+    /// "78,0" grande e "°C" menor, como no popover.
+    private var temperature: some View {
+        let parts = snapshot.temperature.split(separator: " ", maxSplits: 1)
+        return HStack(alignment: .firstTextBaseline, spacing: 2) {
+            Text(parts.first.map(String.init) ?? snapshot.temperature)
+                .font(.system(size: 38, weight: .semibold, design: .rounded))
+                .foregroundStyle(Theme.temperatureColor(snapshot.celsius))
+            if parts.count > 1 {
+                Text(parts[1])
+                    .font(.title3.weight(.medium))
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .monospacedDigit()
+        .lineLimit(1)
+        .minimumScaleFactor(0.6)
+    }
+
+    @ViewBuilder
+    private var footer: some View {
+        if snapshot.isStale {
+            Text("Abra o TermoBar para atualizar.")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        } else if family == .systemSmall, let top = snapshot.apps.first {
+            AppLine(app: top)
+        } else {
+            Text(snapshot.date, style: .time)
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
+        }
+    }
+}
+
+/// Onde a temperatura está na escala de frio a quente, com as cores do gráfico do popover.
+private struct TemperatureScale: View {
+    let celsius: Double
+
+    private static let range = 40.0...100.0
+
+    var body: some View {
+        let span = Self.range.upperBound - Self.range.lowerBound
+        let fraction = (min(max(celsius, Self.range.lowerBound), Self.range.upperBound) - Self.range.lowerBound) / span
+        let stops = stride(from: Self.range.lowerBound, through: Self.range.upperBound, by: 10).map {
+            Gradient.Stop(color: Theme.temperatureColor($0), location: ($0 - Self.range.lowerBound) / span)
+        }
+        GeometryReader { proxy in
+            Capsule()
+                .fill(LinearGradient(stops: stops, startPoint: .leading, endPoint: .trailing))
+                .opacity(0.85)
+                .frame(height: 4)
+                .overlay(alignment: .leading) {
+                    Circle()
+                        .fill(Theme.temperatureColor(celsius))
+                        .overlay(Circle().strokeBorder(.white, lineWidth: 2))
+                        .frame(width: 10, height: 10)
+                        .offset(x: (proxy.size.width - 10) * fraction)
+                }
+                .frame(maxHeight: .infinity)
+        }
+        .frame(height: 10)
+    }
+}
+
+/// Ponto na cor do app, nome e watts.
+private struct AppLine: View {
+    let app: WidgetSnapshot.App
+
+    var body: some View {
+        HStack(spacing: 5) {
+            Circle()
+                .fill(Theme.seriesColor(slot: app.colorSlot))
+                .frame(width: 6, height: 6)
+            Text(app.name).lineLimit(1)
+            Spacer(minLength: 4)
+            Text(app.watts)
+                .monospacedDigit()
+                .foregroundStyle(.secondary)
+        }
+        .font(.caption)
     }
 }
 
@@ -120,24 +199,22 @@ private struct AppsView: View {
     let apps: [WidgetSnapshot.App]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 0) {
             Text("Apps que mais aquecem")
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.secondary)
+            Spacer(minLength: 6)
             if apps.isEmpty {
                 Text("Nenhum app gastando energia.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
-            ForEach(apps) { app in
-                VStack(alignment: .leading, spacing: 3) {
-                    HStack {
-                        Text(app.name).lineLimit(1)
-                        Spacer(minLength: 4)
-                        Text(app.watts).monospacedDigit().foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: 9) {
+                ForEach(apps) { app in
+                    VStack(alignment: .leading, spacing: 4) {
+                        AppLine(app: app)
+                        ShareBar(share: app.share, color: Theme.seriesColor(slot: app.colorSlot))
                     }
-                    .font(.caption)
-                    ShareBar(share: app.share, color: Theme.seriesColor(slot: app.colorSlot))
                 }
             }
             Spacer(minLength: 0)
@@ -159,6 +236,6 @@ private struct ShareBar: View {
                     Capsule().fill(color).frame(width: proxy.size.width * min(max(share, 0), 1))
                 }
         }
-        .frame(height: 4)
+        .frame(height: 3)
     }
 }
