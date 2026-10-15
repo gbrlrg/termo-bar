@@ -34,7 +34,7 @@ Unlike Activity Monitor's "Energy Impact", which is a relative score, TermoBar s
 </p>
 
 > [!NOTE]
-> This is the first public release. The software is provided as is, without warranty; see the [license](LICENSE). Found a problem? [Open an issue](https://github.com/gbrlrg/termo-bar/issues).
+> The software is provided as is, without warranty; see the [license](LICENSE). Found a problem? [Open an issue](https://github.com/gbrlrg/termo-bar/issues).
 
 ## Install
 
@@ -47,7 +47,7 @@ From version 1.3.0 on, TermoBar updates itself: it checks GitHub for new version
 
 ## What it shows
 
-- **Chip temperature in the menu bar**, in °C or °F, with or without a decimal place.
+- **Chip temperature in the menu bar**, in °C or °F, with or without a decimal place, alone or with watts or fan speed, and optionally with an icon next to each value (thermometer, bolt, fan).
 - **macOS thermal state** — from *Normal* to *Throttling* — straight from the kernel's thermal pressure.
 - **Temperature chart**, with the line colored by the temperature itself and throttling periods highlighted.
 - **Fan**: speed in rpm, whether it's stopped or spinning, and a chart of when it spun, on the same time axis. On Macs with a fan, such as the MacBook Pro and Mac mini; the MacBook Air has none.
@@ -151,7 +151,7 @@ Tab names below are the English ones; the Portuguese names are in parentheses.
 | **Sensors** (Sensores) | Live reading of each fan, with its minimum and maximum; of each chip sensor, with a readable name and whether it counts toward the average; and of the other sensors (board, battery, ambient light) |
 | **Data** (Dados) | Retention (7/30/90 days), CSV export, show in Finder, delete history |
 | **Accuracy** (Precisão) | The methodology above, inside the app |
-| **About** (Sobre) | Version, a link to the releases on GitHub and a button that copies system info for support requests |
+| **About** (Sobre) | Version, a link to the releases on GitHub, a button that copies system info for support requests and the third-party licenses |
 
 ## History and privacy
 
@@ -159,6 +159,8 @@ Everything stays on your Mac, in `~/Library/Application Support/TermoBar/history
 
 - **Detailed readings** (one record every 2–10 s) for 24 hours.
 - **Per-minute summary** for the chosen period (7, 30 or 90 days).
+
+The widget reads a small summary (current temperature and the top three apps) that the app writes to `~/Library/Group Containers/F22LFNZSAZ.br.com.gbrlrg.termobar`.
 
 No data leaves your computer. There's no telemetry and no account. The only connection is the update check, which reads the list of releases on GitHub.
 
@@ -179,6 +181,15 @@ Each app picks different sensors. By default TermoBar shows the average of the c
 **Does the fan show up on every Mac?**
 Only on Macs that have one, such as the MacBook Pro and Mac mini. On the MacBook Air, which has none, TermoBar hides it. The MacBook Pro turns its fan off when the chip is cool, and it shows as stopped; on the Mac mini it usually spins all the time, at its minimum speed.
 
+**How do I add the widget?**
+Right-click the desktop › Edit Widgets…, search for TermoBar and pick the small or medium size. The widget refreshes when the temperature or the top app changes; macOS limits how often widgets redraw, so it isn't second by second like the menu bar.
+
+**How do I use it with Shortcuts and Siri?**
+The "Get Mac Temperature" and "Get App Heating Up the Most" actions show up in the Shortcuts app, under TermoBar, with no setup. You can also ask Siri, for example "Mac temperature in TermoBar".
+
+**How do updates work?**
+TermoBar uses [Sparkle](https://sparkle-project.org), the standard update framework for Mac apps outside the App Store. It reads the list of releases on GitHub and only installs an update whose EdDSA signature matches the key built into the app, and which is signed by the same Apple developer. When an automatic check finds a new version, an "Update" button appears at the bottom of the popover. You can also check by hand in the popover's Settings menu › Check for Updates…
+
 **Does it work on Intel Macs?**
 No. The sensors and counters it uses only exist on Apple Silicon.
 
@@ -194,6 +205,8 @@ macOS doesn't let a regular app read the CPU energy of processes owned by other 
 
 ```sh
 rm -rf ~/Library/Application\ Support/TermoBar
+rm -rf ~/Library/Group\ Containers/F22LFNZSAZ.br.com.gbrlrg.termobar
+rm -rf ~/Library/Caches/br.com.gbrlrg.termobar
 defaults delete br.com.gbrlrg.termobar
 ```
 
@@ -206,5 +219,7 @@ See [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) (in Portuguese): building, testin
 The code is available under the [PolyForm Noncommercial 1.0.0](LICENSE) license: you may use, study, modify and redistribute TermoBar for **noncommercial** purposes (personal use, study, research, nonprofit organizations and public institutions). Commercial use is not allowed without written permission.
 
 Because of this restriction, TermoBar is *source-available*, not open source as defined by the OSI.
+
+TermoBar includes [Sparkle](https://github.com/sparkle-project/Sparkle) (MIT license) for updates. Its license comes with the app, in Settings › About › Third-Party Licenses.
 
 Copyright © 2026 Gabriel Rigon.
