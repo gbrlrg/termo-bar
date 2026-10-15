@@ -11,7 +11,7 @@ final class Preferences {
     static let appMinutesRange: ClosedRange<Double> = 2...60
 
     private enum Key: String {
-        case unit, decimals, source, menuBarStyle, compactWhenCool, compactThreshold, colorWhenHot
+        case unit, decimals, source, menuBarStyle, compactWhenCool, compactThreshold, colorWhenHot, showValueIcons
         case sampleInterval, retentionDays
         case alertTemperature, alertTemperatureLimit, alertThrottling, alertAppPower, alertAppWatts, alertAppMinutes
     }
@@ -26,6 +26,8 @@ final class Preferences {
     var compactWhenCool: Bool { didSet { save(compactWhenCool, .compactWhenCool) } }
     var compactThreshold: Double { didSet { save(compactThreshold, .compactThreshold) } }
     var colorWhenHot: Bool { didSet { save(colorWhenHot, .colorWhenHot) } }
+    /// Na barra, põe um ícone antes de cada valor (termômetro, raio, ventoinha).
+    var showValueIcons: Bool { didSet { save(showValueIcons, .showValueIcons) } }
     /// Intervalo entre registros no histórico (s).
     var sampleInterval: Double { didSet { save(sampleInterval, .sampleInterval) } }
     var retentionDays: Int { didSet { save(retentionDays, .retentionDays) } }
@@ -49,6 +51,7 @@ final class Preferences {
             Key.compactWhenCool.rawValue: false,
             Key.compactThreshold.rawValue: 70.0,
             Key.colorWhenHot.rawValue: false,
+            Key.showValueIcons.rawValue: false,
             Key.sampleInterval.rawValue: 5.0,
             Key.retentionDays.rawValue: 30,
             Key.alertTemperature.rawValue: false,
@@ -63,11 +66,13 @@ final class Preferences {
         unit = TemperatureUnit(rawValue: defaults.string(forKey: Key.unit.rawValue) ?? "") ?? .celsius
         decimals = defaults.integer(forKey: Key.decimals.rawValue).clamped(to: 0...1)
         source = TemperatureSource(rawValue: defaults.string(forKey: Key.source.rawValue) ?? "") ?? .average
-        menuBarStyle = MenuBarStyle(rawValue: defaults.string(forKey: Key.menuBarStyle.rawValue) ?? "") ?? .temperature
+        let storedStyle = defaults.string(forKey: Key.menuBarStyle.rawValue) ?? ""
+        menuBarStyle = MenuBarStyle(rawValue: storedStyle) ?? .temperature
         compactWhenCool = defaults.bool(forKey: Key.compactWhenCool.rawValue)
         compactThreshold = defaults.double(forKey: Key.compactThreshold.rawValue).clamped(
             to: Self.temperatureLimitRange)
         colorWhenHot = defaults.bool(forKey: Key.colorWhenHot.rawValue)
+        showValueIcons = defaults.bool(forKey: Key.showValueIcons.rawValue)
         sampleInterval = defaults.double(forKey: Key.sampleInterval.rawValue).clamped(to: Self.sampleIntervalRange)
         retentionDays = defaults.integer(forKey: Key.retentionDays.rawValue).clamped(to: Self.retentionDaysRange)
         alertTemperature = defaults.bool(forKey: Key.alertTemperature.rawValue)
@@ -77,6 +82,12 @@ final class Preferences {
         alertAppPower = defaults.bool(forKey: Key.alertAppPower.rawValue)
         alertAppWatts = defaults.double(forKey: Key.alertAppWatts.rawValue).clamped(to: Self.appWattsRange)
         alertAppMinutes = defaults.double(forKey: Key.alertAppMinutes.rawValue).clamped(to: Self.appMinutesRange)
+
+        // O antigo estilo "Ícone e temperatura" virou a temperatura com ícones.
+        if storedStyle == "iconAndTemperature" {
+            showValueIcons = true
+            save(MenuBarStyle.temperature.rawValue, .menuBarStyle)
+        }
     }
 
     var alertConfiguration: AlertConfiguration {

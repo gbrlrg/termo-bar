@@ -11,7 +11,7 @@ struct FanChart: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            CardTitle(title: "Ventoinha", detail: detail)
+            CardTitle(title: "Ventilador", detail: detail)
             chart
         }
     }
@@ -25,12 +25,12 @@ struct FanChart: View {
                 switch hovered.fanSpeed {
                 case nil: String(localized: "sem leitura")
                 case let rpm? where hovered.isFanSpinning: rpm.formatted(.rpm)
-                default: String(localized: "parada")
+                default: String(localized: "parado")
                 }
             return "\(date)  \(speed)"
         }
         guard let share = readings.fanSpinningShare else { return "" }
-        guard share > 0 else { return String(localized: "parada no período") }
+        guard share > 0 else { return String(localized: "parado no período") }
         return String(localized: "girando \(share.formatted(.percent.precision(.fractionLength(0)))) do tempo")
     }
 

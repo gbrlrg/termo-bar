@@ -142,7 +142,7 @@ Tab names below are the English ones; the Portuguese names are in parentheses.
 | Tab | Options |
 |---|---|
 | **General** (Geral) | Open at login, displayed temperature (chip average or hottest spot), unit (°C/°F), decimal places, recording interval (2/5/10 s) |
-| **Menu bar** (Barra de menus) | Temperature only, temperature and watts, temperature and fan, icon and temperature, or icon only; color when hot; show only the icon while cool |
+| **Menu bar** (Barra de menus) | Icon only, temperature only, temperature and watts, or temperature and fan speed, optionally with icons next to the values; color when hot; show only the icon while cool |
 | **Alerts** (Alertas) | Temperature above a threshold for 30 s; throttling; an app above X W on average for N minutes |
 | **Sensors** (Sensores) | Live reading of each sensor, with a readable name and which ones count toward the average, and of each fan, with its minimum and maximum |
 | **Data** (Dados) | Retention (7/30/90 days), CSV export, show in Finder, delete history |
@@ -183,8 +183,8 @@ macOS doesn't let a regular app read the CPU energy of processes owned by other 
 
 ## Uninstall
 
-1. If it opens at login, turn that off first (gear › Open at login).
-2. Quit TermoBar: click the temperature in the menu bar, then the gear › Quit TermoBar.
+1. If it opens at login, turn that off first (Settings › Open at login).
+2. Quit TermoBar: click the temperature in the menu bar, then Settings › Quit TermoBar.
 3. Delete `TermoBar.app` from Applications.
 4. To also delete the history and settings:
 

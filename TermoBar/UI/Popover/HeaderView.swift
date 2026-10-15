@@ -64,7 +64,7 @@ private struct FanBadge: View {
 
     var body: some View {
         Label(
-            isSpinning ? rpm.formatted(.rpm) : String(localized: "Parada"),
+            isSpinning ? rpm.formatted(.rpm) : String(localized: "Parado"),
             systemImage: isSpinning ? "fan.fill" : "fan.slash"
         )
         .font(.caption.weight(.semibold))
@@ -74,7 +74,7 @@ private struct FanBadge: View {
         .padding(.vertical, 3)
         .background(.fill.tertiary, in: Capsule())
         .fixedSize()
-        .help(isSpinning ? String(localized: "Ventoinha girando") : String(localized: "Ventoinha parada"))
+        .help(isSpinning ? String(localized: "Ventilador girando") : String(localized: "Ventilador parado"))
     }
 }
 

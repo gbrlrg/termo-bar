@@ -9,7 +9,7 @@ struct GeneralSettingsView: View {
         @Bindable var launchAtLogin = launchAtLogin
         Form {
             Section {
-                Toggle("Abrir ao iniciar sessão", isOn: $launchAtLogin.isEnabled)
+                Toggle("Abrir no início da sessão", isOn: $launchAtLogin.isEnabled)
             }
             Section {
                 Picker("Temperatura exibida", selection: $preferences.source) {

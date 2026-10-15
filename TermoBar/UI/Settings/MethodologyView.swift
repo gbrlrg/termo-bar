@@ -24,8 +24,8 @@ struct MethodologyView: View {
             "A CPU de processos do sistema que rodam como administrador (como o kernel) não é legível sem privilégio e fica de fora. A GPU do WindowServer, que desenha a tela, entra na conta."
         ),
         (
-            "Ventoinha", "fan",
-            "Rotação lida do controlador do sistema (SMC) a cada segundo, também sem privilégio de administrador. Abaixo de 100 rpm a ventoinha conta como parada. O MacBook Air não tem ventoinha, e o TermoBar esconde essa parte."
+            "Ventilador", "fan",
+            "Rotação lida do controlador do sistema (SMC) a cada segundo, também sem privilégio de administrador. Abaixo de 100 rpm o ventilador conta como parado. O MacBook Air não tem ventilador, e o TermoBar esconde essa parte."
         ),
         (
             "Limitação térmica", "flame",

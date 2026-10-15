@@ -27,7 +27,7 @@ struct FormattingTests {
     }
 
     @Test func menuBarStyleFlags() {
-        #expect(MenuBarStyle.icon.showsIcon && !MenuBarStyle.icon.showsTemperature)
+        #expect(!MenuBarStyle.icon.showsTemperature)
         #expect(MenuBarStyle.temperatureAndPower.showsPower)
         #expect(MenuBarStyle.temperatureAndFan.showsFan && !MenuBarStyle.temperatureAndFan.showsPower)
         #expect(TemperatureSource.average.alternate == .hottest)

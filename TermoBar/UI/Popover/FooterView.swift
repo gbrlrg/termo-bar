@@ -26,12 +26,12 @@ struct FooterView: View {
                     openSettings()
                 }
                 .keyboardShortcut(",")
-                Toggle("Abrir ao iniciar sessão", isOn: $launchAtLogin.isEnabled)
+                Toggle("Abrir no início da sessão", isOn: $launchAtLogin.isEnabled)
                 Divider()
-                Button("Sair do TermoBar") { NSApp.terminate(nil) }
+                Button("Encerrar TermoBar") { NSApp.terminate(nil) }
                     .keyboardShortcut("q")
             } label: {
-                Image(systemName: "gearshape")
+                Label("Ajustes", systemImage: "gearshape")
             }
             .menuStyle(.button)
             .buttonStyle(.plain)

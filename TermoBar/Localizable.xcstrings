@@ -273,7 +273,7 @@
         }
       }
     },
-    "Abrir ao iniciar sessão": {
+    "Abrir no início da sessão": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -284,7 +284,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abrir ao iniciar sessão"
+            "value": "Abrir no início da sessão"
           }
         }
       }
@@ -333,6 +333,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Agrupamento"
+          }
+        }
+      }
+    },
+    "Ajustes": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajustes"
           }
         }
       }
@@ -877,6 +893,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Em média por"
+          }
+        }
+      }
+    },
+    "Encerrar TermoBar": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quit TermoBar"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encerrar TermoBar"
           }
         }
       }
@@ -1481,6 +1513,22 @@
         }
       }
     },
+    "Mostrar ícones ao lado dos valores": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show icons next to the values"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar ícones ao lado dos valores"
+          }
+        }
+      }
+    },
     "Máquina virtual": {
       "localizations": {
         "en": {
@@ -1841,7 +1889,7 @@
         }
       }
     },
-    "Parada": {
+    "Parado": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1852,7 +1900,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Parada"
+            "value": "Parado"
           }
         }
       }
@@ -1985,7 +2033,7 @@
         }
       }
     },
-    "Prévia": {
+    "Pré-visualização": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -1996,7 +2044,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Prévia"
+            "value": "Pré-visualização"
           }
         }
       }
@@ -2017,7 +2065,7 @@
         }
       }
     },
-    "Rotação lida do controlador do sistema (SMC) a cada segundo, também sem privilégio de administrador. Abaixo de 100 rpm a ventoinha conta como parada. O MacBook Air não tem ventoinha, e o TermoBar esconde essa parte.": {
+    "Rotação lida do controlador do sistema (SMC) a cada segundo, também sem privilégio de administrador. Abaixo de 100 rpm o ventilador conta como parado. O MacBook Air não tem ventilador, e o TermoBar esconde essa parte.": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2028,7 +2076,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rotação lida do controlador do sistema (SMC) a cada segundo, também sem privilégio de administrador. Abaixo de 100 rpm a ventoinha conta como parada. O MacBook Air não tem ventoinha, e o TermoBar esconde essa parte."
+            "value": "Rotação lida do controlador do sistema (SMC) a cada segundo, também sem privilégio de administrador. Abaixo de 100 rpm o ventilador conta como parado. O MacBook Air não tem ventilador, e o TermoBar esconde essa parte."
           }
         }
       }
@@ -2045,22 +2093,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Rotação lida do controlador do sistema (SMC). Parada abaixo de %lld rpm."
-          }
-        }
-      }
-    },
-    "Sair do TermoBar": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Quit TermoBar"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Sair do TermoBar"
           }
         }
       }
@@ -2145,6 +2177,38 @@
         }
       }
     },
+    "Somente temperatura": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temperature only"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Somente temperatura"
+          }
+        }
+      }
+    },
+    "Somente ícone": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Icon only"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Somente ícone"
+          }
+        }
+      }
+    },
     "Suspensão térmica": {
       "localizations": {
         "en": {
@@ -2157,22 +2221,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Suspensão térmica"
-          }
-        }
-      }
-    },
-    "Só ícone": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Icon only"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Só ícone"
           }
         }
       }
@@ -2225,18 +2273,18 @@
         }
       }
     },
-    "Temperatura e ventoinha": {
+    "Temperatura e velocidade do ventilador": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Temperature and fan"
+            "value": "Temperature and fan speed"
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Temperatura e ventoinha"
+            "value": "Temperatura e velocidade do ventilador"
           }
         }
       }
@@ -2369,7 +2417,7 @@
         }
       }
     },
-    "Ventoinha": {
+    "Ventilador": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2380,12 +2428,12 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ventoinha"
+            "value": "Ventilador"
           }
         }
       }
     },
-    "Ventoinha %lld": {
+    "Ventilador %lld": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2396,12 +2444,12 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ventoinha %lld"
+            "value": "Ventilador %lld"
           }
         }
       }
     },
-    "Ventoinha girando": {
+    "Ventilador girando": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2412,12 +2460,12 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ventoinha girando"
+            "value": "Ventilador girando"
           }
         }
       }
     },
-    "Ventoinha parada": {
+    "Ventilador parado": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2428,12 +2476,12 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ventoinha parada"
+            "value": "Ventilador parado"
           }
         }
       }
     },
-    "Ventoinhas": {
+    "Ventiladores": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2444,7 +2492,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ventoinhas"
+            "value": "Ventiladores"
           }
         }
       }
@@ -2609,7 +2657,7 @@
         }
       }
     },
-    "parada": {
+    "parado": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2620,12 +2668,12 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "parada"
+            "value": "parado"
           }
         }
       }
     },
-    "parada no período": {
+    "parado no período": {
       "localizations": {
         "en": {
           "stringUnit": {
@@ -2636,7 +2684,7 @@
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "parada no período"
+            "value": "parado no período"
           }
         }
       }
@@ -2669,22 +2717,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "sem leitura"
-          }
-        }
-      }
-    },
-    "Ícone e temperatura": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Icon and temperature"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ícone e temperatura"
           }
         }
       }

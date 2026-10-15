@@ -36,10 +36,11 @@ struct EnergyChart: View {
 
     private var chart: some View {
         Chart {
-            ForEach(summary.slices) { slice in
+            // O primeiro intervalo pode começar antes do período, e o Charts não recorta o que sai do domínio.
+            ForEach(summary.slices.filter { barEnd($0) > summary.start }) { slice in
                 RectangleMark(
-                    xStart: .value("Início", slice.start),
-                    xEnd: .value("Fim", slice.start.addingTimeInterval(summary.binSize * Self.barWidthRatio)),
+                    xStart: .value("Início", max(slice.start, summary.start)),
+                    xEnd: .value("Fim", barEnd(slice)),
                     yStart: .value("W", slice.low),
                     yEnd: .value("W", slice.high)
                 )
@@ -61,6 +62,10 @@ struct EnergyChart: View {
         .chartYAxis { ChartStyle.quietYAxis { $0.formatted(.number.precision(.fractionLength(0))) + " W" } }
         .chartXSelection(value: $hoverDate)
         .frame(height: 84)
+    }
+
+    private func barEnd(_ slice: PowerSlice) -> Date {
+        slice.start.addingTimeInterval(summary.binSize * Self.barWidthRatio)
     }
 
     private var legend: some View {

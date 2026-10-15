@@ -20,7 +20,7 @@ struct SensorSettingsView: View {
                         FanRow(fan: fan, label: fanLabel(fan))
                     }
                 } header: {
-                    Text("Ventoinhas")
+                    Text("Ventiladores")
                 } footer: {
                     SettingsFootnote(
                         "Rotação lida do controlador do sistema (SMC). Parada abaixo de \(Int(Fan.spinningThreshold)) rpm."
@@ -40,7 +40,7 @@ struct SensorSettingsView: View {
     }
 
     private func fanLabel(_ fan: Fan) -> String {
-        monitor.fans.count == 1 ? String(localized: "Ventoinha") : String(localized: "Ventoinha \(fan.id + 1)")
+        monitor.fans.count == 1 ? String(localized: "Ventilador") : String(localized: "Ventilador \(fan.id + 1)")
     }
 }
 
@@ -60,7 +60,7 @@ private struct FanRow: View {
                     .foregroundStyle(.tertiary)
             }
             Spacer()
-            Text(fan.isSpinning ? fan.rpm.formatted(.rpm) : String(localized: "Parada"))
+            Text(fan.isSpinning ? fan.rpm.formatted(.rpm) : String(localized: "Parado"))
                 .monospacedDigit()
         }
     }

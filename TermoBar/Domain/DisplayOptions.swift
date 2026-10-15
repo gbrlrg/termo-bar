@@ -34,21 +34,18 @@ enum TemperatureSource: String, CaseIterable, Identifiable, Sendable {
 }
 
 enum MenuBarStyle: String, CaseIterable, Identifiable, Sendable {
-    case temperature, temperatureAndPower, temperatureAndFan, iconAndTemperature, icon
+    case icon, temperature, temperatureAndPower, temperatureAndFan
 
     var id: Self { self }
 
     var label: String {
         switch self {
-        case .temperature: String(localized: "Temperatura")
+        case .icon: String(localized: "Somente ícone")
+        case .temperature: String(localized: "Somente temperatura")
         case .temperatureAndPower: String(localized: "Temperatura e watts")
-        case .temperatureAndFan: String(localized: "Temperatura e ventoinha")
-        case .iconAndTemperature: String(localized: "Ícone e temperatura")
-        case .icon: String(localized: "Só ícone")
+        case .temperatureAndFan: String(localized: "Temperatura e velocidade do ventilador")
         }
     }
-
-    var showsIcon: Bool { self == .icon || self == .iconAndTemperature }
 
     var showsTemperature: Bool { self != .icon }
 

@@ -8,7 +8,7 @@ struct MenuBarSettingsView: View {
         @Bindable var preferences = preferences
         Form {
             Section {
-                LabeledContent("Prévia") {
+                LabeledContent("Pré-visualização") {
                     MenuBarLabel()
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
@@ -20,6 +20,9 @@ struct MenuBarSettingsView: View {
                     ForEach(MenuBarStyle.allCases.filter { !$0.showsFan || monitor.hasFans }) {
                         Text($0.label).tag($0)
                     }
+                }
+                if preferences.menuBarStyle.showsTemperature {
+                    Toggle("Mostrar ícones ao lado dos valores", isOn: $preferences.showValueIcons)
                 }
             }
             Section {
