@@ -3,6 +3,8 @@ import SwiftUI
 /// Ícone, versão e informações para suporte, como na aba Sobre de apps independentes para Mac.
 struct AboutView: View {
     private static let releases = URL(string: "https://github.com/gbrlrg/termo-bar/releases")
+    /// Licenças das bibliotecas embutidas (Sparkle), que a licença MIT exige distribuir junto com o app.
+    private static let licenses = Bundle.main.url(forResource: "ThirdPartyLicenses", withExtension: "txt")
 
     @State private var didCopy = false
 
@@ -34,6 +36,12 @@ struct AboutView: View {
                     action: copySystemInfo
                 )
                 .help("Versão do app, do macOS e o chip, para pedidos de suporte")
+            }
+
+            if let licenses = Self.licenses {
+                Button("Licenças de terceiros") { NSWorkspace.shared.open(licenses) }
+                    .buttonStyle(.link)
+                    .font(.callout)
             }
 
             Divider().padding(.vertical, 4)
