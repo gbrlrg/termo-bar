@@ -6,6 +6,7 @@ struct TermoBarApp: App {
         #if DEBUG
             DebugSnapshot.runIfRequested()
         #endif
+        AppDependencies.statusMenu.install()
     }
 
     var body: some Scene {

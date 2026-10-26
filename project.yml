@@ -99,8 +99,8 @@ targets:
         LOCALIZATION_PREFERS_STRING_CATALOGS: YES
         SWIFT_EMIT_LOC_STRINGS: YES
 
-  # Testes da lógica pura (Domain, Persistence e Preferences), compilada junto com os testes:
-  # não abre o app nem depende de sensores.
+  # Testes da lógica pura (Domain, Persistence e Preferences) e do menu da barra, compilados junto
+  # com os testes: não abre o app nem depende de sensores.
   TermoBarTests:
     type: bundle.unit-test
     platform: macOS
@@ -109,6 +109,7 @@ targets:
       - TermoBar/Domain
       - TermoBar/Persistence
       - TermoBar/Services/Preferences.swift
+      - TermoBar/UI/MenuBar/StatusItemContextMenu.swift
     dependencies:
       - sdk: libsqlite3.tbd
     settings:

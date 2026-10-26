@@ -6,13 +6,11 @@ struct FooterView: View {
     @Environment(Updater.self) private var updater
     @Environment(\.openSettings) private var openSettings
 
-    private static let activityMonitorURL = URL(filePath: "/System/Applications/Utilities/Activity Monitor.app")
-
     var body: some View {
         @Bindable var launchAtLogin = launchAtLogin
         HStack {
             Button {
-                NSWorkspace.shared.open(Self.activityMonitorURL)
+                AppActions.openActivityMonitor()
             } label: {
                 Label("Monitor de Atividade", systemImage: "chart.bar.xaxis")
             }

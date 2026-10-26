@@ -11,6 +11,14 @@ enum AppDependencies {
     static let launchAtLogin = LaunchAtLogin()
     static let updater = Updater()
     static let monitor = Monitor(preferences: preferences, alerts: alerts, store: openHistory())
+    static let statusMenu = StatusItemContextMenu(
+        actions: .init(
+            openSettings: AppActions.openSettings,
+            openActivityMonitor: AppActions.openActivityMonitor,
+            checkForUpdates: { updater.checkForUpdates() },
+            toggleLaunchAtLogin: { launchAtLogin.isEnabled.toggle() },
+            quit: { NSApp.terminate(nil) }),
+        isLaunchAtLoginEnabled: { launchAtLogin.isEnabled })
 
     /// Sem acesso ao arquivo, o histórico fica só em memória e o app continua funcionando.
     private static func openHistory() -> HistoryStore? {
