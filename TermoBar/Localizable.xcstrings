@@ -209,6 +209,22 @@
         }
       }
     },
+    "A autonomia aparece depois de alguns minutos de medição na bateria": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Runtime appears after a few minutes of measuring on battery"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A autonomia aparece depois de alguns minutos de medição na bateria"
+          }
+        }
+      }
+    },
     "A energia total da GPU, medida pelo chip, é dividida entre os processos na proporção do tempo de GPU que cada um usou no intervalo.": {
       "localizations": {
         "en": {
@@ -625,6 +641,22 @@
         }
       }
     },
+    "Autonomia no ritmo dos últimos %lld min (%@). Muda conforme o que você faz.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Runtime at the pace of the last %1$lld min (%2$@). It changes with what you do."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autonomia no ritmo dos últimos %lld min (%@). Muda conforme o que você faz."
+          }
+        }
+      }
+    },
     "Avisa quando a temperatura fica acima do limite por 30 segundos seguidos.": {
       "localizations": {
         "en": {
@@ -801,6 +833,22 @@
         }
       }
     },
+    "Calculando…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calculating…"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calculando…"
+          }
+        }
+      }
+    },
     "Calibração %@": {
       "localizations": {
         "en": {
@@ -833,6 +881,54 @@
         }
       }
     },
+    "Carga da bateria, %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Battery charge, %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carga da bateria, %@"
+          }
+        }
+      }
+    },
+    "Carga e temperatura da bateria, %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Battery charge and temperature, %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carga e temperatura da bateria, %@"
+          }
+        }
+      }
+    },
+    "Carga, ciclos e capacidade máxima vêm do registro da própria bateria, os mesmos números dos Ajustes do Sistema. A autonomia é uma estimativa: divide a energia que resta pela potência média que o Mac gastou nos últimos minutos na bateria, e muda conforme o que você faz. Ela só aparece depois de alguns minutos de medição.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge, cycles and maximum capacity come from the battery's own registry, the same numbers as System Settings. Runtime is an estimate: it divides the energy left by the average power the Mac drew over the last minutes on battery, and it changes with what you do. It only appears after a few minutes of measuring."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carga, ciclos e capacidade máxima vêm do registro da própria bateria, os mesmos números dos Ajustes do Sistema. A autonomia é uma estimativa: divide a energia que resta pela potência média que o Mac gastou nos últimos minutos na bateria, e muda conforme o que você faz. Ela só aparece depois de alguns minutos de medição."
+          }
+        }
+      }
+    },
     "Casas decimais": {
       "localizations": {
         "en": {
@@ -845,6 +941,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Casas decimais"
+          }
+        }
+      }
+    },
+    "Cheia em %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Full in %@"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cheia em %@"
           }
         }
       }
@@ -2577,38 +2689,6 @@
         }
       }
     },
-    "Temperatura da bateria": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Battery temperature"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Temperatura da bateria"
-          }
-        }
-      }
-    },
-    "Temperatura da bateria, carregando": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Battery temperature, charging"
-          }
-        },
-        "pt-BR": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Temperatura da bateria, carregando"
-          }
-        }
-      }
-    },
     "Temperatura do Mac": {
       "localizations": {
         "en": {
@@ -2685,6 +2765,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Temperatura exibida"
+          }
+        }
+      }
+    },
+    "Tempo para completar a carga, estimado pelo macOS": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Time to full charge, estimated by macOS"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tempo para completar a carga, estimado pelo macOS"
           }
         }
       }
@@ -2961,6 +3057,22 @@
         }
       }
     },
+    "carregando": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "charging"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "carregando"
+          }
+        }
+      }
+    },
     "energia no período": {
       "localizations": {
         "en": {
@@ -3009,6 +3121,22 @@
         }
       }
     },
+    "mais de 24 h": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "more than 24 h"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mais de 24 h"
+          }
+        }
+      }
+    },
     "média %@": {
       "localizations": {
         "en": {
@@ -3037,6 +3165,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "média %@ · %@–%@"
+          }
+        }
+      }
+    },
+    "na bateria": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "on battery"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "na bateria"
+          }
+        }
+      }
+    },
+    "na tomada": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "plugged in"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "na tomada"
           }
         }
       }

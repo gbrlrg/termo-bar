@@ -116,6 +116,8 @@ O código é dividido em camadas; as de cima dependem das de baixo, nunca o cont
 | `Domain/AlertPolicy.swift` | Quando avisar: temperatura sustentada, limitação térmica, app acima do limite, intervalo entre repetições |
 | `Hardware/TemperatureSensors.swift` | Sensores do die e filtro de leituras implausíveis |
 | `Hardware/FanReader.swift` | Rotação, mínimo e máximo de cada ventoinha, lidos do AppleSMC |
+| `Domain/Battery.swift`, `Domain/BatteryRuntime.swift` | Estado da bateria lido do IORegistry (saúde, energia, potência de descarga) e a autonomia estimada pela média recente |
+| `Hardware/BatteryReader.swift` | Propriedades do `AppleSmartBattery`, sem privilégio de administrador |
 | `Hardware/EnergySampler.swift` | Energia de CPU por processo e agrupamento por app responsável |
 | `Hardware/GPUSampler.swift` | Energia da GPU, tempo de GPU por processo e correção do WindowServer |
 | `Services/Monitor.swift` | Coleta a cada segundo, fecha registros, resume por minuto e mantém o estado da interface |

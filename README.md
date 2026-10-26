@@ -54,7 +54,7 @@ From version 1.3.0 on, TermoBar updates itself: it checks GitHub for new version
 - **Energy per app** as stacked bars, on the same time axis as the temperature.
 - **"Apps heating up the most" ranking**: average watts, share of energy, whether the GPU dominates, and a timeline of when each app was open and drawing power.
 - **Each app's processes, right now**: click an app to see which of its processes are drawing power, with a readable name, project and how long they've been running (e.g. *wrangler · dev · my-site*, *Swift tests*, an app in the Simulator). From there you can also quit the app.
-- **Battery temperature** on laptops, and whether it's charging.
+- **Battery** on laptops: charge, temperature, whether it's charging, and the time left on battery or to full charge. The time left is an estimate from the last minutes of use, shown only after a few minutes of measuring.
 - **Low Power Mode**: shows when it's on and suggests it when the Mac is under thermal pressure, with a shortcut to the Battery settings.
 - **Time ranges** of 15 min, 1 h, 24 h and 7 days.
 - **Alerts** for high temperature, throttling and apps using too much power.

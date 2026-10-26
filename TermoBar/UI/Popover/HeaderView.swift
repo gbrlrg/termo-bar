@@ -31,8 +31,11 @@ struct HeaderView: View {
                 if let rpm = monitor.current?.fanSpeed {
                     FanBadge(rpm: rpm)
                 }
-                if let battery = monitor.batteryTemperature {
-                    BatteryBadge(temperature: preferences.format(battery, decimals: 0), isCharging: monitor.isCharging)
+                if let battery = monitor.battery {
+                    BatteryBadge(
+                        battery: battery,
+                        temperature: monitor.batteryTemperature.map { preferences.format($0, decimals: 0) })
+                    BatteryTimeBadge(battery: battery, runtime: monitor.runtime)
                 }
                 // Ligado, avisa; desligado, só aparece como sugestão quando o Mac já está sob pressão.
                 if monitor.isLowPowerMode || monitor.pressure >= .moderate {
@@ -55,30 +58,6 @@ struct HeaderView: View {
                 .foregroundStyle(.secondary)
         }
         .monospacedDigit()
-    }
-}
-
-/// Temperatura da bateria nos notebooks; carregando é quando ela mais esquenta.
-private struct BatteryBadge: View {
-    let temperature: String
-    let isCharging: Bool
-
-    var body: some View {
-        Label(temperature, systemImage: isCharging ? "battery.100percent.bolt" : "battery.75percent")
-            .font(.caption.weight(.semibold))
-            .monospacedDigit()
-            .foregroundStyle(.secondary)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 3)
-            .background(.fill.tertiary, in: Capsule())
-            .fixedSize()
-            .help(help)
-    }
-
-    private var help: String {
-        isCharging
-            ? String(localized: "Temperatura da bateria, carregando")
-            : String(localized: "Temperatura da bateria")
     }
 }
 

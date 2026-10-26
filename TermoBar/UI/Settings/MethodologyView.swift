@@ -28,6 +28,10 @@ struct MethodologyView: View {
             "Rotação lida do controlador do sistema (SMC) a cada segundo, também sem privilégio de administrador. Abaixo de 100 rpm o ventilador conta como parado. O MacBook Air não tem ventilador, e o TermoBar esconde essa parte."
         ),
         (
+            "Bateria", "battery.75percent",
+            "Carga, ciclos e capacidade máxima vêm do registro da própria bateria, os mesmos números dos Ajustes do Sistema. A autonomia é uma estimativa: divide a energia que resta pela potência média que o Mac gastou nos últimos minutos na bateria, e muda conforme o que você faz. Ela só aparece depois de alguns minutos de medição."
+        ),
+        (
             "Limitação térmica", "flame",
             "Vem da pressão térmica publicada pelo kernel. A partir do nível “pesada” o macOS reduz a frequência do chip; esses trechos aparecem destacados no gráfico."
         ),

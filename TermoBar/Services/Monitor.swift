@@ -23,6 +23,8 @@ final class Monitor {
     private static let widgetApps = 3
 
     private static let readInterval: TimeInterval = 1
+    /// A bateria muda devagar; ler a cada tique só gastaria CPU.
+    private static let batteryInterval: TimeInterval = 5
     /// Tolerância para fechar o registro no tique mais próximo do intervalo escolhido.
     private static let intervalTolerance: TimeInterval = 0.25
     /// Um registro nunca representa mais que isso vezes o intervalo (Mac acordando, por exemplo).
@@ -42,6 +44,10 @@ final class Monitor {
     /// Temperatura da bateria, arredondada a 0,1 °C para não redesenhar o popover à toa; `nil` sem bateria.
     private(set) var batteryTemperature: Double?
     private(set) var isCharging = false
+    /// Estado da bateria interna, lido a cada poucos segundos; `nil` em Macs de mesa.
+    private(set) var battery: BatteryStatus?
+    /// Autonomia no ritmo recente; só enquanto descarrega e depois de medir por alguns minutos.
+    private(set) var runtime: RuntimeEstimate?
     /// Modo Pouca Energia ligado: o macOS segura o chip e o calor cai.
     private(set) var isLowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
     /// Última leitura de cada sensor e de cada ventoinha, atualizadas só com a aba Sensores aberta.
@@ -70,6 +76,8 @@ final class Monitor {
     /// Rotação média das ventoinhas em cada leitura do intervalo (rpm).
     @ObservationIgnored private var pendingFanSpeeds: [Double] = []
     @ObservationIgnored private var lastSampleDate: Date?
+    @ObservationIgnored private var discharge = DischargeHistory()
+    @ObservationIgnored private var lastBatteryRead = Date.distantPast
     @ObservationIgnored private var currentMinute: Date?
     @ObservationIgnored private var lastDiskPrune = Date.distantPast
     @ObservationIgnored private var savedNames: [String: String] = [:]
@@ -182,8 +190,7 @@ final class Monitor {
         if pressure != self.pressure { self.pressure = pressure }
         let battery = temperatureSensors.readBattery().map { ($0 * 10).rounded() / 10 }
         if battery != batteryTemperature { batteryTemperature = battery }
-        let isCharging = battery != nil && PowerSource.isCharging()
-        if isCharging != self.isCharging { self.isCharging = isCharging }
+        updateBattery(now: Date())
         let isLowPowerMode = ProcessInfo.processInfo.isLowPowerModeEnabled
         if isLowPowerMode != self.isLowPowerMode { self.isLowPowerMode = isLowPowerMode }
 
@@ -193,6 +200,18 @@ final class Monitor {
                 now.timeIntervalSince($0) >= preferences.sampleInterval - Self.intervalTolerance
             } ?? true
         if isDue { recordSample(at: now) }
+    }
+
+    private func updateBattery(now: Date) {
+        guard now.timeIntervalSince(lastBatteryRead) >= Self.batteryInterval - Self.intervalTolerance else { return }
+        lastBatteryRead = now
+        let status = BatteryReader.read()
+        discharge.record(status, at: now)
+        let runtime = discharge.estimate(for: status)
+        if status != battery { battery = status }
+        if runtime != self.runtime { self.runtime = runtime }
+        let isCharging = status?.isCharging ?? false
+        if isCharging != self.isCharging { self.isCharging = isCharging }
     }
 
     private func recordSample(at now: Date) {
