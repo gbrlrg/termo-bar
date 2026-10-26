@@ -251,7 +251,7 @@ final class Monitor {
         updatePalette()
         publishWidget(at: now)
         saveNewNames()
-        alerts.evaluate(recent) { self.name($0) }
+        alerts.evaluate(recent, battery: battery) { self.name($0) }
         #if DEBUG
             logIfRequested(sample)
         #endif

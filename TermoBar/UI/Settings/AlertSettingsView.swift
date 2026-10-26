@@ -47,7 +47,9 @@ struct AlertSettingsView: View {
                     }
                 }
             } footer: {
-                SettingsFootnote("Avisa quando um app gasta mais que o limite, em média, durante o período escolhido.")
+                SettingsFootnote(
+                    "Avisa quando um app gasta mais que o limite, em média, durante o período escolhido. Na bateria, o aviso diz quanto da carga ele tira por hora."
+                )
             }
             Section {
                 LabeledContent("Notificação de teste") {

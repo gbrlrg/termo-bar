@@ -147,7 +147,7 @@ Tab names below are the English ones; the Portuguese names are in parentheses.
 |---|---|
 | **General** (Geral) | Open at login, automatic update checks, displayed temperature (chip average or hottest spot), unit (°C/°F), decimal places, recording interval (2/5/10 s) |
 | **Menu bar** (Barra de menus) | Icon only, temperature only, temperature and watts, or temperature and fan speed, optionally with icons next to the values; show only the icon while cool |
-| **Alerts** (Alertas) | Temperature above a threshold for 30 s; throttling; an app above X W on average for N minutes |
+| **Alerts** (Alertas) | Temperature above a threshold for 30 s; throttling; an app above X W on average for N minutes (on battery, the alert says how much charge it takes per hour) |
 | **Sensors** (Sensores) | Live reading of each fan, with its minimum and maximum; of each chip sensor, with a readable name and whether it counts toward the average; and of the other sensors (board, battery, ambient light) |
 | **Data** (Dados) | Retention (7/30/90 days), CSV export, show in Finder, delete history |
 | **Accuracy** (Precisão) | The methodology above, inside the app |

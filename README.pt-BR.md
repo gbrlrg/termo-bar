@@ -145,7 +145,7 @@ Medições feitas num MacBook com Apple M5 e macOS 27:
 |---|---|
 | **Geral** | Abrir no início da sessão, busca automática de atualizações, temperatura exibida (média do chip ou ponto mais quente), unidade (°C/°F), casas decimais, intervalo de registro (2/5/10 s) |
 | **Barra de menus** | Somente ícone, somente temperatura, temperatura e watts ou temperatura e velocidade do ventilador, com ícones ao lado dos valores se quiser; mostrar só o ícone enquanto estiver frio |
-| **Alertas** | Temperatura acima de um limite por 30 s; limitação de desempenho; app acima de X W em média por N minutos |
+| **Alertas** | Temperatura acima de um limite por 30 s; limitação de desempenho; app acima de X W em média por N minutos (na bateria, o aviso diz quanto da carga ele tira por hora) |
 | **Sensores** | Leitura ao vivo de cada ventilador, com mínimo e máximo; de cada sensor do chip, com nome legível e se entra na média; e dos outros sensores (placa, bateria, luz ambiente) |
 | **Dados** | Retenção (7/30/90 dias), exportar CSV, mostrar no Finder, apagar histórico |
 | **Precisão** | A metodologia acima, dentro do app |

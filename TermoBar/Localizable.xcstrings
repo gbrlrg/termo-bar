@@ -689,18 +689,18 @@
         }
       }
     },
-    "Avisa quando um app gasta mais que o limite, em média, durante o período escolhido.": {
+    "Avisa quando um app gasta mais que o limite, em média, durante o período escolhido. Na bateria, o aviso diz quanto da carga ele tira por hora.": {
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Notifies you when an app uses more than the limit, on average, over the chosen period."
+            "value": "Alerts when an app uses more than the limit, on average, over the chosen period. On battery, the alert says how much charge it takes per hour."
           }
         },
         "pt-BR": {
           "stringUnit": {
             "state": "translated",
-            "value": "Avisa quando um app gasta mais que o limite, em média, durante o período escolhido."
+            "value": "Avisa quando um app gasta mais que o limite, em média, durante o período escolhido. Na bateria, o aviso diz quanto da carga ele tira por hora."
           }
         }
       }
@@ -2637,6 +2637,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Suspensão térmica"
+          }
+        }
+      }
+    },
+    "Só a CPU e a GPU dele já tiram cerca de %@ da bateria por hora.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Its CPU and GPU alone already take about %@ of the battery per hour."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Só a CPU e a GPU dele já tiram cerca de %@ da bateria por hora."
           }
         }
       }

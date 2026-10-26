@@ -111,4 +111,10 @@ struct BatteryTests {
         #expect(BatteryDrain.percentPerHour(watts: 5, fullEnergy: 0) == nil)
         #expect(BatteryDrain.percentPerHour(watts: -1, fullEnergy: 50) == nil)
     }
+
+    @Test func notableDrainIsRoundedAndSkipsTheNegligible() {
+        #expect(BatteryDrain.notablePercentPerHour(watts: 6, fullEnergy: 60) == 10)
+        #expect(BatteryDrain.notablePercentPerHour(watts: 0.1, fullEnergy: 60) == nil)
+        #expect(BatteryDrain.notablePercentPerHour(watts: 6, fullEnergy: nil) == nil)
+    }
 }

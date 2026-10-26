@@ -100,4 +100,11 @@ enum BatteryDrain {
         guard let fullEnergy, fullEnergy > 0, watts >= 0 else { return nil }
         return watts / fullEnergy * 100
     }
+
+    /// Percentual por hora inteiro, para o texto de um aviso; `nil` quando é pouco demais para valer a menção.
+    static func notablePercentPerHour(watts: Double, fullEnergy: Double?) -> Int? {
+        guard let percent = percentPerHour(watts: watts, fullEnergy: fullEnergy) else { return nil }
+        let rounded = Int(percent.rounded())
+        return rounded >= 1 ? rounded : nil
+    }
 }

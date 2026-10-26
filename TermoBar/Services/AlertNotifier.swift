@@ -35,10 +35,10 @@ final class AlertNotifier {
     }
 
     /// Avalia a amostra mais recente do histórico e notifica o que for preciso.
-    func evaluate(_ history: [Sample], appName: (String) -> String) {
+    func evaluate(_ history: [Sample], battery: BatteryStatus?, appName: (String) -> String) {
         let events = policy.evaluate(history, configuration: preferences.alertConfiguration, source: preferences.source)
         for event in events {
-            let (title, body) = message(for: event, appName: appName)
+            let (title, body) = message(for: event, battery: battery, appName: appName)
             post(id: event.key, title: title, body: body)
         }
     }
@@ -52,7 +52,9 @@ final class AlertNotifier {
         }
     }
 
-    private func message(for event: AlertEvent, appName: (String) -> String) -> (title: String, body: String) {
+    private func message(
+        for event: AlertEvent, battery: BatteryStatus?, appName: (String) -> String
+    ) -> (title: String, body: String) {
         func describe(_ consumer: PowerConsumer) -> String {
             "\(appName(consumer.app)) (\(consumer.watts.formatted(.watts)))"
         }
@@ -71,9 +73,20 @@ final class AlertNotifier {
                     + (topConsumer.map { " " + String(localized: "Quem mais consome: \(describe($0)).") } ?? "")
             )
         case let .appPower(consumer, window):
+            let average = String(localized: "Média dos últimos \(Int(window / 60)) minutos.")
+            // Só CPU e GPU do app: o resto do Mac também gasta, então é o mínimo que ele custa.
+            let drain =
+                battery?.isDischarging == true
+                ? BatteryDrain.notablePercentPerHour(watts: consumer.watts, fullEnergy: battery?.fullEnergy) : nil
             return (
                 String(localized: "\(appName(consumer.app)) está gastando \(consumer.watts.formatted(.watts))"),
-                String(localized: "Média dos últimos \(Int(window / 60)) minutos.")
+                drain.map {
+                    average + " "
+                        + String(
+                            localized:
+                                "Só a CPU e a GPU dele já tiram cerca de \((Double($0) / 100).formatted(.percent)) da bateria por hora."
+                        )
+                } ?? average
             )
         }
     }
