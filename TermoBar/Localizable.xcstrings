@@ -81,6 +81,22 @@
         }
       }
     },
+    "%lld de %lld": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld of %2$lld"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld de %lld"
+          }
+        }
+      }
+    },
     "%lld processos · %@": {
       "localizations": {
         "en": {
@@ -221,6 +237,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "A autonomia aparece depois de alguns minutos de medição na bateria"
+          }
+        }
+      }
+    },
+    "A capacidade máxima é a mesma dos Ajustes do Sistema.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maximum capacity is the same as in System Settings."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A capacidade máxima é a mesma dos Ajustes do Sistema."
           }
         }
       }
@@ -881,6 +913,38 @@
         }
       }
     },
+    "Capacidade máxima": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maximum capacity"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Capacidade máxima"
+          }
+        }
+      }
+    },
+    "Carga": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charge"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carga"
+          }
+        }
+      }
+    },
     "Carga da bateria, %@": {
       "localizations": {
         "en": {
@@ -1009,6 +1073,22 @@
         }
       }
     },
+    "Ciclos": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cycles"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ciclos"
+          }
+        }
+      }
+    },
     "Coletando dados…": {
       "localizations": {
         "en": {
@@ -1037,6 +1117,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Compilador Swift"
+          }
+        }
+      }
+    },
+    "Consumo do Mac": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mac power draw"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Consumo do Mac"
           }
         }
       }
@@ -1281,6 +1377,22 @@
         }
       }
     },
+    "Estado": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "State"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estado"
+          }
+        }
+      }
+    },
     "Exportado para %@.": {
       "localizations": {
         "en": {
@@ -1389,6 +1501,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Geral"
+          }
+        }
+      }
+    },
+    "Girando no período": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Spinning in period"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Girando no período"
           }
         }
       }
@@ -1533,6 +1661,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lida direto dos sensores do die do chip, a cada segundo, sem privilégio de administrador. Cada registro é a média das leituras do intervalo, o que tira o ruído sem esconder picos: o ponto mais quente é guardado à parte."
+          }
+        }
+      }
+    },
+    "Limitado no período": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Throttled in period"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Limitado no período"
           }
         }
       }
@@ -2049,6 +2193,22 @@
         }
       }
     },
+    "O Mac está esquentando, mas o macOS ainda não reduz o desempenho.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The Mac is warming up, but macOS isn't reducing performance yet."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O Mac está esquentando, mas o macOS ainda não reduz o desempenho."
+          }
+        }
+      }
+    },
     "O Modo Pouca Energia reduz o calor e o ruído. Clique para ativar nos Ajustes.": {
       "localizations": {
         "en": {
@@ -2081,6 +2241,22 @@
         }
       }
     },
+    "O calor está alto: o macOS reduz bastante a velocidade do chip.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It's very hot: macOS is slowing the chip down a lot."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O calor está alto: o macOS reduz bastante a velocidade do chip."
+          }
+        }
+      }
+    },
     "O chip está a %@, com pressão térmica %@.": {
       "localizations": {
         "en": {
@@ -2093,6 +2269,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "O chip está a %@, com pressão térmica %@."
+          }
+        }
+      }
+    },
+    "O chip trabalha na velocidade máxima, sem limitação.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The chip is running at full speed, with no throttling."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O chip trabalha na velocidade máxima, sem limitação."
           }
         }
       }
@@ -2157,6 +2349,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "O macOS está limitando o desempenho"
+          }
+        }
+      }
+    },
+    "O macOS está reduzindo a velocidade do chip para esfriar.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS is slowing the chip down to cool it off."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O macOS está reduzindo a velocidade do chip para esfriar."
+          }
+        }
+      }
+    },
+    "O macOS pausou o trabalho do chip para esfriar.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "macOS has paused the chip's work to cool it off."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O macOS pausou o trabalho do chip para esfriar."
           }
         }
       }
@@ -2301,6 +2525,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Período"
+          }
+        }
+      }
+    },
+    "Pico no período": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peak in period"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pico no período"
           }
         }
       }
@@ -2477,6 +2717,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Quem mais consome: %@."
+          }
+        }
+      }
+    },
+    "Rotação agora": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speed now"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rotação agora"
           }
         }
       }

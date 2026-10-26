@@ -54,6 +54,7 @@ A partir da versão 1.3.0, o TermoBar se atualiza sozinho: busca versões novas 
 - **Energia por app** em barras empilhadas, no mesmo eixo de tempo da temperatura.
 - **Ranking "Apps que mais aquecem"**: watts médios, fatia da energia, se a GPU pesa, e uma linha do tempo de quando cada app esteve aberto e consumindo.
 - **Processos de cada app agora**: clicando num app, a lista mostra os processos dele que estão consumindo, com nome legível, projeto e há quanto tempo rodam (ex.: *wrangler · dev · meu-site*, *Testes Swift*, um app no Simulador). Dali também dá para encerrar o app.
+- **Badges clicáveis**: estado térmico, ventoinha e bateria abrem um card de detalhes (fração do período com limitação, pico do ventilador, capacidade máxima e ciclos).
 - **Bateria** nos notebooks: carga, temperatura, se está carregando e o tempo que falta para acabar ou para carregar. A autonomia é uma estimativa com base nos últimos minutos de uso e só aparece depois de alguns minutos de medição.
 - **Modo Pouca Energia**: indica quando está ligado e sugere ligar quando o Mac está sob pressão térmica, com atalho para os Ajustes da Bateria.
 - **Períodos** de 15 min, 1 h, 24 h e 7 dias.

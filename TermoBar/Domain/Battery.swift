@@ -7,6 +7,8 @@ struct BatteryStatus: Equatable, Sendable {
     var isPluggedIn: Bool
     var isCharging: Bool
     var cycleCount: Int?
+    /// Ciclos para os quais a bateria foi projetada, quando o Mac informa.
+    var designCycleCount: Int?
     /// Capacidade de projeto, quando a bateria era nova (mAh).
     var designCapacity: Double?
     /// Capacidade máxima atual, a base da "Capacidade Máxima" dos Ajustes do Sistema (mAh).
@@ -42,6 +44,7 @@ struct BatteryStatus: Equatable, Sendable {
         isPluggedIn = Self.bool(properties["ExternalConnected"]) ?? false
         isCharging = Self.bool(properties["IsCharging"]) ?? false
         cycleCount = Self.number(properties["CycleCount"]).map { Int($0) }
+        designCycleCount = Self.number(properties["DesignCycleCount9C"]).flatMap { $0 > 0 ? Int($0) : nil }
         designCapacity = capacity(("DesignCapacity", "DesignCapacity"))
         nominalCapacity = capacity(("AppleRawMaxCapacity", "NominalChargeCapacity"))
         fullChargeCapacity = capacity(("AppleRawMaxCapacity", "FullChargeCapacity"))

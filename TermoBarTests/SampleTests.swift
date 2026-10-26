@@ -120,4 +120,22 @@ struct SampleTests {
         #expect(sample.temperature(for: .hottest) == 70)
         #expect([sample].averageTemperature(for: .hottest) == 70)
     }
+
+    @Test func peakFanSpeedIgnoresSamplesWithoutReading() {
+        let samples = [
+            makeSample(at: 0, fanSpeed: 1200), makeSample(at: 5, fanSpeed: 3400), makeSample(at: 10),
+        ]
+        #expect(samples.peakFanSpeed == 3400)
+        #expect([makeSample(at: 0)].peakFanSpeed == nil)
+    }
+
+    @Test func throttledShareIsWeightedByDurationAndSkipsUnreadSamples() throws {
+        let samples = [
+            makeSample(at: 0, duration: 30, pressure: 0),
+            makeSample(at: 30, duration: 10, pressure: 2),
+            makeSample(at: 40, duration: 60, pressure: nil),
+        ]
+        #expect(try #require(samples.throttledShare) == 0.25)
+        #expect([makeSample(at: 0, pressure: nil)].throttledShare == nil)
+    }
 }

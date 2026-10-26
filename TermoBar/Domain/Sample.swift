@@ -97,6 +97,17 @@ extension Collection where Element == Sample {
         return read.filter(\.isFanSpinning).totalDuration / duration
     }
 
+    /// Maior rotação média registrada (rpm); `nil` sem leitura de ventoinha.
+    var peakFanSpeed: Double? { compactMap(\.fanSpeed).max() }
+
+    /// Fração do tempo com o macOS limitando o desempenho (0–1); `nil` sem pressão registrada.
+    var throttledShare: Double? {
+        let read = filter { $0.pressure != nil }
+        let duration = read.totalDuration
+        guard duration > 0 else { return nil }
+        return read.filter(\.isThrottling).totalDuration / duration
+    }
+
     /// Média da temperatura ponderada pela duração de cada amostra.
     func averageTemperature(for source: TemperatureSource) -> Double? {
         let duration = totalDuration

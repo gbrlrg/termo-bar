@@ -7,7 +7,6 @@ struct BatteryBadge: View {
 
     var body: some View {
         Label(text, systemImage: symbol)
-            .badgeStyle()
             .help(help)
     }
 
@@ -43,10 +42,14 @@ struct BatteryTimeBadge: View {
     let battery: BatteryStatus
     let runtime: RuntimeEstimate?
 
+    /// Há o que mostrar: autonomia (ou "calculando") na bateria, ou o tempo para carregar.
+    static func hasContent(_ battery: BatteryStatus) -> Bool {
+        battery.isDischarging || battery.minutesToFull != nil
+    }
+
     var body: some View {
         if let content {
             Label(content.text, systemImage: "clock")
-                .badgeStyle()
                 .help(content.help)
         }
     }
@@ -84,18 +87,5 @@ struct BatteryTimeBadge: View {
 
     private static func format(minutes: Int) -> String {
         Duration.seconds(minutes * 60).formatted(.units(allowed: [.hours, .minutes], width: .narrow))
-    }
-}
-
-extension View {
-    /// Pílula cinza dos números de apoio do cabeçalho.
-    fileprivate func badgeStyle() -> some View {
-        font(.caption.weight(.semibold))
-            .monospacedDigit()
-            .foregroundStyle(.secondary)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 3)
-            .background(.fill.tertiary, in: Capsule())
-            .fixedSize()
     }
 }

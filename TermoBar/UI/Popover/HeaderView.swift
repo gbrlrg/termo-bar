@@ -5,6 +5,19 @@ struct HeaderView: View {
     @Environment(Monitor.self) private var monitor
     @Environment(Preferences.self) private var preferences
 
+    /// Período do popover: as médias dos detalhes usam as mesmas amostras dos gráficos.
+    let summary: RangeSummary
+
+    @State private var expanded: BadgeKind? = {
+        #if DEBUG
+            ProcessInfo.processInfo.environment["TERMOBAR_BADGE"].flatMap {
+                ["pressure": BadgeKind.pressure, "fan": .fan, "battery": .battery][$0]
+            }
+        #else
+            nil
+        #endif
+    }()
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .top) {
@@ -27,23 +40,64 @@ struct HeaderView: View {
                 .padding(.top, 2)
             }
             FlowLayout(spacing: 6) {
-                PressureBadge(pressure: monitor.pressure)
+                BadgeButton(isExpanded: expanded == .pressure, tint: monitor.pressure.color) {
+                    toggle(.pressure)
+                } label: {
+                    PressureBadge(pressure: monitor.pressure)
+                }
                 if let rpm = monitor.current?.fanSpeed {
-                    FanBadge(rpm: rpm)
+                    BadgeButton(isExpanded: expanded == .fan) {
+                        toggle(.fan)
+                    } label: {
+                        FanBadge(rpm: rpm)
+                    }
                 }
                 if let battery = monitor.battery {
-                    BatteryBadge(
-                        battery: battery,
-                        temperature: monitor.batteryTemperature.map { preferences.format($0, decimals: 0) })
-                    BatteryTimeBadge(battery: battery, runtime: monitor.runtime)
+                    BadgeButton(isExpanded: expanded == .battery) {
+                        toggle(.battery)
+                    } label: {
+                        BatteryBadge(battery: battery, temperature: batteryTemperature)
+                    }
+                    if BatteryTimeBadge.hasContent(battery) {
+                        BadgeButton(isExpanded: expanded == .battery) {
+                            toggle(.battery)
+                        } label: {
+                            BatteryTimeBadge(battery: battery, runtime: monitor.runtime)
+                        }
+                    }
                 }
                 // Ligado, avisa; desligado, só aparece como sugestão quando o Mac já está sob pressão.
                 if monitor.isLowPowerMode || monitor.pressure >= .moderate {
                     LowPowerBadge(isOn: monitor.isLowPowerMode)
                 }
             }
+            if let detail {
+                detail.padding(.horizontal, -4).transition(.opacity)
+            }
         }
         .padding(.horizontal, 4)
+    }
+
+    private var batteryTemperature: String? {
+        monitor.batteryTemperature.map { preferences.format($0, decimals: 0) }
+    }
+
+    private func toggle(_ kind: BadgeKind) {
+        withAnimation(.smooth(duration: 0.25)) { expanded = expanded == kind ? nil : kind }
+    }
+
+    /// Detalhes do badge aberto; fecham sozinhos se o dado some (bateria desligada, ventoinha sem leitura).
+    private var detail: BadgeDetailCard? {
+        switch expanded {
+        case .pressure:
+            BadgeDetails.pressure(monitor.pressure, samples: summary.samples)
+        case .fan:
+            monitor.current?.fanSpeed.map { BadgeDetails.fan(rpm: $0, samples: summary.samples) }
+        case .battery:
+            monitor.battery.map { BadgeDetails.battery($0, temperature: batteryTemperature) }
+        case nil:
+            nil
+        }
     }
 
     private var currentTemperature: some View {
@@ -72,13 +126,6 @@ private struct FanBadge: View {
             isSpinning ? rpm.formatted(.rpm) : String(localized: "Parado"),
             systemImage: isSpinning ? "fan.fill" : "fan.slash"
         )
-        .font(.caption.weight(.semibold))
-        .monospacedDigit()
-        .foregroundStyle(.secondary)
-        .padding(.horizontal, 8)
-        .padding(.vertical, 3)
-        .background(.fill.tertiary, in: Capsule())
-        .fixedSize()
         .help(isSpinning ? String(localized: "Ventilador girando") : String(localized: "Ventilador parado"))
     }
 }
@@ -115,12 +162,6 @@ private struct PressureBadge: View {
 
     var body: some View {
         Label(pressure.label, systemImage: pressure.symbol)
-            .font(.caption.weight(.semibold))
-            .foregroundStyle(pressure.color)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 3)
-            .background(pressure.color.opacity(0.14), in: Capsule())
-            .fixedSize()
             .help("Pressão térmica informada pelo kernel do macOS")
     }
 }

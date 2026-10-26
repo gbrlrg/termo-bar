@@ -9,6 +9,7 @@ struct BatteryTests {
             "CurrentCapacity": 80,
             "MaxCapacity": 100,
             "CycleCount": 32,
+            "DesignCycleCount9C": 1000,
             "ExternalConnected": true,
             "IsCharging": false,
             "Voltage": 12438,
@@ -34,6 +35,7 @@ struct BatteryTests {
         let battery = try status()
         #expect(battery.percent == 80)
         #expect(battery.cycleCount == 32)
+        #expect(battery.designCycleCount == 1000)
         #expect(battery.isPluggedIn)
         #expect(!battery.isCharging)
         #expect(battery.designCapacity == 6249)
