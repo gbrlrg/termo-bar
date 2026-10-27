@@ -17,14 +17,21 @@ struct BrandMark: View {
     var body: some View {
         Canvas { context, size in
             let scale = size.width / Self.canvas
+            let line = max(1, size.width / 13)
             for (index, ring) in Self.rings.enumerated() {
+                // Só alguns anéis, em contorno: preenchidos e translúcidos, somem sobre o vidro do popover.
+                guard index.isMultiple(of: 2) || index == Self.rings.count - 1 else { continue }
+                let inset = index == 0 ? line / 2 : 0
                 let frame = CGRect(
                     x: (ring.frame.minX - Self.origin.x) * scale, y: (ring.frame.minY - Self.origin.y) * scale,
-                    width: ring.frame.width * scale, height: ring.frame.height * scale)
-                // Anéis alternados: em 12 pt, os seis juntos viram um quadrado só.
-                guard index.isMultiple(of: 2) || index == Self.rings.count - 1 else { continue }
-                context.opacity = index == Self.rings.count - 1 ? 0.45 : 0.16
-                context.fill(Path(roundedRect: frame, cornerRadius: ring.radius * scale), with: .foreground)
+                    width: ring.frame.width * scale, height: ring.frame.height * scale
+                ).insetBy(dx: inset, dy: inset)
+                let path = Path(roundedRect: frame, cornerRadius: ring.radius * scale)
+                if index == Self.rings.count - 1 {
+                    context.fill(path, with: .color(.primary.opacity(0.85)))
+                } else {
+                    context.stroke(path, with: .color(.primary.opacity(0.55)), lineWidth: line)
+                }
             }
         }
         .aspectRatio(1, contentMode: .fit)
@@ -36,7 +43,7 @@ struct BrandMark: View {
 struct BrandBar: View {
     var body: some View {
         HStack(spacing: 5) {
-            BrandMark().frame(width: 13, height: 13)
+            BrandMark().frame(width: 14, height: 14)
             Text(verbatim: "TermoBar")
                 .font(.caption.weight(.semibold))
         }
