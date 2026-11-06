@@ -25,7 +25,7 @@ xcodebuild test -project TermoBar.xcodeproj -scheme TermoBar -destination 'platf
 swift format lint --strict --recursive TermoBar TermoBarTests TermoBarWidget
 ```
 
-Os testes (Swift Testing) cobrem a lógica pura — agregação, ranking, alertas, histórico SQLite, CSV e preferências — e não dependem de sensores. O CI (`.github/workflows/ci.yml`) roda a formatação e os testes em cada pull request.
+Os testes (Swift Testing) cobrem a lógica pura — agregação, ranking, alertas, histórico SQLite, CSV, preferências, o rateio da GPU, o filtro dos sensores, a decodificação do SMC, o resumo do widget e os textos das telas (`Presentation/`) — e não dependem de sensores. O alvo de testes compila esses arquivos junto com os testes (veja `TermoBarTests` no `project.yml`); o que lê o hardware, o AppKit e o SwiftUI fica de fora, por isso a regra de cada tela e de cada leitor mora num tipo puro que eles só chamam. O CI (`.github/workflows/ci.yml`) roda a formatação e os testes em cada pull request.
 
 ## Distribuir (assinado e notarizado)
 
@@ -104,10 +104,11 @@ O código é dividido em camadas; as de cima dependem das de baixo, nunca o cont
 | `Intents/` | Ações do app Atalhos e frases da Siri (App Intents) |
 | `Shared/` | Resumo gravado pelo app e lido pelo widget (`WidgetSnapshot`), compilado nos dois alvos |
 | `UI/` | Telas SwiftUI: barra de menus, popover, Ajustes, componentes e tema. Recebem os serviços pelo `Environment` |
+| `Presentation/` | O que as telas mostram, sem SwiftUI: valores da barra, textos dos badges, dos gráficos e das notificações, abas dos Ajustes |
 | `Services/` | Estado do app e integração com o macOS: coleta (`Monitor`), preferências, notificações, item de login, widget, atualizações (Sparkle) e log |
 | `Hardware/` | Leitura do hardware: sensores de temperatura (IOHID), ventoinhas (SMC), energia de CPU por processo, GPU (IOReport/IORegistry) e pressão térmica; `Bridging.h` declara as funções privadas e a estrutura do SMC |
 | `Persistence/` | Histórico em SQLite (instruções preparadas, transações) e exportação CSV |
-| `Domain/` | Modelo e regras puras, sem AppKit nem SwiftUI: amostras, resumo por minuto e por período, cores por app, política de alertas, unidades e formatação |
+| `Domain/` | Modelo e regras puras, sem AppKit nem SwiftUI: amostras, resumo por minuto e por período, cores por app, política de alertas, unidades e formatação, e as contas dos leitores de hardware (rateio da GPU, filtro dos sensores, valores do SMC) |
 
 | Arquivo | Responsabilidade |
 |---|---|
@@ -119,8 +120,8 @@ O código é dividido em camadas; as de cima dependem das de baixo, nunca o cont
 | `Domain/Battery.swift`, `Domain/BatteryRuntime.swift` | Estado da bateria lido do IORegistry (saúde, energia, potência de descarga) e a autonomia estimada pela média recente |
 | `Hardware/BatteryReader.swift` | Propriedades do `AppleSmartBattery`, sem privilégio de administrador |
 | `Hardware/EnergySampler.swift` | Energia de CPU por processo e agrupamento por app responsável |
-| `Hardware/GPUSampler.swift` | Energia da GPU, tempo de GPU por processo e correção do WindowServer |
-| `Services/Monitor.swift` | Coleta a cada segundo, fecha registros, resume por minuto e mantém o estado da interface |
+| `Hardware/GPUSampler.swift` | Energia da GPU e tempo de GPU por processo; o rateio e a correção do WindowServer ficam em `Domain/GPUAttribution.swift` |
+| `Services/Monitor.swift` | Coleta a cada segundo e mantém o estado da interface; fechar registros e virar o minuto ficam em `Domain/SampleAccumulator.swift` |
 | `Persistence/HistoryStore.swift` | Leitura e escrita do histórico |
 
 ## Segurança e privacidade

@@ -60,6 +60,9 @@ struct AlertPolicy: Sendable {
     static let consumerWindow: TimeInterval = 60
     /// Fração mínima da janela que precisa ter sido medida, para não alertar com pouco dado.
     static let minimumCoverage = 0.8
+    /// Intervalo sem leituras, em períodos de leitura, que interrompe a temperatura sustentada
+    /// (o mesmo critério que quebra os intervalos dos gráficos).
+    static let maximumGapFactor = 3.0
 
     private var hotSince: Date?
     private var wasThrottling = false
@@ -73,6 +76,12 @@ struct AlertPolicy: Sendable {
         let now = sample.date
         var events: [AlertEvent] = []
 
+        // Um buraco nas leituras (Mac dormindo, app fechado) zera a contagem: o calor não foi contínuo.
+        if let previous = history.dropLast().last,
+            now.timeIntervalSince(previous.date) > max(previous.duration, sample.duration) * Self.maximumGapFactor
+        {
+            hotSince = nil
+        }
         let temperature = sample.temperature(for: source)
         if let limit = configuration.temperatureLimit, temperature >= limit {
             let since = hotSince ?? now

@@ -73,6 +73,10 @@ final class HistoryStore {
                     .real(sample.gpuPower), .text(sample.frontmostApp), .text(apps),
                     .integer(sample.appPower == nil ? 0 : 1), .real(sample.fanSpeed),
                 ])
+            // O registro substituído leva junto a potência antiga, para não sobrar app que não está no novo.
+            try db.run(
+                "DELETE FROM app_power WHERE resolution = ? AND ts = ?",
+                [.integer(resolution.rawValue), .real(timestamp)])
             let insertPower = try db.prepare("INSERT INTO app_power VALUES(?,?,?,?,?)")
             for (app, power) in sample.appPower ?? [:] {
                 try insertPower.run([

@@ -36,7 +36,7 @@ struct AlertPolicyTests {
         var history: [Sample] = []
         var count = 0
         for second in stride(from: 0.0, through: AlertPolicy.cooldown + 60, by: 30) {
-            history.append(makeSample(at: second, temperature: 60))
+            history.append(makeSample(at: second, duration: 30, temperature: 60))
             count += policy.evaluate(history, configuration: configuration, source: .average).count
         }
         #expect(count == 2)

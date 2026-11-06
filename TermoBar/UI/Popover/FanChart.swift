@@ -18,21 +18,7 @@ struct FanChart: View {
 
     private var readings: [Sample] { summary.samples.filter { $0.fanSpeed != nil } }
 
-    private var detail: String {
-        if let hoverDate, let hovered = summary.samples.nearest(to: hoverDate) {
-            let date = hovered.date.formatted(summary.range.hoverDateFormat)
-            let speed =
-                switch hovered.fanSpeed {
-                case nil: String(localized: "sem leitura")
-                case let rpm? where hovered.isFanSpinning: rpm.formatted(.rpm)
-                default: String(localized: "parado")
-                }
-            return "\(date)  \(speed)"
-        }
-        guard let share = readings.fanSpinningShare else { return "" }
-        guard share > 0 else { return String(localized: "parado no período") }
-        return String(localized: "girando \(share.formatted(.percent.precision(.fractionLength(0)))) do tempo")
-    }
+    private var detail: String { ChartDetails.fan(summary, hoverDate: hoverDate) }
 
     private var chart: some View {
         let readings = readings

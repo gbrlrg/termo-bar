@@ -7,11 +7,8 @@ import WidgetKit
 /// Por isso o pedido só sai quando a mudança é visível, e no máximo uma vez por minuto.
 @MainActor
 final class WidgetPublisher {
-    private static let minimumReloadInterval: TimeInterval = 60
-    /// Diferença de temperatura (°C) que justifica redesenhar o widget.
-    private static let temperatureStep = 1.0
-
-    private var lastReload: (date: Date, snapshot: WidgetSnapshot)?
+    /// Último resumo que pediu para redesenhar (veja `WidgetSnapshot.needsReload(since:)`).
+    private var lastReload: WidgetSnapshot?
     /// Sem acesso ao App Group (build sem a assinatura do time), desiste depois do primeiro erro.
     private var isUnavailable = false
 
@@ -24,18 +21,8 @@ final class WidgetPublisher {
             Log.system.error("Resumo do widget não gravado: \(String(describing: error), privacy: .public)")
             return
         }
-        if let last = lastReload {
-            guard snapshot.date.timeIntervalSince(last.date) >= Self.minimumReloadInterval else { return }
-            // Unidade ou casas decimais trocadas mudam o formato do texto, não só o valor.
-            let changed =
-                abs(snapshot.celsius - last.snapshot.celsius) >= Self.temperatureStep
-                || snapshot.temperature.count != last.snapshot.temperature.count
-                || snapshot.temperature.last != last.snapshot.temperature.last
-                || snapshot.pressure != last.snapshot.pressure
-                || snapshot.apps.first?.id != last.snapshot.apps.first?.id
-            guard changed else { return }
-        }
-        lastReload = (snapshot.date, snapshot)
+        if let last = lastReload, !snapshot.needsReload(since: last) { return }
+        lastReload = snapshot
         WidgetCenter.shared.reloadTimelines(ofKind: WidgetSnapshot.kind)
     }
 }

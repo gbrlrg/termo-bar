@@ -9,10 +9,7 @@ import AppKit
 /// A CPU de processos de outros usuários (root, WindowServer) não é legível sem privilégio.
 final class EnergySampler {
     /// App (ou processo solto) ao qual a energia é atribuída.
-    struct Group: Hashable, Sendable {
-        let id: String
-        let name: String
-    }
+    typealias Group = EnergyGroup
 
     struct Measurement: Sendable {
         /// Potência média (W) de cada grupo desde a medição anterior.
@@ -25,13 +22,6 @@ final class EnergySampler {
         let duration: TimeInterval
     }
 
-    /// Processos cujo responsável não é um app comum, mas pertencem a um.
-    private static let aliases: [String: Group] = [
-        "SimulatorTrampoline": Group(id: "com.apple.iphonesimulator", name: String(localized: "Simulador iOS")),
-        "com.apple.CoreSimulator": Group(id: "com.apple.iphonesimulator", name: String(localized: "Simulador iOS")),
-        "com.docker.backend": Group(id: "com.docker.docker", name: "Docker"),
-    ]
-    private static let systemNames = ["kernel_task": "Kernel"]
     private static let nanojoulesPerJoule = 1e9
 
     private let gpu = GPUSampler()
@@ -53,9 +43,8 @@ final class EnergySampler {
             energy[pid] = total
             guard !isFirstSample else { continue }
             // Processo novo (ou PID reaproveitado): toda a energia é deste intervalo.
-            let previous = lastEnergy[pid].flatMap { $0 <= total ? $0 : nil } ?? 0
-            guard total > previous else { continue }
-            joules[pid] = Double(total - previous) / Self.nanojoulesPerJoule
+            guard let delta = CounterDelta.since(lastEnergy[pid], current: total) else { continue }
+            joules[pid] = Double(delta) / Self.nanojoulesPerJoule
         }
 
         let alive = Set(pids)
@@ -99,16 +88,9 @@ final class EnergySampler {
         return Group(id: id, name: app.localizedName ?? id)
     }
 
+    /// Processos de outros usuários (WindowServer) não revelam o nome; o registro da GPU sim.
     private static func processGroup(_ pid: pid_t, fallbackName: String?) -> Group {
-        // Processos de outros usuários (WindowServer) não revelam o nome; o registro da GPU sim.
-        guard let name = ProcessInfoReader.name(of: pid) ?? fallbackName else {
-            return Group(id: AppID.unknownProcess, name: String(localized: "Outros processos"))
-        }
-        // Mesmo id do app, para somar com ele quando estiver aberto.
-        if let alias = aliases[name] ?? aliases.first(where: { name.hasPrefix($0.key) })?.value {
-            return alias
-        }
-        return Group(id: AppID.process(named: name), name: systemNames[name] ?? name)
+        Group.process(named: ProcessInfoReader.name(of: pid) ?? fallbackName)
     }
 }
 
