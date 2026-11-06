@@ -75,6 +75,7 @@ final class Monitor {
     @ObservationIgnored private var discharge = DischargeHistory()
     @ObservationIgnored private var lastBatteryRead = Date.distantPast
     @ObservationIgnored private var minuteClock = MinuteClock()
+    @ObservationIgnored private var summaries = RangeSummaryCache()
     @ObservationIgnored private var lastDiskPrune = Date.distantPast
     @ObservationIgnored private var savedNames: [String: String] = [:]
     /// Detalhes já lidos de cada processo, com o início dele para notar PID reaproveitado.
@@ -109,7 +110,7 @@ final class Monitor {
     }
 
     func name(_ id: String) -> String {
-        id == AppID.others ? AppID.othersName : appNames[id] ?? id
+        AppID.displayName(of: id, names: appNames)
     }
 
     /// Processos do app consumindo agora, com processos iguais (mesmo nome e projeto) juntos.
@@ -117,13 +118,14 @@ final class Monitor {
         LiveProcess.group(processActivity.average(of: id), fallbackName: name(id)) { details(of: $0) }
     }
 
+    /// Resumo do período, refeito só quando as amostras mudam (veja `RangeSummaryCache`).
     func summary(range: TimeRange) -> RangeSummary {
-        RangeSummary(
+        summaries.summary(
             range: range,
             history: range.usesMinuteSummaries ? minutes : recent,
             end: current?.date ?? Date(),
-            highlighted: palette.apps
-        ) { self.name($0) }
+            highlighted: palette.apps,
+            names: appNames)
     }
 
     // MARK: - Ações
