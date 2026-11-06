@@ -23,8 +23,6 @@ struct Entry: TimelineEntry {
 
 /// Lê o último resumo gravado pelo app. Quem pede para redesenhar é o app; o pedido daqui é só a rede de segurança.
 struct Provider: TimelineProvider {
-    private static let refresh: TimeInterval = 15 * 60
-
     func placeholder(in context: Context) -> Entry {
         Entry(date: .now, snapshot: .placeholder)
     }
@@ -35,21 +33,9 @@ struct Provider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> Void) {
         let entry = Entry(date: .now, snapshot: WidgetSnapshot.load())
-        completion(Timeline(entries: [entry], policy: .after(.now.addingTimeInterval(Self.refresh))))
+        completion(
+            Timeline(entries: [entry], policy: .after(.now.addingTimeInterval(WidgetSnapshot.timelineRefresh))))
     }
-}
-
-extension WidgetSnapshot {
-    static let placeholder = WidgetSnapshot(
-        date: .now, celsius: 62, temperature: "62 °C", pressure: .nominal,
-        apps: [
-            App(id: "a", name: "Xcode", watts: "4,2 W", share: 0.48, colorSlot: 0),
-            App(id: "b", name: "Safari", watts: "1,9 W", share: 0.22, colorSlot: 1),
-            App(id: "c", name: "Mail", watts: "0,6 W", share: 0.07, colorSlot: 2),
-        ])
-
-    /// Sem registro recente, o app provavelmente está fechado e os números estão velhos.
-    var isStale: Bool { Date.now.timeIntervalSince(date) > 15 * 60 }
 }
 
 struct WidgetView: View {
