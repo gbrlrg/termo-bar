@@ -99,15 +99,17 @@ targets:
         LOCALIZATION_PREFERS_STRING_CATALOGS: YES
         SWIFT_EMIT_LOC_STRINGS: YES
 
-  # Testes da lógica pura (Domain, Persistence e Preferences) e do menu da barra, compilados junto
-  # com os testes: não abre o app nem depende de sensores.
+  # Testes da lógica pura (Domain, Presentation, Persistence, Shared e Preferences) e do menu da barra,
+  # compilados junto com os testes: não abre o app nem depende de sensores.
   TermoBarTests:
     type: bundle.unit-test
     platform: macOS
     sources:
       - TermoBarTests
       - TermoBar/Domain
+      - TermoBar/Presentation
       - TermoBar/Persistence
+      - TermoBar/Shared
       - TermoBar/Services/Preferences.swift
       - TermoBar/UI/MenuBar/StatusItemContextMenu.swift
     dependencies:

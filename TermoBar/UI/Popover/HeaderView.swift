@@ -72,7 +72,7 @@ struct HeaderView: View {
                 }
             }
             if let detail {
-                detail.padding(.horizontal, -4).transition(.opacity)
+                BadgeDetailCard(detail).padding(.horizontal, -4).transition(.opacity)
             }
         }
         .padding(.horizontal, 4)
@@ -87,7 +87,7 @@ struct HeaderView: View {
     }
 
     /// Detalhes do badge aberto; fecham sozinhos se o dado some (bateria desligada, ventoinha sem leitura).
-    private var detail: BadgeDetailCard? {
+    private var detail: BadgeDetailContent? {
         switch expanded {
         case .pressure:
             BadgeDetails.pressure(monitor.pressure, samples: summary.samples)

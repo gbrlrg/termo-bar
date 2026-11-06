@@ -5,53 +5,26 @@ struct MenuBarLabel: View {
     @Environment(Monitor.self) private var monitor
     @Environment(Preferences.self) private var preferences
 
-    /// Um valor da barra, com o ícone opcional que vem antes dele.
-    private struct Segment {
-        var symbol: String?
-        var text: String
-    }
-
-    private enum Symbol {
-        static let temperature = "thermometer.medium"
-        static let power = "bolt.fill"
-        static let fan = "fan.fill"
-    }
+    private typealias Segment = MenuBarContent.Segment
 
     var body: some View {
-        let temperature = monitor.currentTemperature
-        let style = effectiveStyle(temperature: temperature)
-        let segments = segments(style: style, temperature: temperature)
+        let segments = MenuBarContent.segments(
+            MenuBarContent.Reading(
+                temperature: monitor.currentTemperature, fanSpeed: monitor.current?.fanSpeed,
+                power: monitor.currentPower, hasFans: monitor.hasFans),
+            options: MenuBarContent.Options(
+                style: preferences.menuBarStyle, compactWhenCool: preferences.compactWhenCool,
+                compactThreshold: preferences.compactThreshold, showValueIcons: preferences.showValueIcons,
+                unitSymbol: preferences.unit.symbol)
+        ) { preferences.format($0) }
 
         if segments.isEmpty {
-            Image(systemName: Symbol.temperature)
+            Image(systemName: MenuBarContent.Symbol.temperature)
         } else if let image = renderedImage(segments) {
             Image(nsImage: image)
         } else {
             content(segments)
         }
-    }
-
-    /// Enquanto estiver frio, o modo compacto mostra só o ícone.
-    private func effectiveStyle(temperature: Double?) -> MenuBarStyle {
-        let isCool = (temperature ?? 0) < preferences.compactThreshold
-        if preferences.compactWhenCool && isCool { return .icon }
-        let style = preferences.menuBarStyle
-        return style.showsFan && !monitor.hasFans ? .temperature : style
-    }
-
-    private func segments(style: MenuBarStyle, temperature: Double?) -> [Segment] {
-        guard style.showsTemperature else { return [] }
-        let icons = preferences.showValueIcons
-        let value =
-            temperature.map { preferences.format($0).replacingOccurrences(of: " ", with: "") }
-            ?? "--\(preferences.unit.symbol)"
-        var segments = [Segment(symbol: icons ? Symbol.temperature : nil, text: value)]
-        if style.showsFan, let rpm = monitor.current?.fanSpeed {
-            segments.append(Segment(symbol: icons ? Symbol.fan : nil, text: rpm.formatted(.rpm)))
-        } else if style.showsPower, let watts = monitor.currentPower {
-            segments.append(Segment(symbol: icons ? Symbol.power : nil, text: watts.formatted(.watts)))
-        }
-        return segments
     }
 
     private func content(_ segments: [Segment]) -> some View {

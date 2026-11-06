@@ -23,17 +23,7 @@ struct TemperatureChart: View {
     private func temperature(_ sample: Sample) -> Double { monitor.temperature(of: sample) }
 
     private var detail: String {
-        if let hovered {
-            let date = hovered.date.formatted(summary.range.hoverDateFormat)
-            return "\(date)  \(preferences.format(temperature(hovered), decimals: 1))"
-        }
-        guard let average = summary.samples.averageTemperature(for: preferences.source) else { return "" }
-        let temperatures = summary.samples.map(temperature)
-        guard let low = temperatures.min(), let high = temperatures.max() else {
-            return String(localized: "média \(preferences.format(average, decimals: 1))")
-        }
-        let mean = preferences.format(average, decimals: 1)
-        return String(localized: "média \(mean) · \(preferences.short(low))–\(preferences.short(high))")
+        ChartDetails.temperature(summary, hoverDate: hoverDate, preferences: preferences)
     }
 
     private var chart: some View {
@@ -81,17 +71,5 @@ struct TemperatureChart: View {
         .chartYAxis { ChartStyle.quietYAxis { "\(Int($0))°" } }
         .chartXSelection(value: $hoverDate)
         .frame(height: 96)
-    }
-}
-
-extension TimeRange {
-    /// Data do instante sob o cursor: com dia da semana nos períodos longos.
-    var hoverDateFormat: Date.FormatStyle {
-        usesMinuteSummaries ? .dateTime.weekday(.abbreviated).hour().minute() : .dateTime.hour().minute().second()
-    }
-
-    /// Rótulos do eixo de tempo.
-    var axisDateFormat: Date.FormatStyle {
-        self == .week ? .dateTime.weekday(.abbreviated) : .dateTime.hour().minute()
     }
 }

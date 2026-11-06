@@ -38,7 +38,8 @@ final class AlertNotifier {
     func evaluate(_ history: [Sample], battery: BatteryStatus?, appName: (String) -> String) {
         let events = policy.evaluate(history, configuration: preferences.alertConfiguration, source: preferences.source)
         for event in events {
-            let (title, body) = message(for: event, battery: battery, appName: appName)
+            let (title, body) = AlertMessage.make(
+                for: event, battery: battery, formatTemperature: { preferences.format($0) }, appName: appName)
             post(id: event.key, title: title, body: body)
         }
     }
@@ -49,45 +50,6 @@ final class AlertNotifier {
             await refreshAuthorization()
             await Self.deliver(
                 id: "test", title: "TermoBar", body: String(localized: "As notificações estão funcionando."))
-        }
-    }
-
-    private func message(
-        for event: AlertEvent, battery: BatteryStatus?, appName: (String) -> String
-    ) -> (title: String, body: String) {
-        func describe(_ consumer: PowerConsumer) -> String {
-            "\(appName(consumer.app)) (\(consumer.watts.formatted(.watts)))"
-        }
-
-        switch event {
-        case let .highTemperature(celsius, limit, topConsumer):
-            return (
-                String(localized: "Mac a \(preferences.format(celsius))"),
-                topConsumer.map { String(localized: "Quem mais consome: \(describe($0)).") }
-                    ?? String(localized: "Acima do limite de \(preferences.format(limit)).")
-            )
-        case let .throttling(pressure, topConsumer):
-            return (
-                String(localized: "O macOS está limitando o desempenho"),
-                String(localized: "Pressão térmica \(pressure?.label.lowercased() ?? String(localized: "alta")).")
-                    + (topConsumer.map { " " + String(localized: "Quem mais consome: \(describe($0)).") } ?? "")
-            )
-        case let .appPower(consumer, window):
-            let average = String(localized: "Média dos últimos \(Int(window / 60)) minutos.")
-            // Só CPU e GPU do app: o resto do Mac também gasta, então é o mínimo que ele custa.
-            let drain =
-                battery?.isDischarging == true
-                ? BatteryDrain.notablePercentPerHour(watts: consumer.watts, fullEnergy: battery?.fullEnergy) : nil
-            return (
-                String(localized: "\(appName(consumer.app)) está gastando \(consumer.watts.formatted(.watts))"),
-                drain.map {
-                    average + " "
-                        + String(
-                            localized:
-                                "Só a CPU e a GPU dele já tiram cerca de \((Double($0) / 100).formatted(.percent)) da bateria por hora."
-                        )
-                } ?? average
-            )
         }
     }
 
