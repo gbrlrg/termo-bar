@@ -33,7 +33,9 @@ struct HardwareDecodingTests {
 
     @Test(arguments: [
         ("PMU tdie3", String(localized: "Chip · sensor \("3")")),
+        ("PMU2 tdie12", String(localized: "Chip, controlador 2 · sensor \("12")")),
         ("PMU tdev1", String(localized: "Placa · sensor \("1")")),
+        ("PMU2 tdev4", String(localized: "Placa, controlador 2 · sensor \("4")")),
         ("als", String(localized: "Sensor de luz ambiente")),
         ("PMU tcal", String(localized: "Calibração \("1")")),
         ("PMU2 tcal", String(localized: "Calibração \("2")")),

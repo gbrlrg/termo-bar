@@ -37,7 +37,8 @@ enum DieTemperatureFilter {
 enum SensorLabel {
     /// Nome legível de um sensor do IOHID.
     static func label(for name: String) -> String {
-        let number = String(name.drop { !$0.isNumber })
+        // O número do sensor é o do fim do nome: em "PMU2 tdie12", 12 (o 2 é do controlador).
+        let number = String(name.reversed().prefix(while: \.isNumber).reversed())
         return switch true {
         case name.hasPrefix("PMU tdie"): String(localized: "Chip · sensor \(number)")
         case name.hasPrefix("PMU2 tdie"): String(localized: "Chip, controlador 2 · sensor \(number)")
