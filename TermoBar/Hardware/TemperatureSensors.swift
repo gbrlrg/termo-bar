@@ -18,11 +18,6 @@ final class TemperatureSensors {
         let sensors: [Sensor]
     }
 
-    /// Faixa de leitura plausível (°C); fora dela o sensor está com defeito ou desligado.
-    static let plausibleRange = 10.0...130.0
-    /// Um sensor do die que destoa da mediana por mais que isso (°C) está com defeito ou é outro componente.
-    static let maxDeviation = 25.0
-
     private static let temperatureEventType: Int64 = 15
     private static let temperatureField = Int32(temperatureEventType << 16)
     /// Página e uso HID dos sensores de temperatura da Apple.
@@ -46,19 +41,12 @@ final class TemperatureSensors {
     /// - Parameter includeOthers: inclui na lista (fora da média) os sensores que não são do die.
     func read(includeOthers: Bool = false) -> Reading? {
         let values = dieSensors.map { value(of: $0.client) }
-        let valid = values.compactMap { $0 }.sorted()
-        guard !valid.isEmpty else { return nil }
-        let median = valid[valid.count / 2]
+        guard let result = DieTemperatureFilter.filter(values) else { return nil }
 
-        var accepted: [Double] = []
-        var sensors: [Sensor] = []
-        for (service, value) in zip(dieSensors, values) {
-            let isIncluded = value.map { abs($0 - median) <= Self.maxDeviation } ?? false
-            if isIncluded, let value { accepted.append(value) }
-            sensors.append(
-                Sensor(
-                    id: service.name, label: Self.label(for: service.name), value: value, isOnDie: true,
-                    isIncluded: isIncluded))
+        var sensors = zip(dieSensors, zip(values, result.isIncluded)).map { service, reading in
+            Sensor(
+                id: service.name, label: Self.label(for: service.name), value: reading.0, isOnDie: true,
+                isIncluded: reading.1)
         }
         if includeOthers {
             sensors += otherSensors.map {
@@ -67,9 +55,7 @@ final class TemperatureSensors {
                     isIncluded: false)
             }
         }
-
-        guard let maximum = accepted.max() else { return nil }
-        return Reading(average: accepted.reduce(0, +) / Double(accepted.count), maximum: maximum, sensors: sensors)
+        return Reading(average: result.average, maximum: result.maximum, sensors: sensors)
     }
 
     private func loadSensors() {
@@ -104,22 +90,9 @@ final class TemperatureSensors {
     private func value(of service: IOHIDServiceClient) -> Double? {
         guard let event = IOHIDServiceClientCopyEvent(service, Self.temperatureEventType, 0, 0) else { return nil }
         let value = IOHIDEventGetFloatValue(event, Self.temperatureField)
-        return Self.plausibleRange.contains(value) ? value : nil
+        return DieTemperatureFilter.plausible(value)
     }
 
     /// Nome legível de um sensor do IOHID.
-    static func label(for name: String) -> String {
-        let number = String(name.drop { !$0.isNumber })
-        return switch true {
-        case name.hasPrefix("PMU tdie"): String(localized: "Chip · sensor \(number)")
-        case name.hasPrefix("PMU2 tdie"): String(localized: "Chip, controlador 2 · sensor \(number)")
-        case name.hasPrefix("PMU tdev"): String(localized: "Placa · sensor \(number)")
-        case name.hasPrefix("PMU2 tdev"): String(localized: "Placa, controlador 2 · sensor \(number)")
-        case name.hasPrefix("als"): String(localized: "Sensor de luz ambiente")
-        case name.contains("tcal"): String(localized: "Calibração \(name.hasPrefix("PMU2") ? "2" : "1")")
-        case name.hasPrefix("NAND"): "SSD"
-        case name.contains("battery"): String(localized: "Bateria")
-        default: name
-        }
-    }
+    static func label(for name: String) -> String { SensorLabel.label(for: name) }
 }

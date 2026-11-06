@@ -68,7 +68,7 @@ final class FanReader {
 
     /// Tipo e tamanho de uma chave; `nil` se o SMC não a conhece.
     private func key(_ name: String) -> Key? {
-        let code = name.utf8.reduce(UInt32(0)) { $0 << 8 | UInt32($1) }
+        let code = SMCValue.fourCC(name)
         var input = SMCKeyData()
         input.key = code
         input.data8 = Self.readInfo
@@ -82,7 +82,7 @@ final class FanReader {
         input.data8 = Self.readValue
         guard let output = call(input) else { return nil }
         let bytes = withUnsafeBytes(of: output.bytes) { Array($0.prefix(Int(key.info.dataSize))) }
-        return Self.decode(bytes, type: key.info.dataType)
+        return SMCValue.decode(bytes, type: key.info.dataType)
     }
 
     private func call(_ input: SMCKeyData) -> SMCKeyData? {
@@ -93,20 +93,5 @@ final class FanReader {
         let status = IOConnectCallStructMethod(
             connection, Self.structMethod, &input, MemoryLayout<SMCKeyData>.stride, &output, &size)
         return status == KERN_SUCCESS && output.result == 0 ? output : nil
-    }
-
-    /// No Apple Silicon a rotação vem como `flt ` (float little-endian); os inteiros são big-endian.
-    private static func decode(_ bytes: [UInt8], type: UInt32) -> Double? {
-        let bigEndian = bytes.reduce(UInt32(0)) { $0 << 8 | UInt32($1) }
-        switch (type, bytes.count) {
-        case (fourCC("flt "), 4): return Double(Float(bitPattern: bigEndian.byteSwapped))
-        case (fourCC("ui8 "), 1), (fourCC("ui16"), 2), (fourCC("ui32"), 4): return Double(bigEndian)
-        case (fourCC("fpe2"), 2): return Double(bigEndian) / 4
-        default: return nil
-        }
-    }
-
-    private static func fourCC(_ name: StaticString) -> UInt32 {
-        name.withUTF8Buffer { $0.reduce(UInt32(0)) { $0 << 8 | UInt32($1) } }
     }
 }
