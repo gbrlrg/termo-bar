@@ -1,14 +1,5 @@
 import Foundation
 
-/// Detalhes de um processo para a lista "Processos agora": o que é, de onde roda e desde quando.
-struct ProcessDetails: Sendable {
-    let pid: pid_t
-    let description: ProcessDescription
-    /// Linha de comando completa (dica ao passar o cursor).
-    let commandLine: String?
-    let startDate: Date?
-}
-
 /// Lê executável, argumentos e pasta de trabalho dos processos (libproc e sysctl).
 ///
 /// Argumentos e pasta só são legíveis em processos do próprio usuário; os do sistema

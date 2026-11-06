@@ -25,10 +25,8 @@ final class Monitor {
     private static let readInterval: TimeInterval = 1
     /// A bateria muda devagar; ler a cada tique só gastaria CPU.
     private static let batteryInterval: TimeInterval = 5
-    /// Tolerância para fechar o registro no tique mais próximo do intervalo escolhido.
-    private static let intervalTolerance: TimeInterval = 0.25
-    /// Um registro nunca representa mais que isso vezes o intervalo (Mac acordando, por exemplo).
-    private static let maxDurationFactor = 3.0
+    /// Tolerância para ler a bateria no tique mais próximo do intervalo.
+    private static let intervalTolerance = ReadingAccumulator.intervalTolerance
     /// Leituras finas ficam no disco por um dia; os resumos, pelo período escolhido.
     private static let rawRetention: TimeInterval = 86400
     private static let diskPruneInterval: TimeInterval = 600
@@ -72,13 +70,11 @@ final class Monitor {
     private let widget = WidgetPublisher()
 
     @ObservationIgnored private var timer: Timer?
-    @ObservationIgnored private var pendingReadings: [TemperatureSensors.Reading] = []
-    /// Rotação média das ventoinhas em cada leitura do intervalo (rpm).
-    @ObservationIgnored private var pendingFanSpeeds: [Double] = []
-    @ObservationIgnored private var lastSampleDate: Date?
+    /// Leituras do intervalo, até fechar o próximo registro.
+    @ObservationIgnored private var pending = ReadingAccumulator()
     @ObservationIgnored private var discharge = DischargeHistory()
     @ObservationIgnored private var lastBatteryRead = Date.distantPast
-    @ObservationIgnored private var currentMinute: Date?
+    @ObservationIgnored private var minuteClock = MinuteClock()
     @ObservationIgnored private var lastDiskPrune = Date.distantPast
     @ObservationIgnored private var savedNames: [String: String] = [:]
     /// Detalhes já lidos de cada processo, com o início dele para notar PID reaproveitado.
@@ -118,26 +114,7 @@ final class Monitor {
 
     /// Processos do app consumindo agora, com processos iguais (mesmo nome e projeto) juntos.
     func liveProcesses(of id: String) -> [LiveProcess] {
-        var groups: [ProcessDescription: LiveProcess] = [:]
-        var order: [ProcessDescription] = []
-        for (pid, power) in processActivity.average(of: id) {
-            // Processos do sistema não revelam detalhes; aparecem pelo nome do grupo.
-            let details =
-                details(of: pid)
-                ?? ProcessDetails(
-                    pid: pid,
-                    description: ProcessDescription(
-                        ProcessFacts(name: name(id), executablePath: nil, arguments: [], workingDirectory: nil),
-                        homeDirectory: ""),
-                    commandLine: nil, startDate: nil)
-            let key = details.description
-            if groups[key] == nil {
-                order.append(key)
-                groups[key] = LiveProcess(description: key)
-            }
-            groups[key]?.add(details, power: power)
-        }
-        return order.compactMap { groups[$0] }.sorted { $0.power.total > $1.power.total }
+        LiveProcess.group(processActivity.average(of: id), fallbackName: name(id)) { details(of: $0) }
     }
 
     func summary(range: TimeRange) -> RangeSummary {
@@ -177,13 +154,11 @@ final class Monitor {
 
     private func tick() {
         if let reading = temperatureSensors.read(includeOthers: isShowingSensors) {
-            pendingReadings.append(reading)
+            pending.addTemperature(average: reading.average, maximum: reading.maximum)
             if isShowingSensors { sensors = reading.sensors }
         }
         let fans = fanReader.read()
-        if !fans.isEmpty {
-            pendingFanSpeeds.append(fans.reduce(0) { $0 + $1.rpm } / Double(fans.count))
-        }
+        pending.addFans(fans.map(\.rpm))
         if isShowingSensors, fans != self.fans { self.fans = fans }
         // O Observation avisa as telas a cada atribuição, mesmo de um valor igual.
         let pressure = pressureReader.read()
@@ -195,11 +170,7 @@ final class Monitor {
         if isLowPowerMode != self.isLowPowerMode { self.isLowPowerMode = isLowPowerMode }
 
         let now = Date()
-        let isDue =
-            lastSampleDate.map {
-                now.timeIntervalSince($0) >= preferences.sampleInterval - Self.intervalTolerance
-            } ?? true
-        if isDue { recordSample(at: now) }
+        if pending.isDue(at: now, interval: preferences.sampleInterval) { recordSample(at: now) }
     }
 
     private func updateBattery(now: Date) {
@@ -220,29 +191,19 @@ final class Monitor {
         if let measurement {
             processActivity.record(measurement.byProcess, at: now, duration: measurement.duration)
         }
-        guard !pendingReadings.isEmpty else { return }
-        let averageTemperature = pendingReadings.map(\.average).reduce(0, +) / Double(pendingReadings.count)
-        let maxTemperature = pendingReadings.map(\.maximum).max() ?? averageTemperature
-        pendingReadings.removeAll()
-        let fanSpeed = pendingFanSpeeds.isEmpty ? nil : pendingFanSpeeds.reduce(0, +) / Double(pendingFanSpeeds.count)
-        pendingFanSpeeds.removeAll()
-
-        let interval = preferences.sampleInterval
-        let duration =
-            lastSampleDate.map { min(now.timeIntervalSince($0), interval * Self.maxDurationFactor) } ?? interval
-        lastSampleDate = now
+        guard let record = pending.close(at: now, interval: preferences.sampleInterval) else { return }
 
         let sample = Sample(
-            date: now,
-            duration: duration,
-            averageTemperature: averageTemperature,
-            maxTemperature: maxTemperature,
+            date: record.date,
+            duration: record.duration,
+            averageTemperature: record.averageTemperature,
+            maxTemperature: record.maxTemperature,
             openApps: openApps(),
             frontmostApp: NSWorkspace.shared.frontmostApplication.map(Self.identifier),
             appPower: measurement.map { appPower(from: $0) },
             pressure: pressure.rawValue,
             gpuPower: measurement?.gpuTotal,
-            fanSpeed: fanSpeed)
+            fanSpeed: record.fanSpeed)
         recent.append(sample)
         persist("gravar a leitura") { try $0.insert(sample, resolution: .raw) }
 
@@ -323,11 +284,9 @@ final class Monitor {
 
     /// Quando o minuto do relógio vira, resume as leituras do minuto anterior.
     private func summarizeMinute(at now: Date) {
-        let minute = Calendar.current.dateInterval(of: .minute, for: now)?.start ?? now
-        defer { currentMinute = minute }
-        guard let previous = currentMinute, previous != minute else { return }
-        let samples = recent.filter { $0.date > previous && $0.date <= minute }
-        guard let summary = Sample(summarizing: samples, at: previous) else { return }
+        guard let minute = minuteClock.advance(to: now), let summary = recent.minuteSummary(of: minute) else {
+            return
+        }
         minutes.append(summary)
         persist("gravar o resumo do minuto") { try $0.insert(summary, resolution: .minute) }
     }
@@ -396,25 +355,4 @@ final class Monitor {
             print(head + top.joined(separator: " | "))
         }
     #endif
-}
-
-/// Um processo (ou vários iguais, como as abas do Chrome) de um app, com a potência recente.
-struct LiveProcess: Identifiable {
-    let description: ProcessDescription
-    private(set) var pids: [pid_t] = []
-    private(set) var power = Power.zero
-    /// Só quando é um processo único.
-    private(set) var details: ProcessDetails?
-
-    var id: ProcessDescription { description }
-
-    fileprivate init(description: ProcessDescription) {
-        self.description = description
-    }
-
-    fileprivate mutating func add(_ details: ProcessDetails, power: Power) {
-        pids.append(details.pid)
-        self.power += power
-        self.details = pids.count == 1 ? details : nil
-    }
 }
