@@ -49,7 +49,8 @@ enum CSVExporter {
         if let first = value.unicodeScalars.first, "=+-@\t\r".unicodeScalars.contains(first) {
             value = "'" + value
         }
-        guard value.contains(where: { ",\"\n\r".contains($0) }) else { return value }
+        // Por escalar: "\r\n" é um caractere só no Swift e não seria igual a "\r" nem a "\n".
+        guard value.unicodeScalars.contains(where: { ",\"\n\r".unicodeScalars.contains($0) }) else { return value }
         return "\"" + value.replacingOccurrences(of: "\"", with: "\"\"") + "\""
     }
 }

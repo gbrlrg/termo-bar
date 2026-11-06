@@ -140,6 +140,13 @@ struct PersistenceEdgeCaseTests {
 
     // MARK: - CSV
 
+    @Test func quotesFieldsWithLineBreaksOfAnyKind() {
+        #expect(CSVExporter.text("a\r\nb") == "\"a\r\nb\"")
+        #expect(CSVExporter.text("a\nb") == "\"a\nb\"")
+        #expect(CSVExporter.text("a\rb") == "\"a\rb\"")
+        #expect(CSVExporter.text("simples") == "simples")
+    }
+
     @Test func exportsInTheGivenTimeZone() {
         let csv = CSVExporter.csv(
             samples: [makeSample(at: 0)], names: [:], timeZone: TimeZone(secondsFromGMT: -3 * 3600) ?? .current)
