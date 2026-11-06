@@ -105,8 +105,7 @@ struct ProcessDescription: Hashable, Sendable {
             if let package = rest.first { return package }
         }
         let file = components.last ?? script
-        let stem = file.split(separator: ".").first.map(String.init) ?? file
-        return stem.isEmpty ? file : stem
+        return file.split(separator: ".").first.map(String.init) ?? file
     }
 
     /// Só palavras simples contam como subcomando ("dev", "render"), não valores nem caminhos.

@@ -74,3 +74,78 @@ struct PreferencesTests {
         #expect(preferences.short(80) == "80°")
     }
 }
+
+@MainActor
+struct PreferencesMigrationTests {
+    private func makeDefaults() throws -> UserDefaults {
+        try #require(UserDefaults(suiteName: "termobar-tests-\(UUID().uuidString)"))
+    }
+
+    @Test func oldIconAndTemperatureStyleBecomesTemperatureWithIcons() throws {
+        let defaults = try makeDefaults()
+        defaults.set("iconAndTemperature", forKey: "menuBarStyle")
+
+        let preferences = Preferences(defaults: defaults)
+
+        #expect(preferences.menuBarStyle == .temperature)
+        #expect(preferences.showValueIcons)
+        #expect(defaults.string(forKey: "menuBarStyle") == MenuBarStyle.temperature.rawValue)
+        // A migração fica gravada: abrir de novo não perde os ícones.
+        let reopened = Preferences(defaults: defaults)
+        #expect(reopened.showValueIcons)
+        #expect(reopened.menuBarStyle == .temperature)
+    }
+
+    @Test func persistsEveryPreference() throws {
+        let defaults = try makeDefaults()
+        let preferences = Preferences(defaults: defaults)
+        preferences.decimals = 1
+        preferences.source = .hottest
+        preferences.compactWhenCool = true
+        preferences.compactThreshold = 65
+        preferences.showValueIcons = true
+        preferences.sampleInterval = 2
+        preferences.retentionDays = 90
+        preferences.alertTemperature = true
+        preferences.alertTemperatureLimit = 88
+        preferences.alertThrottling = false
+        preferences.alertAppPower = true
+        preferences.alertAppMinutes = 15
+
+        let reloaded = Preferences(defaults: defaults)
+        #expect(reloaded.decimals == 1)
+        #expect(reloaded.source == .hottest)
+        #expect(reloaded.compactWhenCool)
+        #expect(reloaded.compactThreshold == 65)
+        #expect(reloaded.showValueIcons)
+        #expect(reloaded.sampleInterval == 2)
+        #expect(reloaded.retentionDays == 90)
+        #expect(reloaded.alertTemperature)
+        #expect(reloaded.alertTemperatureLimit == 88)
+        #expect(!reloaded.alertThrottling)
+        #expect(reloaded.alertAppPower)
+        #expect(reloaded.alertAppMinutes == 15)
+    }
+
+    @Test func disabledAlertsLeaveNoLimits() throws {
+        let preferences = Preferences(defaults: try makeDefaults())
+        preferences.alertTemperature = false
+        preferences.alertAppPower = false
+        preferences.alertThrottling = false
+        let configuration = preferences.alertConfiguration
+        #expect(configuration.temperatureLimit == nil)
+        #expect(configuration.appPower == nil)
+        #expect(!configuration.isAnyEnabled)
+    }
+
+    @Test func formatsWithOverridesAndInFahrenheit() throws {
+        let preferences = Preferences(defaults: try makeDefaults())
+        preferences.unit = .fahrenheit
+        preferences.decimals = 1
+        #expect(
+            preferences.format(100)
+                == TemperatureFormatStyle(unit: .fahrenheit, fractionDigits: 1, symbol: .unit).format(100))
+        #expect(preferences.format(100, decimals: 0) == "212 °F")
+        #expect(preferences.short(100) == "212°")
+    }
+}
