@@ -12,6 +12,7 @@
   <a href="https://github.com/gbrlrg/termo-bar/releases/latest"><img src="https://img.shields.io/github/v/release/gbrlrg/termo-bar?label=baixar&color=7b3ff2" alt="Baixar a última versão"></a>
   <img src="https://img.shields.io/badge/macOS-15%2B-black?logo=apple" alt="macOS 15 ou superior">
   <img src="https://img.shields.io/badge/Apple%20Silicon-only-black" alt="Só Apple Silicon">
+  <a href="https://github.com/gbrlrg/termo-bar/actions/workflows/ci.yml"><img src="https://github.com/gbrlrg/termo-bar/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/licen%C3%A7a-PolyForm%20Noncommercial-blue" alt="Licença PolyForm Noncommercial"></a>
 </p>
 
@@ -163,6 +164,17 @@ O widget lê um resumo pequeno (temperatura atual e os três apps que mais gasta
 
 Nenhum dado sai do computador. Não há telemetria nem conta. A única conexão é a busca por atualizações, que lê a lista de versões no GitHub.
 
+## Segurança
+
+- **Assinado e notarizado**: o app e o DMG têm assinatura Developer ID e o carimbo de notarização da Apple, e o app roda com o runtime endurecido do macOS, que bloqueia injeção de código e bibliotecas não assinadas.
+- **Atualizações conferidas**: o Sparkle só instala uma atualização cuja assinatura EdDSA confere com a chave pública embutida no app, baixada por HTTPS do GitHub.
+- **Mínimo privilégio**: sem senha de administrador, sem auxiliar, sem extensão de kernel. O widget roda no App Sandbox e só lê o resumo que o app grava para ele.
+- **Dados locais protegidos**: a pasta do histórico só é legível pelo seu usuário; todo valor entra no SQLite por parâmetro, nunca interpolado no SQL; *Apagar histórico* compacta o arquivo para os registros apagados não ficarem no disco.
+- **CSV seguro**: nomes de processo que começam com `=`, `+`, `-` ou `@` são neutralizados para não virarem fórmulas ao abrir a exportação numa planilha.
+- **Revisado com base no [OWASP Top 10 (2025)](https://top10.owasp.org/2025/)**, nas categorias que se aplicam a um app local (cadeia de suprimentos, integridade, injeção, configuração).
+
+Encontrou uma vulnerabilidade? Reporte de forma privada pelos [avisos de segurança do GitHub](https://github.com/gbrlrg/termo-bar/security/advisories/new), em vez de abrir uma issue pública.
+
 ## Perguntas frequentes
 
 **Por que não está na Mac App Store?**
@@ -211,7 +223,19 @@ defaults delete br.com.gbrlrg.termobar
 
 ## Compilar a partir do código
 
-Veja [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md): como compilar, testar, distribuir e como o código está organizado.
+Requer Mac com Apple Silicon, Xcode 16 ou superior e [XcodeGen](https://github.com/yonaskolb/XcodeGen). O projeto Xcode é gerado a partir do `project.yml`.
+
+```sh
+brew install xcodegen
+xcodegen generate
+xcodebuild test -project TermoBar.xcodeproj -scheme TermoBar -destination 'platform=macOS,arch=arm64'
+xcodebuild -project TermoBar.xcodeproj -scheme TermoBar -configuration Release -derivedDataPath build build
+open build/Build/Products/Release/TermoBar.app
+```
+
+A lógica pura (agregação, ranking, alertas, rateio da GPU, filtro dos sensores, decodificação do SMC, histórico SQLite, CSV, preferências e todos os textos das telas) fica em tipos sem AppKit nem SwiftUI e é coberta por mais de 200 testes unitários (Swift Testing). O CI roda o `swift-format` e os testes em cada pull request.
+
+Veja [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) para distribuição, idiomas, arquitetura e ferramentas de diagnóstico.
 
 ## Licença
 
