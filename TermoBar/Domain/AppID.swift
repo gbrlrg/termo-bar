@@ -12,6 +12,11 @@ enum AppID {
 
     static func isProcess(_ id: String) -> Bool { id.hasPrefix(processPrefix) }
 
+    /// Nomes novos ou alterados em `names` em relação aos já gravados em `saved`.
+    static func unsavedNames(_ names: [String: String], saved: [String: String]) -> [String: String] {
+        names.filter { saved[$0.key] != $0.value }
+    }
+
     /// Nome de exibição: "Outros" para o grupo agregado, o nome conhecido ou o próprio id.
     static func displayName(of id: String, names: [String: String]) -> String {
         id == others ? othersName : names[id] ?? id

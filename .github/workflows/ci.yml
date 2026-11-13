@@ -12,28 +12,45 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Dependências fixadas por hash, não por tag: uma tag pode ser movida para outro código.
+# Ao atualizar, troque a versão e o hash juntos.
+env:
+  XCODEGEN_VERSION: 2.45.4
+  XCODEGEN_SHA256: 090ec29491aad50aec10631bf6e62253fed733c50f3aab0f5ffc86bc170bdbef
+
 jobs:
   lint:
     name: Formatação (swift-format)
     runs-on: ubuntu-latest
-    container: swift:6.0
+    container: swift:6.0@sha256:f73bbe1acf48ee6b0b6764268e0e2bed2cdf29285abcc908320a68cbfd9d5b90
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - run: swift format lint --strict --recursive TermoBar TermoBarTests TermoBarWidget
 
   build-and-test:
     name: Build e testes (macOS)
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v4
-      - name: Gerar o projeto Xcode
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Instalar o XcodeGen (versão e hash fixos)
         run: |
-          brew install xcodegen
-          xcodegen generate
+          curl -fsSL -o "$RUNNER_TEMP/xcodegen.zip" \
+            "https://github.com/yonaskolb/XcodeGen/releases/download/$XCODEGEN_VERSION/xcodegen.zip"
+          echo "$XCODEGEN_SHA256  $RUNNER_TEMP/xcodegen.zip" | shasum -a 256 -c -
+          unzip -q "$RUNNER_TEMP/xcodegen.zip" -d "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/xcodegen/bin" >> "$GITHUB_PATH"
+      - name: Gerar o projeto Xcode
+        run: xcodegen generate
       - name: Testar
+        # Só as versões travadas no Package.resolved; um pacote diferente faz o build falhar.
         run: |
           xcodebuild test \
             -project TermoBar.xcodeproj \
             -scheme TermoBar \
             -destination 'platform=macOS' \
-            -derivedDataPath build
+            -derivedDataPath build \
+            -onlyUsePackageVersionsFromResolvedFile

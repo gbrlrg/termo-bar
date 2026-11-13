@@ -223,18 +223,10 @@ final class Monitor {
     /// Temperatura e os apps que mais gastaram nos últimos 15 minutos, para o widget.
     private func publishWidget(at now: Date) {
         guard let celsius = currentTemperature else { return }
-        let apps = summary(range: .quarter).rows
-            .filter { $0.id != AppID.others && $0.energy.total > 0 }
-            .prefix(Self.widgetApps)
-            .map {
-                WidgetSnapshot.App(
-                    id: $0.id, name: $0.name, watts: $0.average.total.formatted(.watts), share: $0.share,
-                    colorSlot: palette[$0.id])
-            }
         widget.publish(
             WidgetSnapshot(
-                date: now, celsius: celsius, temperature: preferences.format(celsius),
-                pressure: pressure, apps: Array(apps)))
+                date: now, celsius: celsius, temperature: preferences.format(celsius), pressure: pressure,
+                summary: summary(range: .quarter), palette: palette, limit: Self.widgetApps))
     }
 
     /// Atualiza na hora as leituras da aba Sensores, sem esperar o próximo tique.
@@ -329,7 +321,7 @@ final class Monitor {
     }
 
     private func saveNewNames() {
-        let changed = appNames.filter { savedNames[$0.key] != $0.value }
+        let changed = AppID.unsavedNames(appNames, saved: savedNames)
         guard !changed.isEmpty else { return }
         persist("gravar os nomes dos apps") { try $0.saveNames(changed) }
         savedNames.merge(changed) { $1 }

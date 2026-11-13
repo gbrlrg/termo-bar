@@ -27,7 +27,7 @@ struct GetTopAppIntent: AppIntent {
     @MainActor
     func perform() async throws -> some IntentResult & ReturnsValue<String> & ProvidesDialog {
         let summary = AppDependencies.monitor.summary(range: .quarter)
-        guard let top = summary.rows.first(where: { $0.id != AppID.others && $0.energy.total > 0 }) else {
+        guard let top = summary.heatingApps.first else {
             return .result(value: "", dialog: "Nenhum app gastou energia nos últimos 15 minutos.")
         }
         let watts = top.average.total.formatted(.watts)

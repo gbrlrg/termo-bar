@@ -1,5 +1,13 @@
-# Gerados pelo XcodeGen (fonte: project.yml)
-TermoBar.xcodeproj/
+# Gerados pelo XcodeGen (fonte: project.yml). O Package.resolved fica no repositório:
+# ele trava a revisão exata de cada pacote (veja o CI e o release.sh).
+TermoBar.xcodeproj/*
+!TermoBar.xcodeproj/project.xcworkspace/
+TermoBar.xcodeproj/project.xcworkspace/*
+!TermoBar.xcodeproj/project.xcworkspace/xcshareddata/
+TermoBar.xcodeproj/project.xcworkspace/xcshareddata/*
+!TermoBar.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
+TermoBar.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/*
+!TermoBar.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
 TermoBar/Info.plist
 TermoBar/TermoBar.entitlements
 TermoBarWidget/Info.plist

@@ -35,6 +35,7 @@ xcodebuild -project TermoBar.xcodeproj -scheme TermoBar -configuration Release \
     DEVELOPMENT_TEAM=$TEAM_ID \
     CODE_SIGN_INJECT_BASE_ENTITLEMENTS=NO \
     OTHER_CODE_SIGN_FLAGS=--timestamp \
+    -onlyUsePackageVersionsFromResolvedFile \
     clean build -quiet
 
 # O Xcode assina o Sparkle.framework, mas os auxiliares dentro dele continuam com a assinatura ad hoc

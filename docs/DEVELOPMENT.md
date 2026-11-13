@@ -14,7 +14,7 @@ cp -R build/Build/Products/Release/TermoBar.app /Applications/
 open /Applications/TermoBar.app
 ```
 
-O projeto Xcode é gerado a partir do `project.yml` e não fica no repositório.
+O projeto Xcode é gerado a partir do `project.yml` e não fica no repositório, com uma exceção: o `Package.resolved` (em `TermoBar.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/`), que trava a revisão exata de cada pacote. O CI e o `release.sh` compilam com `-onlyUsePackageVersionsFromResolvedFile`, então um pacote diferente do travado faz o build falhar. Para atualizar o Sparkle, mude o `exactVersion` no `project.yml`, rode `xcodegen generate` e `xcodebuild -resolvePackageDependencies`, confira que a revisão no `Package.resolved` é a da tag oficial e faça o commit dele.
 
 O ícone (`TermoBar/AppIcon.icon`) é um documento do Icon Composer e só é compilado a partir do Xcode 26. Com versões anteriores, o app compila e funciona, mas fica com o ícone genérico do macOS.
 
@@ -132,6 +132,7 @@ O código é dividido em camadas; as de cima dependem das de baixo, nunca o cont
 - Preferências fora da faixa válida (editadas com `defaults write`) são corrigidas ao abrir o app.
 - O app roda com o runtime endurecido do macOS. Ele não pode usar o App Sandbox, porque lê a energia de processos de outros apps e usa APIs privadas do IOKit. O widget, que só lê o resumo do App Group, roda em sandbox.
 - A única conexão de rede é a busca por atualizações (Sparkle), que lê o `appcast.xml` no GitHub; cada atualização só é instalada se a assinatura EdDSA conferir.
+- Cadeia de suprimentos: o Sparkle é fixado por versão exata e pela revisão no `Package.resolved`; no CI, a action de checkout é fixada por hash do commit, a imagem do Swift por digest e o XcodeGen por versão e SHA-256 (`.github/workflows/ci.yml`). Ao atualizar, troque a versão e o hash juntos.
 - Falhas de banco e de notificação vão para o log unificado (`log stream --predicate 'subsystem == "br.com.gbrlrg.termobar"'`).
 
 ## Diagnóstico (build Debug)

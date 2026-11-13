@@ -56,6 +56,11 @@ struct RangeSummary: Sendable {
 
     func bin(for date: Date) -> Date { range.bin(containing: date) }
 
+    /// Apps que gastaram energia no período, do que mais gastou ao que menos, sem o grupo "Outros".
+    var heatingApps: [AppRow] {
+        rows.filter { $0.id != AppID.others && $0.energy.total > 0 }
+    }
+
     /// Potência média de todos os apps no período.
     var averagePower: Double? {
         guard measured > 0 else { return nil }
